@@ -12,6 +12,12 @@ OS with a reasonable recent JDK installed and gnumake installed.
 And just type "make", good luck, and I hope that my code could be helpful
 to everyone in the github community.
 
+```
+git clone https://github.com/siliconej/hackweekly.git
+cd hackweekly/week1
+make
+```
+
 Happy Hacking,
 Nov 2 2023
 siliconej
