@@ -3,7 +3,7 @@ JARFILE=libs/bcprov-jdk18on-177b05.jar:libs/bcutil-jdk18on-177b05.jar:libs/pdfbo
 all: test1 test2 test3
 PDFSigVerifier.class: PDFSigVerifier.java
 	@echo "Compile PDFSigVerifier"
-	Wjavac -cp ${JARFILE} PDFSigVerifier.java
+	javac -cp ${JARFILE} PDFSigVerifier.java
 
 test1: PDFSigVerifier.class exported_file_1936.pdf
 	@echo "Testing PKCS7 signature with RSAwithSHA256"

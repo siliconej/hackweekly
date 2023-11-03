@@ -210,12 +210,7 @@ public class PDFSigVerifier {
 	    byte[] sigAttrBytes  = null;
 	    byte[] digestAttribute = null;
 
-	    // Roughtly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
-	    //
-	    // Notice that if the Signature attribute sequence doesn't exist, we will use the plainDigest
-	    // calculated above.
-	    //
-	    // For exploration purpose we're only using
+	    // Roughly, Verification ::= ( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
 	    final SignerInfo signerInfo = SignerInfo.getInstance(signerInfoSeq);
 	    if (signerInfoSeq.getObjectAt(3) instanceof ASN1TaggedObject) {
 		// The signatureAttribute needs to take the explicit DER encoding format.
