@@ -1,7 +1,7 @@
 # Hack Weekly
 A weekly/bi-weekly adventure in interesting code hacking experiment.
 
-I could be reached at siliconej@gmail.com
+I could be reached at siliconej (at) gmail.com
 
 
 ## Week 1: PDF Signautre Verification in Java, JavaScript, and Rust.
