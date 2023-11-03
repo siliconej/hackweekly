@@ -217,9 +217,7 @@ public class PDFSigVerifier {
 		ASN1Set sigAttr = signerInfo.getAuthenticatedAttributes();
 		sigAttrBytes = sigAttr.getEncoded();
 		
-		// here we analyze the digest attributes.
-		// ASN1TaggedObject taggedObj = (ASN1TaggedObject) signerInfo.getObjectAt(3);
-		// ASN1Set set = ASN1Set.getInstance(taggedObj, /* explicit = */ false);
+		// Here we analyze the digest attributes.
 		for (int i = 0; i < sigAttr.size(); ++i) {
 		    ASN1Sequence seq = (ASN1Sequence) sigAttr.getObjectAt(i);
 		    String oidString = ((ASN1ObjectIdentifier) seq.getObjectAt(0)).getId();
@@ -246,7 +244,6 @@ public class PDFSigVerifier {
 		encDigestAlgoIndex++;
 	    }
 	    
-	    // Now we start to verify the signature.
 	    // 1.2.840.113549.1.1.1 = RSA Cipher
 	    ASN1ObjectIdentifier encDigestAlgoOid =
 	    	(ASN1ObjectIdentifier) ((ASN1Sequence) signerInfoSeq.getObjectAt(encDigestAlgoIndex)).getObjectAt(0);
@@ -272,6 +269,7 @@ public class PDFSigVerifier {
 	    // CRLs are not supported yet.
 	    ASN1Set crls = signedData.getCRLs();
 
+	    // Now we start to verify the signature.
 	    // prepare pubkey and call RSA decrypt rountine to verify.
 	    return verifySignature(cert.getSubjectPublicKeyInfo(),
 				   encDigestBytes,
