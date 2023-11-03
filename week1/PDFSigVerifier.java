@@ -1,23 +1,3 @@
-/**
- *
- * Copyright 2023 Edward Jiang
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the “Software”), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ByteArrayInputStream;
@@ -68,8 +48,22 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class PDFSigVerifier {
 
-    private static File _pdfFile;
-    private static boolean _debug;
+    private static final String OID_CIPHER_RSA   = "1.2.840.113549.1.1.1";
+    private static final String OID_PKCS_SHA_1   = "1.2.840.113549.1.1.5";
+    private static final String OID_PKCS_SHA_256 = "1.2.840.113549.1.1.11";
+    private static final String OID_PKCS_SHA_384 = "1.2.840.113549.1.1.12";
+    private static final String OID_PKCS_SHA_512 = "1.2.840.113549.1.1.13";
+    private static final String OID_CTYPE_PKCS7  = "1.2.840.113549.1.7.1";
+    private static final String OID_SIGNED_DATA  = "1.2.840.113549.1.7.2";
+    private static final String OID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
+    private static final String OID_MD_ID        = "1.2.840.113549.1.9.4";
+    private static final String OID_ALGO_SHA_1   = "1.3.14.3.2.26";
+    private static final String OID_ALGO_SHA_256 = "2.16.840.1.101.3.4.2.1";
+    private static final String OID_ALGO_SHA_384 = "2.16.840.1.101.3.4.2.2";
+    private static final String OID_ALGO_SHA_512 = "2.16.840.1.101.3.4.2.3";
+
+    private File _pdfFile;
+    private boolean _debug;
 
     public PDFSigVerifier(String pdfFileName) throws IOException {
 	this(pdfFileName, /* debug = */ false);
@@ -104,23 +98,22 @@ public class PDFSigVerifier {
 
     private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
 	try {
-	    ASN1InputStream asn1is = new ASN1InputStream(new ByteArrayInputStream(pkcs7Bytes));
-	    ASN1Primitive asn1prim = asn1is.readObject();
+	    final ASN1InputStream asn1is = new ASN1InputStream(new ByteArrayInputStream(pkcs7Bytes));
+	    final ASN1Primitive asn1prim = asn1is.readObject();
 
 	    // parse signedData
 	    ASN1ObjectIdentifier objId =
 		(ASN1ObjectIdentifier) ((ASN1Sequence) asn1prim).getObjectAt(0);
-	    // https://oidref.com/1.2.840.113549.1.7
-	    if (!objId.getId().equals("1.2.840.113549.1.7.2")) {
+	    if (!OID_SIGNED_DATA.equals(objId.getId())) {
 		throw new IllegalArgumentException("Invalid PKCS7 data");
 	    }
 	    // data sub position #1 is the digestAlgorithm
-	    ContentInfo info = ContentInfo.getInstance(asn1prim);
-	    SignedData signedData = SignedData.getInstance(info.getContent());
+	    final ContentInfo info = ContentInfo.getInstance(asn1prim);
+	    final SignedData signedData = SignedData.getInstance(info.getContent());
 	    asn1is.close();
 
 	    // parse digest algorithm
-	    ASN1Set digestAlgorithms = signedData.getDigestAlgorithms();
+	    final ASN1Set digestAlgorithms = signedData.getDigestAlgorithms();
 	    // only the very first algo is supported, and it has to be SHA256.
 	    if (digestAlgorithms.size() != 1) {
 		throw new IllegalArgumentException("Invalid algorithm size");
@@ -128,16 +121,14 @@ public class PDFSigVerifier {
 	    final ASN1Sequence algoSequence = (ASN1Sequence) digestAlgorithms.getObjectAt(0);
 	    final String digestAlgoOid = ((ASN1ObjectIdentifier) algoSequence.getObjectAt(0)).getId();
 	    
-	    // https://oidref.com/2.16.840.1.101.3.4.2.[1|2|3]: SHA-256,SHA-384, SHA-512
-	    // https://oidref.com/1.3.14.3.2.26: SHA-1
 	    String digestAlgoId = null;
-	    if ("2.16.840.1.101.3.4.2.1".equals(digestAlgoOid)) {
+	    if (OID_ALGO_SHA_256.equals(digestAlgoOid)) {
 		digestAlgoId = "SHA-256";
-	    } else if ("2.16.840.1.101.3.4.2.2".equals(digestAlgoOid)) {
+	    } else if (OID_ALGO_SHA_384.equals(digestAlgoOid)) {
 		digestAlgoId = "SHA-384";
-	    } else if ("2.16.840.1.101.3.4.2.3".equals(digestAlgoOid)) {
+	    } else if (OID_ALGO_SHA_512.equals(digestAlgoOid)) {
 		digestAlgoId = "SHA-512";
-	    } else if ("1.3.14.3.2.26".equals(digestAlgoOid)) {
+	    } else if (OID_ALGO_SHA_1.equals(digestAlgoOid)) {
 		digestAlgoId = "SHA-1";
 	    } else {
 		throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlgoOid);
@@ -170,23 +161,28 @@ public class PDFSigVerifier {
 	    if (cert == null) {
 		throw new IOException("Failed to find the correct certificate to operate");
 	    }
+	    // Check date range validity, not a hard blocker.
+	    // Ideally we should get the official time from a time sever instead.
+	    if (!cert.isValidOn(new java.util.Date())) {
+		System.err.println("WARNING: Certificate used is outside of the valid time range: " +
+				   cert.getNotBefore() + " - " + cert.getNotAfter());
+	    }
 
-	    // https://oidref.com/1.2.840.113549.1.1.[11|12|13]
 	    boolean algoMatch = false;
 	    final String sigAlgoId = cert.getSignatureAlgorithm().getAlgorithm().getId();
-	    if ("1.2.840.113549.1.1.11".equals(sigAlgoId)) {
+	    if (OID_PKCS_SHA_256.equals(sigAlgoId)) {
 		algoMatch = "SHA-256".equals(digestAlgoId);
-	    } else if ("1.2.840.113549.1.1.12".equals(sigAlgoId)) {
+	    } else if (OID_PKCS_SHA_384.equals(sigAlgoId)) {
 		algoMatch = "SHA-384".equals(digestAlgoId);
-	    } else if ("1.2.840.113549.1.1.13".equals(sigAlgoId)) {
+	    } else if (OID_PKCS_SHA_512.equals(sigAlgoId)) {
 		algoMatch = "SHA-512".equals(digestAlgoId);
-	    } else if ("1.2.840.113549.1.1.5".equals(sigAlgoId)) {
+	    } else if (OID_PKCS_SHA_1.equals(sigAlgoId)) {
 		algoMatch = "SHA-1".equals(digestAlgoId);
 	    }
 	    if (!algoMatch) {
 		throw new IllegalArgumentException("Invalid or unsupported SignatureAlgorithm found: " + sigAlgoId);
 	    }
-	    byte[] signatureBytes = cert.getSignature();
+	    final byte[] signatureBytes = cert.getSignature();
             if (_debug) {
                 System.out.println(getDebugByteArrayString("Signature of cert found", signatureBytes));
             }
@@ -210,26 +206,32 @@ public class PDFSigVerifier {
 	    byte[] sigAttrBytes  = null;
 	    byte[] digestAttribute = null;
 
-	    // Roughly, Verification ::= ( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
+	    // Roughtly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
+	    //
+	    // Notice that if the Signature attribute sequence doesn't exist, we will use the plainDigest
+	    // calculated above.
+	    //
+	    // For exploration purpose we're only using
 	    final SignerInfo signerInfo = SignerInfo.getInstance(signerInfoSeq);
 	    if (signerInfoSeq.getObjectAt(3) instanceof ASN1TaggedObject) {
 		// The signatureAttribute needs to take the explicit DER encoding format.
 		ASN1Set sigAttr = signerInfo.getAuthenticatedAttributes();
 		sigAttrBytes = sigAttr.getEncoded();
 		
-		// Here we analyze the digest attributes.
+		// here we analyze the digest attributes.
+		// ASN1TaggedObject taggedObj = (ASN1TaggedObject) signerInfo.getObjectAt(3);
+		// ASN1Set set = ASN1Set.getInstance(taggedObj, /* explicit = */ false);
 		for (int i = 0; i < sigAttr.size(); ++i) {
 		    ASN1Sequence seq = (ASN1Sequence) sigAttr.getObjectAt(i);
 		    String oidString = ((ASN1ObjectIdentifier) seq.getObjectAt(0)).getId();
-		    if ("1.2.840.113549.1.9.3".equals(oidString) &&
-			"1.2.840.113549.1.7.1".equals(((ASN1ObjectIdentifier)
-						       (((ASN1Set) seq.getObjectAt(1)).getObjectAt(0))).getId())) {
+		    if (OID_CONTENT_TYPE.equals(oidString) &&
+			OID_CTYPE_PKCS7.equals(((ASN1ObjectIdentifier)(((ASN1Set) seq.getObjectAt(1)).
+									    getObjectAt(0))).getId())) {
 			if (_debug) {
 			    System.out.println("Content Type found: PKCS7");
 			}
 		    }
-		    // Tag "1.2.840.113549.1.9.4" is Message Digest
-		    if ("1.2.840.113549.1.9.4".equals(oidString)) {
+		    if (OID_MD_ID.equals(oidString)) {
 			ASN1Set set2 = (ASN1Set) seq.getObjectAt(1);
 			digestAttribute = ((DEROctetString) set2.getObjectAt(0)).getOctets();
 			if (_debug) {
@@ -244,14 +246,14 @@ public class PDFSigVerifier {
 		encDigestAlgoIndex++;
 	    }
 	    
-	    // 1.2.840.113549.1.1.1 = RSA Cipher
-	    ASN1ObjectIdentifier encDigestAlgoOid =
+	    // Now we start to verify the signature.
+	    final ASN1ObjectIdentifier encDigestAlgoOid =
 	    	(ASN1ObjectIdentifier) ((ASN1Sequence) signerInfoSeq.getObjectAt(encDigestAlgoIndex)).getObjectAt(0);
-	    if (!"1.2.840.113549.1.1.1".equals(encDigestAlgoOid.getId())) {
+	    if (!OID_CIPHER_RSA.equals(encDigestAlgoOid.getId())) {
 		throw new IllegalArgumentException("Unsupported cipher: " + encDigestAlgoOid.getId());
 	    }
 
-	    byte[] encDigestBytes = signerInfo.getEncryptedDigest().getOctets();
+	    final byte[] encDigestBytes = signerInfo.getEncryptedDigest().getOctets();
 	    
 	    // Extract Possible PKCS7 RSA Data
 	    if (((ASN1Sequence) asn1prim).size() > 2) {
@@ -267,9 +269,8 @@ public class PDFSigVerifier {
 	    }
 	    
 	    // CRLs are not supported yet.
-	    ASN1Set crls = signedData.getCRLs();
+	    final ASN1Set crls = signedData.getCRLs();
 
-	    // Now we start to verify the signature.
 	    // prepare pubkey and call RSA decrypt rountine to verify.
 	    return verifySignature(cert.getSubjectPublicKeyInfo(),
 				   encDigestBytes,
@@ -318,16 +319,16 @@ public class PDFSigVerifier {
 	if (_debug) {
 	    System.out.println(getDebugByteArrayString("RSA encrypted MD extracted", rsaDigest));
 	}
-	RSAPublicKey key = RSAPublicKey.getInstance(pubKeyEncoded);
-	RSAEngine rsaEngine = new RSAEngine();
+	final RSAPublicKey key = RSAPublicKey.getInstance(pubKeyEncoded);
+	final RSAEngine rsaEngine = new RSAEngine();
 	byte[] decryptedDigest = null;
 	rsaEngine.init(/* forEncryption = */ false,
 		       new RSAKeyParameters(/* isPrivate = */ false,
 					    key.getModulus(), key.getPublicExponent()));
 	if (pkcs1Padding) {
-	    PKCS1Encoding pkcs1Enc = new PKCS1Encoding(rsaEngine);
+	    final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(rsaEngine);
 	    final byte[] decryptedDigestASN = calcRSA(pkcs1Enc, rsaDigest);
-	    ASN1Sequence decryptedSeq = ASN1Sequence.getInstance(decryptedDigestASN);
+	    final ASN1Sequence decryptedSeq = ASN1Sequence.getInstance(decryptedDigestASN);
 	    decryptedDigest = ((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets();
 	} else {
 	    decryptedDigest = calcRSA(rsaEngine, rsaDigest);
@@ -358,13 +359,13 @@ public class PDFSigVerifier {
 	return outputBlock;
     }
 
-    private static byte[] getCOSBytesInRange(COSArray byteRanges) {
+    private byte[] getCOSBytesInRange(COSArray byteRanges) {
 	FileInputStream fis = null;
 	try {
-	    int file_length = (int) _pdfFile.length();
+	    final int file_length = (int) _pdfFile.length();
 	    fis = new FileInputStream(_pdfFile);
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream(file_length);
-	    byte[] buffer = new byte[file_length];
+	    final ByteArrayOutputStream bos = new ByteArrayOutputStream(file_length);
+	    final byte[] buffer = new byte[file_length];
 	    int offset = 0;
 	    do {
 		offset += fis.read(buffer, offset, file_length - offset);
@@ -389,7 +390,7 @@ public class PDFSigVerifier {
 
     private byte[] calcMessageDigest(COSArray byteRanges, String hashAlgorithm) {
 	try {
-	    byte[] cosBuffer = getCOSBytesInRange(byteRanges);
+	    final byte[] cosBuffer = getCOSBytesInRange(byteRanges);
 	    if (cosBuffer == null) {
 		throw new IOException("invalid cos bytes defined by ranges");
 	    }
@@ -403,7 +404,7 @@ public class PDFSigVerifier {
 
     private byte[] calcMessageDigest(byte[] buffer, String hashAlgorithm) {
 	try {
-	    MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm);
+	    final MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm);
 	    final byte[] plainDigest = messageDigest.digest(buffer);
 	    if (_debug) {
 		System.out.println(getDebugByteArrayString("Digest calculated using " + hashAlgorithm,
@@ -418,7 +419,7 @@ public class PDFSigVerifier {
     }
     
     private void processObject(COSObject cosObject) {
-	COSBase base = cosObject.getObject();
+	final COSBase base = cosObject.getObject();
 	if (!(base instanceof COSDictionary)) {
 	    return;
 	}
@@ -452,9 +453,9 @@ public class PDFSigVerifier {
 
     public void verify() {
 	try {
-	    PDDocument doc = Loader.loadPDF(_pdfFile, /* password= */ (String) null);
+	    final PDDocument doc = Loader.loadPDF(_pdfFile, /* password= */ (String) null);
 	    doc.setAllSecurityToBeRemoved(true);
-	    COSDocument cosDocument = doc.getDocument();
+	    final COSDocument cosDocument = doc.getDocument();
 	    cosDocument.getXrefTable().keySet().stream()
 		.forEach(obj -> processObject(cosDocument.getObjectFromPool(obj)));
 	} catch (IOException e) {
@@ -465,8 +466,6 @@ public class PDFSigVerifier {
 
     public static final void main(String[] args) throws Exception {
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-	
-	PDFSigVerifier verifier = new PDFSigVerifier(args[0], /* debug = */ false);
-	verifier.verify();
+	(new PDFSigVerifier(args[0], /* debug = */ false)).verify();
     }
 }
