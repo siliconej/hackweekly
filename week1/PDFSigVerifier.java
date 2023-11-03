@@ -133,6 +133,10 @@ public class PDFSigVerifier {
 	    } else {
 		throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlgoOid);
 	    }
+	    if (_debug) {
+		System.err.println("PDF digest algorithm found: " + digestAlgoId);
+	    }
+	    
 	    final byte[] plainDigest = calcMessageDigest(byteRanges, digestAlgoId);
 
 	    // Extract S/N of the cert used.
@@ -164,24 +168,27 @@ public class PDFSigVerifier {
 	    // Check date range validity, not a hard blocker.
 	    // Ideally we should get the official time from a time sever instead.
 	    if (!cert.isValidOn(new java.util.Date())) {
-		System.err.println("WARNING: Certificate used is outside of the valid time range: " +
-				   cert.getNotBefore() + " - " + cert.getNotAfter());
+		System.err.println("WARNING: Certificate outside of valid time range: " +
+				   cert.getNotBefore() + " ~ " + cert.getNotAfter());
 	    }
 
-	    boolean algoMatch = false;
-	    final String sigAlgoId = cert.getSignatureAlgorithm().getAlgorithm().getId();
-	    if (OID_PKCS_SHA_256.equals(sigAlgoId)) {
-		algoMatch = "SHA-256".equals(digestAlgoId);
-	    } else if (OID_PKCS_SHA_384.equals(sigAlgoId)) {
-		algoMatch = "SHA-384".equals(digestAlgoId);
-	    } else if (OID_PKCS_SHA_512.equals(sigAlgoId)) {
-		algoMatch = "SHA-512".equals(digestAlgoId);
-	    } else if (OID_PKCS_SHA_1.equals(sigAlgoId)) {
-		algoMatch = "SHA-1".equals(digestAlgoId);
+	    final String sigAlgoOid = cert.getSignatureAlgorithm().getAlgorithm().getId();
+	    String certAlgoId = null;
+	    if (OID_PKCS_SHA_256.equals(sigAlgoOid)) {
+		certAlgoId = "RSAwithSHA256";
+	    } else if (OID_PKCS_SHA_384.equals(sigAlgoOid)) {
+		certAlgoId = "RSAwithSHA384";
+	    } else if (OID_PKCS_SHA_512.equals(sigAlgoOid)) {
+		certAlgoId = "RSAwithSHA512";
+	    } else if (OID_PKCS_SHA_1.equals(sigAlgoOid)) {
+		certAlgoId = "RSAwithSHA1";
 	    }
-	    if (!algoMatch) {
-		throw new IllegalArgumentException("Invalid or unsupported SignatureAlgorithm found: " + sigAlgoId);
+	    if (certAlgoId == null) {
+		System.err.println("WARNING: Unknown cert signature algorithm found: " + sigAlgoOid);
+	    } else if (_debug) {
+		System.out.println("Certificate signature algorithm recognized: " + certAlgoId);
 	    }
+	    
 	    final byte[] signatureBytes = cert.getSignature();
             if (_debug) {
                 System.out.println(getDebugByteArrayString("Signature of cert found", signatureBytes));
@@ -465,7 +472,24 @@ public class PDFSigVerifier {
     }
 
     public static final void main(String[] args) throws Exception {
+	boolean debug_mode = false;
+	String file_name = null;
+	if (args.length == 2) {
+	    if ("--debug".equals(args[0])) {
+		debug_mode = true;
+		file_name = args[1];
+	    } else if ("--debug".equals(args[1])) {
+		debug_mode = true;
+		file_name = args[0];
+	    }
+	} else if (args.length == 1) {
+	    file_name = args[0];
+	}
+	if (file_name == null) {
+	    throw new IllegalArgumentException("Usage: java PDFSigVerifier [--debug] <file_name.pdf>");
+	}
+
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-	(new PDFSigVerifier(args[0], /* debug = */ false)).verify();
+	(new PDFSigVerifier(file_name, debug_mode)).verify();
     }
 }
