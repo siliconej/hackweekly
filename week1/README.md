@@ -1,4 +1,4 @@
-# Week1: Java implementation of PDF Signature verification
+# Week 1: Java implementation of PDF Signature verification
 
 I notice that there's lack of coherent explanation of how simple PDF digital
 signature is verified.  So I explored in last several days and implemented
@@ -7,7 +7,9 @@ to explain what were the interesting blockers and issues I had during this
 adventure.
 
 The building and testing process is self-explanatory, simply on any mainstream
-OS with a reasonable recent JDK install and gnumake install.  Just type "make".
+OS with a reasonable recent JDK installed and gnumake installed.
+
+And just type "make", good luck and happy hacking.
 
 Nov 2 2023
 siliconej
