@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import org.apache.pdfbox.Loader;
@@ -536,14 +537,14 @@ public class PDFSigVerifier {
 	    }
 	    bos.close();
 	    return bos.toByteArray();
-	} catch (Exception e) {
+	} catch (IOException e) {
 	    System.err.println("Error during extraction of bytes in ranges: " + e.getMessage());
 	    e.printStackTrace(System.err);
 	} finally {
 	    if (fis != null) {
 		try {
 		    fis.close();
-		} catch (Exception e) {}
+		} catch (IOException e) {}
 	    }
 	}
 	return null;
@@ -556,7 +557,7 @@ public class PDFSigVerifier {
 		throw new IOException("invalid cos bytes defined by ranges");
 	    }
 	    return calcMessageDigest(cosBuffer, hashAlgorithm);
-	} catch (Exception e) {	
+	} catch (IOException e) {	
 	    System.err.println("Failed to calculate message digest: " + e.getMessage());
 	    e.printStackTrace(System.err);
 	}
@@ -572,7 +573,7 @@ public class PDFSigVerifier {
 							   plainDigest));
 	    }
 	    return plainDigest;
-	} catch (Exception e) {
+	} catch (NoSuchAlgorithmException e) {
 	    System.err.println("Failed to calculate message digest: " + e.getMessage());
 	    e.printStackTrace(System.err);
 	}
@@ -597,7 +598,8 @@ public class PDFSigVerifier {
 	}
 	
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
-	if ("adbe.pkcs7.detached".equals(signerAlgorithm)) {
+	if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
+            "ETSI.CAdES.detached".equals(signerAlgorithm)) {
 	    showReport("*" + _pdfFile.getName() + "* PKCS7", cosObject.getObjectNumber(), 
 		       verifyDetachedPKCS7Signature(((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
 						    (COSArray) dict.getItem(COSName.BYTERANGE)));
