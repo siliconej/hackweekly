@@ -31,52 +31,69 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DLTaggedObject;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.eac.PublicKeyDataObject;
 import org.bouncycastle.asn1.pkcs.ContentInfo;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.DSAParameters;
 import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.DSASigner;
+import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class PDFSigVerifier {
 
-    private static final String OID_CIPHER_RSA       = "1.2.840.113549.1.1.1";
-    private static final String OID_PKCS_RSA_SHA1    = "1.2.840.113549.1.1.5";
-    private static final String OID_PKCS_RSA_SHA256  = "1.2.840.113549.1.1.11";
-    private static final String OID_PKCS_RSA_SHA384  = "1.2.840.113549.1.1.12";
-    private static final String OID_PKCS_RSA_SHA512  = "1.2.840.113549.1.1.13";
+    private static final String OID_CIPHER_RSA        = "1.2.840.113549.1.1.1";
+    private static final String OID_PKCS_RSA_SHA1     = "1.2.840.113549.1.1.5";
+    private static final String OID_PKCS_RSA_SHA256   = "1.2.840.113549.1.1.11";
+    private static final String OID_PKCS_RSA_SHA384   = "1.2.840.113549.1.1.12";
+    private static final String OID_PKCS_RSA_SHA512   = "1.2.840.113549.1.1.13";
 
-    private static final String OID_CIPHER_DSA       = "1.2.840.10040.4.1";
-    private static final String OID_PKCS_DSA_SHA1    = "1.2.840.10040.4.3";
+    private static final String OID_CIPHER_DSA        = "1.2.840.10040.4.1";
+    private static final String OID_PKCS_DSA_SHA1     = "1.2.840.10040.4.3";
 
-    private static final String OID_CTYPE_PKCS7      = "1.2.840.113549.1.7.1";
-    private static final String OID_SIGNED_DATA      = "1.2.840.113549.1.7.2";
-    private static final String OID_CONTENT_TYPE     = "1.2.840.113549.1.9.3";
-    private static final String OID_MD_ID            = "1.2.840.113549.1.9.4";
-    private static final String OID_ALGO_SHA1        = "1.3.14.3.2.26";
-    private static final String OID_ALGO_SHA256      = "2.16.840.1.101.3.4.2.1";
-    private static final String OID_ALGO_SHA384      = "2.16.840.1.101.3.4.2.2";
-    private static final String OID_ALGO_SHA512      = "2.16.840.1.101.3.4.2.3";
+    private static final String OID_CIPHER_ECDSA      = "1.2.840.10045.2.1";
+    private static final String OID_PKCS_ECDSA_SHA256 = "1.2.840.10045.4.3.2";
+    private static final String OID_PKCS_ECDSA_SHA384 = "1.2.840.10045.4.3.3";
+    private static final String OID_PKCS_ECDSA_SHA512 = "1.2.840.10045.4.3.4";
+
+    private static final String OID_CTYPE_PKCS7       = "1.2.840.113549.1.7.1";
+    private static final String OID_SIGNED_DATA       = "1.2.840.113549.1.7.2";
+    private static final String OID_CONTENT_TYPE      = "1.2.840.113549.1.9.3";
+    private static final String OID_MD_ID             = "1.2.840.113549.1.9.4";
+    private static final String OID_ALGO_SHA1         = "1.3.14.3.2.26";
+    private static final String OID_ALGO_SHA256       = "2.16.840.1.101.3.4.2.1";
+    private static final String OID_ALGO_SHA384       = "2.16.840.1.101.3.4.2.2";
+    private static final String OID_ALGO_SHA512       = "2.16.840.1.101.3.4.2.3";
+
+    private static final String OID_EC_PRIME256V1     = "1.2.840.10045.3.1.7";
 
     private File _pdfFile;
     private static boolean _VERBOSE;
 
     private enum AsymmetricCipherType {
-	RSA, DSA
+	RSA, DSA, ECDSA
     }
 
     public PDFSigVerifier(String pdfFileName) throws IOException {
@@ -102,7 +119,8 @@ public class PDFSigVerifier {
     }
 
     private static void showReport(String header, long objectNum, boolean verifyStatus) {
-	System.out.println(header + " Object #" + objectNum + ": " + (verifyStatus?"OK":"Failed"));
+	System.out.println(header + " Object #" + objectNum + ": " +
+			   "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
     
     private static String getDigestAlgorithmId(ASN1ObjectIdentifier oid)
@@ -134,6 +152,12 @@ public class PDFSigVerifier {
 	    return "rsaWithSHA1";
 	} else if (OID_PKCS_DSA_SHA1.equals(oid.getId())) {
 	    return "dsaWithSHA1";
+	} else if (OID_PKCS_ECDSA_SHA256.equals(oid.getId())) {
+	    return "ecdsa-with-SHA256";
+	} else if (OID_PKCS_ECDSA_SHA384.equals(oid.getId())) {
+	    return "ecdsa-with-SHA384";
+	} else if (OID_PKCS_ECDSA_SHA512.equals(oid.getId())) {
+	    return "ecdsa-with-SHA512";
 	} else {
 	    System.err.println("WARNING: Unknown cert signature algorithm found: " + oid.getId());
 	    return null;
@@ -284,6 +308,8 @@ public class PDFSigVerifier {
 		cipherType = AsymmetricCipherType.RSA;
 	    } else if (OID_CIPHER_DSA.equals(encDigestAlgoOid.getId())) {
 		cipherType = AsymmetricCipherType.DSA;
+	    } else if (OID_CIPHER_ECDSA.equals(encDigestAlgoOid.getId())) {
+		cipherType = AsymmetricCipherType.ECDSA;
 	    } else {
 		throw new IllegalArgumentException("Unsupported cipher: " + encDigestAlgoOid.getId());
 	    }
@@ -306,14 +332,14 @@ public class PDFSigVerifier {
 	    // CRLs are not supported yet.
 	    final ASN1Set crls = signedData.getCRLs();
 
-	    // prepare pubkey and call RSA decrypt rountine to verify.
-	    // System.err.println("cert: " + cert.getExtensions());
+	    // Prepare pubkey and call RSA decrypt rountine to verify.
 	    return verifySignature(cipherType,
 				   cert.getSubjectPublicKeyInfo(),
 				   encDigestBytes,
 				   calcMessageDigest(sigAttrBytes, digestAlgoId),
 				   /* digest in ASN.1 = */
-				   (cipherType == AsymmetricCipherType.DSA),
+				   (cipherType == AsymmetricCipherType.DSA ||
+				    cipherType == AsymmetricCipherType.ECDSA),
 				   /* pkcs1 padding = */ true);
 	} catch (IOException e) {
 	    System.err.println("I/O failure during PKCS7 verification: " + e.getMessage());
@@ -357,6 +383,7 @@ public class PDFSigVerifier {
 	    ASN1InputStream digestIS = new ASN1InputStream(new ByteArrayInputStream(digestSrc));
 	    digestPrimitive = digestIS.readObject();
 	    digestIS.close();
+	    // System.err.println("digestPrimitive: " + digestPrimitive);
 
 	    switch (cipherType) {
 	    case RSA:
@@ -370,6 +397,7 @@ public class PDFSigVerifier {
 		break;
 
 	    case DSA:
+	    case ECDSA:
 		if (digestPrimitive instanceof ASN1Sequence &&
 		    ((ASN1Sequence) digestPrimitive).size() == 2) {
 		    // following code will parse the params.
@@ -382,8 +410,15 @@ public class PDFSigVerifier {
 	} else {
 	    digest = digestSrc;
 	}
-	
-	final ASN1Primitive pubKeyEncoded = pubKeyInfo.parsePublicKey();
+
+	ASN1Primitive pubKeyEncoded = null;
+	if (cipherType == AsymmetricCipherType.ECDSA) {
+	    // Bug identified in BC code, that doesn't handle the ECDSA pubkey well
+	    // here pubKeyEEncoded is a DERSequence.
+	    pubKeyEncoded = pubKeyInfo.toASN1Primitive();
+	} else {
+	    pubKeyEncoded = pubKeyInfo.parsePublicKey();
+	}
 	byte[] decryptedDigest = null;
 	switch (cipherType) {
 	case RSA:
@@ -412,26 +447,42 @@ public class PDFSigVerifier {
 	    
 	case DSA:
 	    final ASN1Sequence dsaParams = (ASN1Sequence) pubKeyInfo.getAlgorithm().getParameters();
-	    final ASN1Sequence digestSeq = (ASN1Sequence) digestPrimitive;
 	    if (dsaParams.size() != 3) {
 		throw new IllegalArgumentException("Unsupported DSA algorithm parameter size: " + dsaParams.size());
 	    }
-	    final DSAPublicKeyParameters dsaPubKeyParams = new DSAPublicKeyParameters
-		(/* Y = */ ((ASN1Integer) pubKeyEncoded).getValue(),
-		 new DSAParameters(/* P = */ ((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),
-				   /* Q = */ ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),
-				   /* G = */ ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));
-	    final DSASigner dsaSigner = new DSASigner();
-	    dsaSigner.init(/* for signing = */ false, dsaPubKeyParams);
-	    if (_VERBOSE) {
-		System.out.println("Calculated signature r = " +
-				   ((ASN1Integer) digestSeq.getObjectAt(0)).getValue().toString(16));
-		System.out.println("Calculated signature s = " +
-				   ((ASN1Integer) digestSeq.getObjectAt(1)).getValue().toString(16));
+	    return verifyDSA(new DSASigner(),
+			     new DSAPublicKeyParameters
+			     (/* Y = */ ((ASN1Integer) pubKeyEncoded).getValue(),
+			      new DSAParameters(/* P = */ ((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),
+						/* Q = */ ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),
+						/* G = */ ((ASN1Integer) dsaParams.getObjectAt(2)).getValue())),
+			     plainDigest, (ASN1Sequence) digestPrimitive);
+
+	case ECDSA:
+	    final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
+	    if (ecdsaPubKeySeq.size() != 2 ||
+		!OID_CIPHER_ECDSA.equals(((AlgorithmIdentifier)
+					  ecdsaPubKeySeq.getObjectAt(0)).getAlgorithm().getId())) {
+		throw new IllegalArgumentException("Invalid public key algorithm identifier");
 	    }
-	    return dsaSigner.verifySignature(plainDigest,
-					     /* r = */ ((ASN1Integer) digestSeq.getObjectAt(0)).getValue(),
-					     /* s = */ ((ASN1Integer) digestSeq.getObjectAt(1)).getValue());
+	    final X9ECParameters ecParams =
+		ECNamedCurveTable.getByOID((ASN1ObjectIdentifier)
+					   ((AlgorithmIdentifier) ecdsaPubKeySeq.getObjectAt(0)).
+					   getParameters());
+	    if (ecParams == null) {
+		throw new IllegalArgumentException("Unsupported EC curve");
+	    }
+	    return verifyDSA(new ECDSASigner(),
+			     new ECPublicKeyParameters
+			     (ecParams.getCurve().
+			      decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
+					  getBytes()),
+			      new ECDomainParameters(ecParams.getCurve(),
+						     ecParams.getG(),
+						     ecParams.getN(),
+						     ecParams.getH(),
+						     ecParams.getSeed())),
+			     plainDigest, (ASN1Sequence) digestPrimitive);
 	    
 	default:
 	    return false;
@@ -454,6 +505,18 @@ public class PDFSigVerifier {
 	    outputBlock = cipher.processBlock(digest, offset, length - offset);
 	}
 	return outputBlock;
+    }
+
+    private static boolean verifyDSA(DSA cipher, CipherParameters params,
+				     byte[] plainDigest, ASN1Sequence encDigestSequence) {
+	cipher.init(/* for signing = */ false, params);
+	final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
+	final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
+	if (_VERBOSE) {
+	    System.out.println("Extracted DSA digest r = " + r.toString(16));
+	    System.out.println("Extracted DSA digest s = " + s.toString(16));
+	}
+	return cipher.verifySignature(plainDigest, r, s);
     }
 
     private byte[] getCOSBytesInRange(COSArray byteRanges) {
