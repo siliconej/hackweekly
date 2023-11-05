@@ -86,8 +86,7 @@ public class PDFSigVerifier {
     private static final String OID_ALGO_SHA256       = "2.16.840.1.101.3.4.2.1";
     private static final String OID_ALGO_SHA384       = "2.16.840.1.101.3.4.2.2";
     private static final String OID_ALGO_SHA512       = "2.16.840.1.101.3.4.2.3";
-
-    private static final String OID_EC_PRIME256V1     = "1.2.840.10045.3.1.7";
+    private static final String OID_ALGO_RIPEMD160    = "1.3.36.3.2.1";
 
     private File _pdfFile;
     private static boolean _VERBOSE;
@@ -134,6 +133,8 @@ public class PDFSigVerifier {
 	    return "SHA-512";
 	} else if (OID_ALGO_SHA1.equals(oid.getId())) {
 	    return "SHA-1";
+	} else if (OID_ALGO_RIPEMD160.equals(oid.getId())) {
+	    return "RIPEMD160";
 	} else {
 	    throw new IllegalArgumentException("Unsupported digest algorithm: " + oid.getId());
 	}
@@ -259,7 +260,7 @@ public class PDFSigVerifier {
 	    byte[] sigAttrBytes  = null;
 	    byte[] digestAttribute = null;
 
-	    // Roughtly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
+	    // Roughly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
 	    //
 	    // Notice that if the Signature attribute sequence doesn't exist, we will use the plainDigest
 	    // calculated above.
