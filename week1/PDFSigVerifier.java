@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.Security;
 
 import org.apache.pdfbox.Loader;
@@ -47,6 +48,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
@@ -64,6 +66,9 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 
 public class PDFSigVerifier extends PDFSigBase {
 
@@ -130,11 +135,16 @@ public class PDFSigVerifier extends PDFSigBase {
 	    if (cert == null) {
 		throw new IOException("Failed to find the correct certificate to operate");
 	    }
-	    // Check date range validity, not a hard blocker.
+	    if (_VERBOSE) {
+		System.err.println("Cert Subject: " + certHolder.getSubject());
+		System.err.println("Cert Issuer: " + certHolder.getIssuer());
+	    }
+	    
 	    // Ideally we should get the official time from a time sever instead.
-	    if (!certHolder.isValidOn(new java.util.Date())) {
-		System.err.println("WARNING: Certificate outside of valid time range: " +
-				   certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter());
+	    if (!certHolder.isValidOn(new java.util.Date()) && _VERBOSE) {
+		System.err.println("\u001B[35mWARNING: Certificate outside of valid time range: " +
+				   certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter() +
+				   "\u001B[0m");
 	    }
 
 	    final String sigAlgoId = getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
@@ -176,8 +186,6 @@ public class PDFSigVerifier extends PDFSigBase {
 		sigAttrBytes = sigAttr.getEncoded();
 		
 		// here we analyze the digest attributes.
-		// ASN1TaggedObject taggedObj = (ASN1TaggedObject) signerInfo.getObjectAt(3);
-		// ASN1Set set = ASN1Set.getInstance(taggedObj, /* explicit = */ false);
 		for (int i = 0; i < sigAttr.size(); ++i) {
 		    ASN1Sequence seq = (ASN1Sequence) sigAttr.getObjectAt(i);
 		    String oidString = ((ASN1ObjectIdentifier) seq.getObjectAt(0)).getId();
@@ -193,7 +201,7 @@ public class PDFSigVerifier extends PDFSigBase {
 			digestAttribute = ((DEROctetString) set2.getObjectAt(0)).getOctets();
 			debugByteArrayString("Plain digest found", digestAttribute);
 			// We can now verify the message digest in plain text first.
-			if (Arrays.compare(digestAttribute, plainDigest) != 0) {
+			if (0 != Arrays.compare(digestAttribute, plainDigest)) {
 			    return false;
 			}
 		    }
@@ -233,14 +241,11 @@ public class PDFSigVerifier extends PDFSigBase {
 	    final ASN1Set crls = signedData.getCRLs();
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
-	    return verifySignature(cipherType,
-				   cert.getSubjectPublicKeyInfo(),
-				   encDigestBytes,
-				   calcMessageDigest(sigAttrBytes, digestAlgoId),
+	    return verifySignature(cipherType, certHolder, cert.getTBSCertificate(),
+				   encDigestBytes, calcMessageDigest(sigAttrBytes, digestAlgoId),
 				   /* digest in ASN.1 = */
 				   (cipherType == AsymmetricCipherType.DSA ||
-				    cipherType == AsymmetricCipherType.ECDSA),
-				   /* pkcs1 padding = */ true);
+				    cipherType == AsymmetricCipherType.ECDSA));
 	} catch (IOException e) {
 	    System.err.println("I/O failure during PKCS7 verification: " + e.getMessage());
 	    e.printStackTrace(System.err);
@@ -256,10 +261,12 @@ public class PDFSigVerifier extends PDFSigBase {
 
     private boolean verifyPKCS1Signature(byte[] certBytes, byte[] digestASN1, byte[] plainDigest) {
 	try {
+	    X509CertificateHolder certHolder = new X509CertificateHolder(certBytes);
 	    return verifySignature(AsymmetricCipherType.RSA,
-				   (new X509CertificateHolder(certBytes)).getSubjectPublicKeyInfo(),
+				   certHolder,
+				   certHolder.toASN1Structure().getTBSCertificate(),
 				   digestASN1, plainDigest,
-				   /* digest in ASN.1 = */ true, /* pkcs1 padding = */ true);
+				   /* digest in ASN.1 = */ true);
 	} catch (IOException e) {
 	    System.err.println("I/O failure during PKCS1 verification: " + e.getMessage());
 	    e.printStackTrace(System.err);
@@ -274,8 +281,10 @@ public class PDFSigVerifier extends PDFSigBase {
     }
 
     private boolean verifySignature(AsymmetricCipherType cipherType,
-				    SubjectPublicKeyInfo pubKeyInfo, byte[] digestSrc, byte[] plainDigest,
-				    boolean digestInASN1, boolean pkcs1Padding)
+				    X509CertificateHolder certHolder,
+				    TBSCertificate tbsCert,
+				    byte[] digestSrc, byte[] plainDigest,
+				    boolean digestInASN1)
 	throws IOException, InvalidCipherTextException {
 	byte[] digest = null;
 	ASN1Primitive digestPrimitive = null;
@@ -310,50 +319,50 @@ public class PDFSigVerifier extends PDFSigBase {
 	    digest = digestSrc;
 	}
 
-	ASN1Primitive pubKeyEncoded = 
+	final SubjectPublicKeyInfo pubKeyInfo = certHolder.getSubjectPublicKeyInfo();
+	final ASN1Primitive pubKeyEncoded = 
 	    (cipherType == AsymmetricCipherType.ECDSA
 	     // Bug identified in BC code, that doesn't handle the ECDSA pubkey well
 	     // here pubKeyEEncoded is a DERSequence.
 	     ? pubKeyInfo.toASN1Primitive()
 	     : pubKeyInfo.parsePublicKey());
 	byte[] decryptedDigest = null;
+	byte[] sigDigestBytes = calcMessageDigest
+	    (tbsCert.getEncoded(), getSignatureDigestId(certHolder.getSignatureAlgorithm().
+							getAlgorithm()));
 	switch (cipherType) {
 	case RSA:
 	    final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(pubKeyEncoded);
 	    final AsymmetricBlockCipher cipher = new RSAEngine();
-	    cipher.init(/* forEncryption = */ false,
-			new RSAKeyParameters(/* isPrivate = */ false,
-					     rsaPubKey.getModulus(),
-					     rsaPubKey.getPublicExponent()));
-	    if (pkcs1Padding) {
-		final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
-		final byte[] decryptedDigestASN = decrypt(pkcs1Enc, digest);
-		final ASN1Sequence decryptedSeq = ASN1Sequence.getInstance(decryptedDigestASN);
-		decryptedDigest = ((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets();
-	    } else {
-		decryptedDigest = decrypt(cipher, digest);
-	    }
-	    if (_VERBOSE) {
-		System.out.println(getDebugByteArrayString("RSA digest decrypted", decryptedDigest,
-							   /* in full = */ true));
-		System.out.println(getDebugByteArrayString("Plain digest", plainDigest,
-							   /* in full = */ true));
-	    }
-	    // Now the moment of the truth:
-	    return (Arrays.compare(decryptedDigest, plainDigest) == 0);
+	    try {
+		if (verifyRSA(cipher, rsaPubKey, certHolder.getSignature(), sigDigestBytes)) {
+		    System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+		}
+	    } catch (InvalidCipherTextException e) {
+		// this could happen when the cert is not self-signed.
+		// we silently ignore.
+	    }		
+	    return verifyRSA(cipher, rsaPubKey, digest, plainDigest);			     
 	    
 	case DSA:
 	    final ASN1Sequence dsaParams = (ASN1Sequence) pubKeyInfo.getAlgorithm().getParameters();
 	    if (dsaParams.size() != 3) {
 		throw new IllegalArgumentException("Unsupported DSA algorithm parameter size: " + dsaParams.size());
 	    }
-	    return verifyDSA(new DSASigner(),
-			     new DSAPublicKeyParameters
-			     (/* Y = */ ((ASN1Integer) pubKeyEncoded).getValue(),
-			      new DSAParameters(/* P = */ ((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),
-						/* Q = */ ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),
-						/* G = */ ((ASN1Integer) dsaParams.getObjectAt(2)).getValue())),
-			     plainDigest, (ASN1Sequence) digestPrimitive);
+
+	    DSA dsaSigner = new DSASigner();	    
+	    final CipherParameters dsaPubkeyParams = new DSAPublicKeyParameters
+		(/* Y = */ ((ASN1Integer) pubKeyEncoded).getValue(),
+		 new DSAParameters(/* P = */ ((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),
+				   /* Q = */ ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),
+				   /* G = */ ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));
+	    if (verifyDSA(dsaSigner, dsaPubkeyParams,
+			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
+			  sigDigestBytes)) {
+		System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+	    }
+	    return verifyDSA(dsaSigner, dsaPubkeyParams,
+			     (ASN1Sequence) digestPrimitive, plainDigest);
 
 	case ECDSA:
 	    final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
@@ -369,17 +378,24 @@ public class PDFSigVerifier extends PDFSigBase {
 	    if (ecParams == null) {
 		throw new IllegalArgumentException("Unsupported EC curve");
 	    }
-	    return verifyDSA(new ECDSASigner(),
-			     new ECPublicKeyParameters
-			     (ecParams.getCurve().
-			      decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
-					  getBytes()),
-			      new ECDomainParameters(ecParams.getCurve(),
-						     ecParams.getG(),
-						     ecParams.getN(),
-						     ecParams.getH(),
-						     ecParams.getSeed())),
-			     plainDigest, (ASN1Sequence) digestPrimitive);
+	    final DSA ecdsaSigner = new ECDSASigner();
+	    final CipherParameters ecdsaPubkeyParams = new ECPublicKeyParameters
+		(ecParams.getCurve().
+		 decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
+			     getBytes()),
+		 new ECDomainParameters(ecParams.getCurve(),
+					ecParams.getG(),
+					ecParams.getN(),
+					ecParams.getH(),
+					ecParams.getSeed()));
+
+	    if (verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
+			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
+			  sigDigestBytes)) {
+		System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+	    }
+	    return verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
+			     (ASN1Sequence) digestPrimitive, plainDigest);
 	    
 	default:
 	    return false;
@@ -404,8 +420,22 @@ public class PDFSigVerifier extends PDFSigBase {
 	return outputBlock;
     }
 
+    private static boolean verifyRSA(AsymmetricBlockCipher cipher, RSAPublicKey rsaPubKey,
+				     byte[] encryptedBytes, byte[] cleanBytes)
+	throws InvalidCipherTextException {
+	RSAKeyParameters pubkeyParams =
+	    new RSAKeyParameters(/* isPriviate = */ false,
+				 rsaPubKey.getModulus(), rsaPubKey.getPublicExponent());
+	cipher.init(/* forEncryption = */ false, pubkeyParams);
+	final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
+	final ASN1Sequence decryptedSeq =
+	    ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
+	return (0 == Arrays.compare
+		(((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets(), cleanBytes));
+    }
+
     private static boolean verifyDSA(DSA cipher, CipherParameters params,
-				     byte[] plainDigest, ASN1Sequence encDigestSequence) {
+				     ASN1Sequence encDigestSequence, byte[] plainDigest) {
 	cipher.init(/* for signing = */ false, params);
 	final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
 	final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();

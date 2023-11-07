@@ -20,11 +20,11 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 public abstract class PDFSigBase {
 
     static final String OID_CIPHER_RSA        = "1.2.840.113549.1.1.1";
+    static final String OID_PKCS_RSA_MD5      = "1.2.840.113549.1.1.4";
     static final String OID_PKCS_RSA_SHA1     = "1.2.840.113549.1.1.5";
     static final String OID_PKCS_RSA_SHA256   = "1.2.840.113549.1.1.11";
     static final String OID_PKCS_RSA_SHA384   = "1.2.840.113549.1.1.12";
     static final String OID_PKCS_RSA_SHA512   = "1.2.840.113549.1.1.13";
-
     static final String OID_CIPHER_DSA        = "1.2.840.10040.4.1";
     static final String OID_PKCS_DSA_SHA1     = "1.2.840.10040.4.3";
 
@@ -37,6 +37,7 @@ public abstract class PDFSigBase {
     static final String OID_SIGNED_DATA       = "1.2.840.113549.1.7.2";
     static final String OID_CONTENT_TYPE      = "1.2.840.113549.1.9.3";
     static final String OID_MD_ID             = "1.2.840.113549.1.9.4";
+    static final String OID_ALGO_MD5          = "1.2.840.113549.2.5";
     static final String OID_ALGO_SHA1         = "1.3.14.3.2.26";
     static final String OID_ALGO_SHA256       = "2.16.840.1.101.3.4.2.1";
     static final String OID_ALGO_SHA384       = "2.16.840.1.101.3.4.2.2";
@@ -49,6 +50,7 @@ public abstract class PDFSigBase {
 		{ OID_ALGO_SHA384,    "SHA-384"   },
 		{ OID_ALGO_SHA512,    "SHA-512"   },
 		{ OID_ALGO_SHA1,      "SHA-1"     },
+		{ OID_ALGO_MD5,       "MD5"       },
 	        { OID_ALGO_RIPEMD160, "RIPEMD160" },
 	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
     
@@ -58,10 +60,24 @@ public abstract class PDFSigBase {
                 { OID_PKCS_RSA_SHA384,   "rsaWithSHA384" },
                 { OID_PKCS_RSA_SHA512,   "rsaWithSHA512" },
                 { OID_PKCS_RSA_SHA1,     "rsaWithSHA1"   },
+		{ OID_PKCS_RSA_MD5,      "rsaWithMD5"    },
 		{ OID_PKCS_DSA_SHA1,     "dsaWithSHA1"   },
 		{ OID_PKCS_ECDSA_SHA256, "ecdsaWithSHA256" },
 		{ OID_PKCS_ECDSA_SHA384, "ecdsaWithSHA384" },
 		{ OID_PKCS_ECDSA_SHA512, "ecdsaWithSHA512" },
+            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    private static final Map<String, String> _SignatureDigestIdMap =
+        Stream.of(new String[][] {
+                { OID_PKCS_RSA_SHA256,   "SHA-256" },
+                { OID_PKCS_RSA_SHA384,   "SHA-384" },
+                { OID_PKCS_RSA_SHA512,   "SHA-512" },
+                { OID_PKCS_RSA_SHA1,     "SHA-1"   },
+		{ OID_PKCS_RSA_MD5,      "MD5"     },
+		{ OID_PKCS_DSA_SHA1,     "SHA-1"   },
+		{ OID_PKCS_ECDSA_SHA256, "SHA-256" },
+		{ OID_PKCS_ECDSA_SHA384, "SHA-384" },
+		{ OID_PKCS_ECDSA_SHA512, "SHA-512" },
             }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     protected enum AsymmetricCipherType {
@@ -77,16 +93,21 @@ public abstract class PDFSigBase {
     
     protected static String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
 	StringBuffer sb = new StringBuffer(128);
-	sb.append(header).append(" (len=").append(buffer.length).append(")[");
-	if (full) {
-	    for (int i = 0; i < buffer.length; ++i) {
-		sb.append(Integer.toHexString(buffer[i] & 0xff)).append(" ");
+        final int len = buffer.length;
+	sb.append(header).append(" (len=").append(len).append(")[\u001B[34m");
+	if (full && len > 1) {
+	    for (int i = 0; i < len - 1; ++i) {
+		sb.append(String.format("%02x", buffer[i] & 0xff)).append(":");
 	    }
+            sb.append(String.format("%02x", buffer[len - 1] & 0xff));
 	} else {
-	    sb.append(Integer.toHexString(buffer[0] & 0xff)).append(" .. ")
-		.append(Integer.toHexString(buffer[buffer.length - 1] & 0xff));
-	}
-	return sb.append("]").toString();
+	    sb.append(String.format("%02x", buffer[0] & 0xff));
+            if (len > 1) {
+                sb.append(" .. ");
+                sb.append(String.format("%02x", buffer[len - 1] & 0xff));
+            }
+        }
+	return sb.append("\u001B[0m]").toString();
     }
 
     protected static void debugByteArrayString(final String header, final byte[] buffer) {
@@ -114,6 +135,16 @@ public abstract class PDFSigBase {
 	final String id = _SignatureAlgorithmIdMap.get(oid.getId());
 	if (id == null) {
 	    System.err.println("WARNING: Unknown cert signature algorithm found: " + oid.getId());
+	}
+	return id;
+    }
+
+    protected static String getSignatureDigestId(ASN1ObjectIdentifier oid)
+	throws IllegalArgumentException {
+	final String id = _SignatureDigestIdMap.get(oid.getId());
+	if (id == null) {
+	    throw new IllegalArgumentException("Unsupported signature digest algorithm: " +
+					       oid.getId());
 	}
 	return id;
     }
@@ -165,7 +196,6 @@ public abstract class PDFSigBase {
 	try {
 	    final MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm);
 	    final byte[] plainDigest = messageDigest.digest(buffer);
-	    debugByteArrayString("Digest calculated using " + hashAlgorithm, plainDigest);
 	    return plainDigest;
 	} catch (NoSuchAlgorithmException e) {
 	    System.err.println("Failed to calculate message digest: " + e.getMessage());
