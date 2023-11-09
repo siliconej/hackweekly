@@ -425,7 +425,8 @@ public abstract class PDFSigBase {
 	if (root == null) {
 	    return false;
 	}
-	final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().getPublicKey());
+	final RSAPublicKey rsaPubKey =
+	    RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().parsePublicKey());
 	return verifyRSA(new RSAEngine(), rsaPubKey, certSignature, sigDigestBytes);
     }
 
