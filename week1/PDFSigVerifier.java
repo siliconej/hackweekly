@@ -515,7 +515,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    }
 	    fileNames.add(args[i]);
 	}
-	
+
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 	if (pkcs12file != null) {
 	    loadKeyStore(pkcs12file, pkcs12password);

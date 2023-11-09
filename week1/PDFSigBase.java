@@ -377,38 +377,10 @@ public abstract class PDFSigBase {
 	return null;
     }
 
-    /** Sample Encrypted Data:
-    [
-     [1.2.840.113549.1.7.6, <<< encryptedData
-      [CONTEXT 0] <<< #1
-      [0,
-       [
-        1.2.840.113549.1.7.1, <<< PKCS7
-        [
-         1.2.840.113549.1.5.13, <<<  PKCS5-PBES2
-         [
-          [1.2.840.113549.1.5.12, <<< PKCS5-PBKDF2
-           [#d7d638d07711fc96,    <<< SALT
-            2048,                 <<< Iteration
-            [1.2.840.113549.2.9, NULL] <<< hmacWithSHA256
-           ]
-          ],
-          [2.16.840.1.101.3.4.1.42, <<< AES256-CBC
-           #c662b3d5d86fb05459c30d6c0a4f646f
-          ]
-         ]
-        ],
-        [CONTEXT 0] <actual payload> <<< #2
-       ]
-      ] <<< end of CONTEXT 0 #1
-     ]  <<< end of encryptedData 
-    ]
-    */
     protected static void loadCertBags(ASN1Primitive rootPrim, String password) throws Exception {
 	ASN1Sequence pkcs5Seq = (ASN1Sequence) ((ASN1Sequence) rootPrim).getObjectAt(0);
 	if (!verifySequenceOid(OID_CTYPE_ENC_DATA, pkcs5Seq.getObjectAt(0))) {
 	    throw new IllegalArgumentException("Invalid PKCS5");
-
 	}
 	ASN1Sequence pkcs5EncDataSeq =
 	    (ASN1Sequence) ((ASN1TaggedObject) pkcs5Seq.getObjectAt(1)).getBaseObject();
@@ -420,7 +392,7 @@ public abstract class PDFSigBase {
 	    throw new IllegalArgumentException("Invalid embedded data");
 	}
 	ASN1Sequence pkcs5PbeSeq = (ASN1Sequence) pkcs5DataSeq.getObjectAt(1);
-	
+
 	if (!verifySequenceOid("1.2.840.113549.1.5.13", pkcs5PbeSeq.getObjectAt(0))) {
 	    throw new IllegalArgumentException("Invalid PKCS5-PBE sequence");
 	}
@@ -428,7 +400,7 @@ public abstract class PDFSigBase {
 	final AlgorithmIdentifier algo = contentInfo.getContentEncryptionAlgorithm();
 	final ASN1Sequence algoSeq = (ASN1Sequence) algo.getParameters();
 	System.err.println("encAlgorithm: " + algo.getAlgorithm().getId());
-	
+
 	/////// 1. parse decryptor ///////
 	final PBES2Parameters pbes2Params = PBES2Parameters.
 	    getInstance(contentInfo.getContentEncryptionAlgorithm().getParameters());
@@ -460,7 +432,7 @@ public abstract class PDFSigBase {
 	    new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
         final BufferedBlockCipher cipher =
 	    new DefaultBufferedBlockCipher(CBCBlockCipher.newInstance(AESEngine.newInstance()));
-								     
+ 
 	decryptHelper.newCipher(cipherParams);
 	final byte[] decryptedBytes = decryptHelper.decrypt(encryptedBytes);
 
@@ -481,11 +453,10 @@ public abstract class PDFSigBase {
 	}
 	return false;
     }
-					      
 
     protected static void loadPKCS7(ASN1Primitive rootPrim, String password) throws Exception {
     }
-    
+
     protected static void loadCertificates(File pkcs12file, String password) {
 	try {
 	    ASN1InputStream asnIS = new ASN1InputStream(new FileInputStream(pkcs12file));
@@ -507,10 +478,9 @@ public abstract class PDFSigBase {
 	    e.printStackTrace(System.err);
 	}
     }
-    
+
     protected static KeyStore loadKeyStore(File pkcs12file, String password) {
 	loadCertificates(pkcs12file, password);
-	
 	try {
 	    final KeyStore p12 = KeyStore.getInstance("PKCS12", "BC");
 	    p12.load(new FileInputStream(pkcs12file), password.toCharArray());
