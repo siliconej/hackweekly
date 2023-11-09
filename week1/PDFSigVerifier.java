@@ -335,9 +335,24 @@ public class PDFSigVerifier extends PDFSigBase {
 	    final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(pubKeyEncoded);
 	    final AsymmetricBlockCipher cipher = new RSAEngine();
 	    try {
-		if (verifyRSA(cipher, rsaPubKey, certHolder.getSignature(), sigDigestBytes)) {
-		    System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+		if (certHolder.getSubject().equals(certHolder.getIssuer())) {
+		    if (verifyRSA(cipher, rsaPubKey, certHolder.getSignature(), sigDigestBytes)) {
+			System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+		    } else {
+			System.out.println("\u001B[35mWARNING: Invalid self-signed cert.\u001B[0m");
+		    }
+		} else {
+		    if (verifyCertChain(certHolder.getIssuer(),
+					certHolder.getSignature(), sigDigestBytes)) {
+			if (_VERBOSE) {
+			    System.out.println("Cert issuer verified: " + certHolder.getIssuer());
+			}
+		    } else {
+			System.out.println("\u001B[35mWARNING: Invalid issuer certificate: " +
+					   certHolder.getIssuer() + "\u001B[0m");
+		    }
 		}
+		    
 	    } catch (InvalidCipherTextException e) {
 		// this could happen when the cert is not self-signed.
 		// we silently ignore.
@@ -401,49 +416,6 @@ public class PDFSigVerifier extends PDFSigBase {
 	    return false;
 	}
 
-    }
-
-    private static byte[] decrypt(AsymmetricBlockCipher cipher, byte[] digest)
-	throws InvalidCipherTextException {
-	int offset = 0;
-	final int len = digest.length;
-	final int blocksize = cipher.getInputBlockSize();
-	byte[] outputBlock = null;
-
-	while (offset <= len - blocksize) {
-	    outputBlock = cipher.processBlock(digest, offset, blocksize);
-	    offset += blocksize;
-	}
-	if (offset < len) {
-	    outputBlock = cipher.processBlock(digest, offset, len - offset);
-	}
-	return outputBlock;
-    }
-
-    private static boolean verifyRSA(AsymmetricBlockCipher cipher, RSAPublicKey rsaPubKey,
-				     byte[] encryptedBytes, byte[] cleanBytes)
-	throws InvalidCipherTextException {
-	RSAKeyParameters pubkeyParams =
-	    new RSAKeyParameters(/* isPriviate = */ false,
-				 rsaPubKey.getModulus(), rsaPubKey.getPublicExponent());
-	cipher.init(/* forEncryption = */ false, pubkeyParams);
-	final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
-	final ASN1Sequence decryptedSeq =
-	    ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
-	return (0 == Arrays.compare
-		(((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets(), cleanBytes));
-    }
-
-    private static boolean verifyDSA(DSA cipher, CipherParameters params,
-				     ASN1Sequence encDigestSequence, byte[] plainDigest) {
-	cipher.init(/* for signing = */ false, params);
-	final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
-	final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
-	if (_VERBOSE) {
-	    System.out.println("Extracted DSA digest r = " + r.toString(16));
-	    System.out.println("Extracted DSA digest s = " + s.toString(16));
-	}
-	return cipher.verifySignature(plainDigest, r, s);
     }
 
     private void processObject(COSObject cosObject) {
@@ -518,7 +490,7 @@ public class PDFSigVerifier extends PDFSigBase {
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 	if (pkcs12file != null) {
-	    loadKeyStore(pkcs12file, pkcs12password);
+	    loadPKCS12(pkcs12file, pkcs12password);
 	}
 	if (fileNames.isEmpty()) {
 	    throw new IllegalArgumentException("Usage: java PDFSigVerifier [--verbose] <file_name.pdf>");
