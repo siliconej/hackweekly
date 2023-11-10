@@ -419,15 +419,35 @@ public abstract class PDFSigBase {
 	return null;
     }
 
-    protected static boolean verifyCertChain(X500Name issuer, byte[] certSignature, byte[] sigDigestBytes)
+    protected static boolean verifyCertChain(X500Name parentIssuer,
+					     byte[] startCertSignature, byte[] startSigDigestBytes)
 	throws InvalidCipherTextException, IOException {
-	final X509CertificateHolder root = _certBags.get(issuer);
-	if (root == null) {
-	    return false;
-	}
-	final RSAPublicKey rsaPubKey =
-	    RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().parsePublicKey());
-	return verifyRSA(new RSAEngine(), rsaPubKey, certSignature, sigDigestBytes);
+	X500Name issuer = parentIssuer;
+	int maxDepth = 3;
+	byte[] certSignature = startCertSignature;
+	byte[] sigDigestBytes = startSigDigestBytes;
+	AsymmetricBlockCipher cipher = new RSAEngine();
+	do {
+	    final X509CertificateHolder root = _certBags.get(issuer);
+	    if (root == null) {
+		return false;
+	    }
+	    RSAPublicKey rsaPubKey =
+		RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().parsePublicKey());
+	    if (!verifyRSA(cipher, rsaPubKey, certSignature, sigDigestBytes)) {
+		return false;
+	    }
+	    if (root.getSubject().equals(root.getIssuer())) {
+		// reached the self-sign root.
+		return true;
+	    }
+	    issuer = root.getIssuer();
+	    certSignature = root.getSignature();
+	    sigDigestBytes =
+		calcMessageDigest(root.toASN1Structure().getTBSCertificate().getEncoded(),
+				  getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
+	} while ((--maxDepth) > 0);
+	return false;
     }
 
     protected static final byte[] decrypt(AsymmetricBlockCipher cipher, byte[] digest)

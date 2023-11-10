@@ -137,7 +137,6 @@ public class PDFSigVerifier extends PDFSigBase {
 	    }
 	    if (_VERBOSE) {
 		System.err.println("Cert Subject: " + certHolder.getSubject());
-		System.err.println("Cert Issuer: " + certHolder.getIssuer());
 	    }
 	    
 	    // Ideally we should get the official time from a time sever instead.
@@ -348,11 +347,10 @@ public class PDFSigVerifier extends PDFSigBase {
 			    System.out.println("Cert issuer verified: " + certHolder.getIssuer());
 			}
 		    } else {
-			System.out.println("\u001B[35mWARNING: Invalid issuer certificate: " +
+			System.out.println("\u001B[35mWARNING: Invalid issuer cert: " +
 					   certHolder.getIssuer() + "\u001B[0m");
 		    }
 		}
-		    
 	    } catch (InvalidCipherTextException e) {
 		// this could happen when the cert is not self-signed.
 		// we silently ignore.
