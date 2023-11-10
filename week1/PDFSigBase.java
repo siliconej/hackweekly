@@ -153,7 +153,9 @@ public abstract class PDFSigBase {
 	private CipherType _cipherType;
 	private ModeType _modeType;
 	private int _keySize;
-	private BufferedBlockCipher _cipher;
+	private BufferedBlockCipher _bufferedCipher;
+	private GCMBlockCipher _gcmCipher;
+	private CCMBlockCipher _ccmCipher;
 
 	public static DecryptHelper newInstance(String oid) {
 	    DecryptHelper helper = _SymmetricCipherIdMap.get(oid);
@@ -192,20 +194,42 @@ public abstract class PDFSigBase {
 	    case CFB:
 		mode = CFBBlockCipher.newInstance(engine, _keySize / 8);
 		break;
+	    case GCM:
+		_gcmCipher = (GCMBlockCipher) GCMBlockCipher.newInstance(engine);
+		_gcmCipher.init(/* for encrypt = */ false, params);
+		return;
+	    case CCM:
+		_ccmCipher = (CCMBlockCipher) CCMBlockCipher.newInstance(engine);
+		_ccmCipher.init(/* for encrypt = */ false, params);
+		return;
 	    default:
 		throw new IllegalArgumentException("Unsupported mode: " + _modeType);
 	    }
 	    if (mode == null) {
 		throw new IllegalArgumentException("Fail to create a new cipher");
 	    }
-	    _cipher = new DefaultBufferedBlockCipher(mode);
-	    _cipher.init(/* for encrypt */ false, params);
+	    _bufferedCipher = new DefaultBufferedBlockCipher(mode);
+	    _bufferedCipher.init(/* for encrypt = */ false, params);
 	}
 
 	public byte[] decrypt(byte[] in) throws InvalidCipherTextException {
-	    byte[] decryptedBytes = new byte[_cipher.getOutputSize(in.length)];
-	    int len = _cipher.processBytes(in, 0, in.length, decryptedBytes, 0);
-	    len += _cipher.doFinal(decryptedBytes, len);
+	    byte[] decryptedBytes = null;
+	    int len;
+	    if (_modeType == ModeType.GCM) {
+                decryptedBytes = new byte[_gcmCipher.getOutputSize(in.length)];
+                len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
+                len += _gcmCipher.doFinal(decryptedBytes, len);
+	    } else if (_modeType == ModeType.CCM) {
+		decryptedBytes = new byte[_ccmCipher.getOutputSize(in.length)];
+		len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
+                len += _gcmCipher.doFinal(decryptedBytes, len);
+	    } else if (_bufferedCipher != null) {
+		decryptedBytes = new byte[_bufferedCipher.getOutputSize(in.length)];
+		len = _bufferedCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
+		len += _bufferedCipher.doFinal(decryptedBytes, len);
+	    } else {
+		throw new IllegalArgumentException("Fail tot decrypt");
+	    }
 	    return decryptedBytes;
 	}
 
@@ -423,7 +447,7 @@ public abstract class PDFSigBase {
 					     byte[] startCertSignature, byte[] startSigDigestBytes)
 	throws InvalidCipherTextException, IOException {
 	X500Name issuer = parentIssuer;
-	int maxDepth = 3;
+	int maxDepth = 2;
 	byte[] certSignature = startCertSignature;
 	byte[] sigDigestBytes = startSigDigestBytes;
 	AsymmetricBlockCipher cipher = new RSAEngine();
