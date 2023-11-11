@@ -712,19 +712,16 @@ public abstract class PDFSigBase {
 	    final ASN1Primitive asn1prim = asnIS.readObject();
 	    asnIS.close();
 	    final ASN1Sequence asn1Seq = (ASN1Sequence) (((ASN1Sequence) asn1prim).getObjectAt(1));
-	    final int certCount =
-		((ASN1Integer) ((ASN1Sequence) asn1prim).getObjectAt(0)).getValue().intValue();
-	    System.out.println("Certificate bag found: " + certCount);
 	    if (verifySequenceOid(OID_CTYPE_PKCS7, asn1Seq.getObjectAt(0))) {
 		// PKCS7 bag
 		byte[] cmsBytes = DEROctetString.getInstance(((ASN1TaggedObject) asn1Seq.getObjectAt(1)).
 							     getBaseObject().getEncoded()).getOctets();
 		ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
 		if (_certBags == null) {
-		    _certBags = new HashMap<X500Name, X509CertificateHolder>(certCount);
+		    _certBags = new HashMap<X500Name, X509CertificateHolder>();
 		}
 		loadCertBags(cmsSeq, password);
-		VLOG("Certificate bag: " + _certBags);
+		VLOG("Certificate bag size: " + _certBags.size());
 	    }
 	} catch (Exception e) {
 	    System.err.println("Fail to read an object: " + e);

@@ -458,7 +458,7 @@ public class PDFSigVerifier extends PDFSigBase {
     public static final void main(String[] args) throws Exception {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
 	File pkcs12file = null;
-	String pkcs12password = "";
+	String pkcs12password = null;
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 	for (int i = 0; i < args.length; ++i) {
@@ -467,16 +467,15 @@ public class PDFSigVerifier extends PDFSigBase {
 		continue;
 	    } else if ("--pkcs12".equals(args[i])) {
 		pkcs12file = new File(args[++i]);
-		continue;
 	    } else if ("--password".equals(args[i])) {
 		pkcs12password = args[++i];
-		continue;
-	    }
-	    if (pkcs12file != null) {
+	    } else {
+	      fileNames.add(args[i]);
+            }
+	    if (pkcs12file != null && pkcs12password != null) {
 		loadPKCS12(pkcs12file, pkcs12password);
 		pkcs12file = null;
 	    }
-	    fileNames.add(args[i]);
 	}
 	if (fileNames.isEmpty()) {
 	    throw new IllegalArgumentException("Usage: java PDFSigVerifier [--verbose] <file_name.pdf>");
