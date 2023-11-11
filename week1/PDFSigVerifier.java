@@ -102,10 +102,8 @@ public class PDFSigVerifier extends PDFSigBase {
 	    
 	    final String digestAlgoId =
 		getDigestAlgorithmId((ASN1ObjectIdentifier) algoSequence.getObjectAt(0));
-	    if (_VERBOSE) {
-		System.err.println("PDF digest algorithm found: " + digestAlgoId);
-	    }
-	    
+	    VLOG("PDF digest algorithm found: " + digestAlgoId);
+    
 	    final byte[] plainDigest = calcMessageDigest(byteRanges, digestAlgoId);
 
 	    // Extract S/N of the cert used.
@@ -117,9 +115,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    final ASN1Sequence signerInfoSeq = (ASN1Sequence) signerInfos.getObjectAt(0);
 	    sn = ((ASN1Integer) (((ASN1Sequence) signerInfoSeq.getObjectAt(1)).
 				 getObjectAt(1))).getValue();
-	    if (_VERBOSE) {
-		System.out.println("Signer serial number: " + sn);
-	    }
+	    VLOG("Signer serial number: " + sn);
 	    
 	    // parse certificates and find the correct certificate
 	    final ASN1Set certificates = signedData.getCertificates();
@@ -135,21 +131,17 @@ public class PDFSigVerifier extends PDFSigBase {
 	    if (cert == null) {
 		throw new IOException("Failed to find the correct certificate to operate");
 	    }
-	    if (_VERBOSE) {
-		System.err.println("Cert Subject: " + certHolder.getSubject());
-	    }
+	    VLOG("Cert Subject: " + certHolder.getSubject());
 	    
 	    // Ideally we should get the official time from a time sever instead.
-	    if (!certHolder.isValidOn(new java.util.Date()) && _VERBOSE) {
-		System.err.println("\u001B[35mWARNING: Certificate outside of valid time range: " +
-				   certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter() +
-				   "\u001B[0m");
+	    if (!certHolder.isValidOn(new java.util.Date())) {
+		VLOG("\u001B[35mWARNING: Certificate outside of valid time range: " +
+		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter() +
+		     "\u001B[0m");
 	    }
 
 	    final String sigAlgoId = getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
-	    if (_VERBOSE) {
-		System.out.println("Certificate signature algorithm recognized: " + sigAlgoId);
-	    }
+	    VLOG("Certificate signature algorithm recognized: " + sigAlgoId);
 	    final byte[] signatureBytes = certHolder.getSignature();
 	    debugByteArrayString("Signature of cert found", signatureBytes);
 
@@ -191,9 +183,7 @@ public class PDFSigVerifier extends PDFSigBase {
 		    if (OID_CONTENT_TYPE.equals(oidString) &&
 			OID_CTYPE_PKCS7.equals(((ASN1ObjectIdentifier)(((ASN1Set) seq.getObjectAt(1)).
 									    getObjectAt(0))).getId())) {
-			if (_VERBOSE) {
-			    System.out.println("Content Type found: PKCS7");
-			}
+			VLOG("Content Type found: PKCS7");
 		    }
 		    if (OID_MD_ID.equals(oidString)) {
 			ASN1Set set2 = (ASN1Set) seq.getObjectAt(1);
@@ -343,12 +333,10 @@ public class PDFSigVerifier extends PDFSigBase {
 		} else {
 		    if (verifyCertChain(certHolder.getIssuer(),
 					certHolder.getSignature(), sigDigestBytes)) {
-			if (_VERBOSE) {
-			    System.out.println("Cert issuer verified: " + certHolder.getIssuer());
-			}
+			VLOG("Cert issuer verified: " + certHolder.getIssuer());
 		    } else {
-			System.out.println("\u001B[35mWARNING: Invalid issuer cert: " +
-					   certHolder.getIssuer() + "\u001B[0m");
+			VLOG("\u001B[35mWARNING: Invalid issuer cert: " +
+			     certHolder.getIssuer() + "\u001B[0m");
 		    }
 		}
 	    } catch (InvalidCipherTextException e) {

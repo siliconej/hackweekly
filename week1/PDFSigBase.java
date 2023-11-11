@@ -347,6 +347,12 @@ public abstract class PDFSigBase {
     public PDFSigBase(String pdfFileName) throws IOException {
 	_pdfFile = new File(pdfFileName);
     }
+
+    protected static final void VLOG(String log) {
+	if (_VERBOSE) {
+	    System.out.println(log);
+	}
+    }
     
     protected static final String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
 	StringBuffer sb = new StringBuffer(128);
@@ -430,9 +436,7 @@ public abstract class PDFSigBase {
     }
 
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
-	if (_VERBOSE) {
-	    System.out.println(getDebugByteArrayString(header, buffer, /* in full = */ false));
-	}
+	VLOG(getDebugByteArrayString(header, buffer, /* in full = */ false));
     }
 
     protected static final void showReport(String header, long objectNum, boolean verifyStatus) {
@@ -564,10 +568,8 @@ public abstract class PDFSigBase {
         cipher.init(/* for signing = */ false, params);
         final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
         final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
-        if (_VERBOSE) {
-            System.out.println("Extracted DSA digest r = " + r.toString(16));
-            System.out.println("Extracted DSA digest s = " + s.toString(16));
-        }
+	VLOG("Extracted DSA digest r = " + r.toString(16));
+	VLOG("Extracted DSA digest s = " + s.toString(16));
         return cipher.verifySignature(plainDigest, r, s);
     }
 
@@ -617,6 +619,8 @@ public abstract class PDFSigBase {
 	final ASN1Sequence algoSeq = (ASN1Sequence) algo.getParameters();
 
 	DecryptHelper decryptHelper = null;
+	CipherParameters cipherParams = null;
+	
 	if (verifySequenceOid(OID_PBE_SHA_3DES, algo.getAlgorithm()) ||
 	    verifySequenceOid(OID_PBE_SHA_EDE, algo.getAlgorithm())) {
 	    // PKCS12 vanilla
@@ -628,18 +632,14 @@ public abstract class PDFSigBase {
                            (password.toCharArray()),
                            pkcs12PbeParams.getIV(),  // salt
                            pkcs12PbeParams.getIterations().intValue());
-	    final CipherParameters cipherParams =
-		generator.generateDerivedParameters(pbeParamsHelper.getKeySize(),
-						    pbeParamsHelper.getIvSize());
+	    cipherParams = generator.generateDerivedParameters(pbeParamsHelper.getKeySize(),
+							       pbeParamsHelper.getIvSize());
 	    decryptHelper = DecryptHelper.newInstance(algo.getAlgorithm().getId());
-	    decryptHelper.newCipher(cipherParams);
 
-	    if (_VERBOSE) {
-		System.out.print("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize());
-                System.out.print(getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true));
-                System.out.print("; iteration: " + pkcs12PbeParams.getIterations());
-                System.out.println("; decryptHelper: " + decryptHelper + ")");
-	    }
+	    VLOG("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize() +
+		 getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
+		 "; iteration: " + pkcs12PbeParams.getIterations() +
+		 "; decryptHelper: " + decryptHelper + ")");
 
 	} else if (verifySequenceOid(OID_PBES2, algo.getAlgorithm())) {
 	    // PKCS12 wrapping PKCS5
@@ -667,22 +667,19 @@ public abstract class PDFSigBase {
 			   (password.toCharArray()),
 			   pbkdf2Params.getSalt(),
 			   pbkdf2Params.getIterationCount().intValue());
-	    final CipherParameters cipherParams =
-		new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
-	    decryptHelper.newCipher(cipherParams);
+	    cipherParams = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
 	    
-	    if (_VERBOSE) {
-		System.out.print("PBKDF2 (keyLength: " + keySize);
-		System.out.print("; iteration: " + pbkdf2Params.getIterationCount());
-		System.out.print(getDebugByteArrayString("; IV:", iv, true));
-		System.out.println("; decryptHelper: " + decryptHelper + ")");
-	    }
+	    VLOG("PBKDF2 (keyLength: " + keySize +
+		 "; iteration: " + pbkdf2Params.getIterationCount() +
+		 getDebugByteArrayString("; IV:", iv, true) +
+		 "; decryptHelper: " + decryptHelper + ")");
 	    
 	} else {
 	    throw new IllegalArgumentException("Invalid PKCS5-PBE sequence: " +
 					       pkcs5PbeSeq.getObjectAt(0));
 	}
 
+	decryptHelper.newCipher(cipherParams);
 	final byte[] encryptedBytes = contentInfo.getEncryptedContent().getOctets();
 	final byte[] decryptedBytes = decryptHelper.decrypt(encryptedBytes);
 	debugByteArrayString("encryptedBytes", encryptedBytes);
@@ -727,9 +724,7 @@ public abstract class PDFSigBase {
 		    _certBags = new HashMap<X500Name, X509CertificateHolder>(certCount);
 		}
 		loadCertBags(cmsSeq, password);
-		if (_VERBOSE) {
-		    System.out.println("Certificate bag: " + _certBags);
-		}
+		VLOG("Certificate bag: " + _certBags);
 	    }
 	} catch (Exception e) {
 	    System.err.println("Fail to read an object: " + e);
