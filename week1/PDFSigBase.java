@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -41,6 +42,7 @@ import org.bouncycastle.asn1.pkcs.EncryptedData;
 import org.bouncycastle.asn1.pkcs.EncryptionScheme;
 import org.bouncycastle.asn1.pkcs.PBES2Parameters;
 import org.bouncycastle.asn1.pkcs.PBKDF2Params;
+import org.bouncycastle.asn1.pkcs.PKCS12PBEParams;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -59,16 +61,22 @@ import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.DESEngine;
+import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.modes.CCMBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
+import org.bouncycastle.crypto.params.DESedeParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
+import org.bouncycastle.util.encoders.Hex;
 
 public abstract class PDFSigBase {
 
@@ -141,11 +149,15 @@ public abstract class PDFSigBase {
             }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     private enum CipherType {
-	AES, DES
+	AES, DES, EDE
     }
 
     private enum ModeType {
 	CBC, OFB, CFB, GCM, CCM
+    }
+
+    private enum WrapperType {
+	PKCS5, PKCS12
     }
     
     private static class DecryptHelper {
@@ -177,6 +189,8 @@ public abstract class PDFSigBase {
 		return AESEngine.newInstance();
 	    case DES:
 		return new DESEngine();
+	    case EDE:
+		return new DESedeEngine();
 	    }
 	    return null;
 	}
@@ -228,7 +242,7 @@ public abstract class PDFSigBase {
 		len = _bufferedCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
 		len += _bufferedCipher.doFinal(decryptedBytes, len);
 	    } else {
-		throw new IllegalArgumentException("Fail tot decrypt");
+		throw new IllegalArgumentException("Fail to decrypt");
 	    }
 	    return decryptedBytes;
 	}
@@ -276,28 +290,46 @@ public abstract class PDFSigBase {
 				  new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
 	_SymmetricCipherIdMap.put(OID_AES + ".46",
 				  new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
+	// 3DES
+	_SymmetricCipherIdMap.put("1.2.840.113549.1.12.1.3",
+				  new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
+	_SymmetricCipherIdMap.put("1.2.840.113549.1.12.1.4",
+				  new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
     }
 
-    static final String OID_PBKDF2 = "1.2.840.113549.1.5.12";
-    static final String OID_PBES2  = "1.2.840.113549.1.5.13";
+    private static final String OID_PBKDF2 = "1.2.840.113549.1.5.12";
+    private static final String OID_PBES2  = "1.2.840.113549.1.5.13";
+    private static final String OID_PBE_SHA_3DES = "1.2.840.113549.1.12.1.3";
+    private static final String OID_PBE_SHA_EDE  = "1.2.840.113549.1.12.1.4";
 
-    private static final Map<String, String> _PbeIdMap =
+    private static final Map<String, String> _PKCS5PbeIdMap =
 	Stream.of(new String[][] {
-		{ "1.2.840.113549.1.5.1",  "pbeWithMD2AndDES-CBC" },
-		{ "1.2.840.113549.1.5.3",  "pbeWithMD5AndDES-CBC" },
-		{ "1.2.840.113549.1.5.4",  "pbeWithMD2AndRC2-CBC" },
-		{ "1.2.840.113549.1.5.6",  "pbeWithMD5AndRC2-CBC" },
-		{ "1.2.840.113549.1.5.9",  "pbeWithMD5AndXOR-CBC" },
+		// PKCS5
+		{ "1.2.840.113549.1.5.1",  "pbeWithMD2AndDES-CBC"  },
+		{ "1.2.840.113549.1.5.3",  "pbeWithMD5AndDES-CBC"  },
+		{ "1.2.840.113549.1.5.4",  "pbeWithMD2AndRC2-CBC"  },
+		{ "1.2.840.113549.1.5.6",  "pbeWithMD5AndRC2-CBC"  },
+		{ "1.2.840.113549.1.5.9",  "pbeWithMD5AndXOR-CBC"  },
 		{ "1.2.840.113549.1.5.10", "pbeWithSHA1AndDES-CBC" },
 		{ "1.2.840.113549.1.5.11", "pbeWithSHA1AndRC2-CBC" },
 		{ "1.2.840.113549.1.5.12", "PBKDF2" },
-		{ "1.2.840.113549.1.5.13", "PBES2" },
+		{ "1.2.840.113549.1.5.13", "PBES2"  },
 		{ "1.2.840.113549.1.5.14", "PBMAC1" },
+	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+    private static final Map<String, String> _PKCS12PbeIdMap =
+	Stream.of(new String[][] {
+		// PKCS12
+		{ "1.2.840.113549.1.12.1.1", "pbeWithSHA1And128BitRC4"          },
+		{ "1.2.840.113549.1.12.1.2", "pbeWithSHA1And40BitRC4"           },
+		{ "1.2.840.113549.1.12.1.3", "pbeWithSHA1And3-KeyTripleDES-CBC" },
+		{ "1.2.840.113549.1.12.1.4", "pbeWithSHA1And2-KeyTripleDES-CBC" },
+		{ "1.2.840.113549.1.12.1.5", "pbeWithSHA1And128BitRC2-CBC"      },
+		{ "1.2.840.113549.1.12.1.6", "pbeWithSHA1And40BitRC2-CBC"       },
 	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     private static final Map<String, String> _HmacIdMap =
 	Stream.of(new String[][] {
-		{ "1.2.840.113549.2.7",  "hmacWithSHA1" },
+		{ "1.2.840.113549.2.7",  "hmacWithSHA1"   },
 		{ "1.2.840.113549.2.8",  "hmacWithSHA224" },
 		{ "1.2.840.113549.2.9",  "hmacWithSHA256" },
 		{ "1.2.840.113549.2.10", "hmacWithSHA384" },
@@ -336,42 +368,64 @@ public abstract class PDFSigBase {
     }
 
     private static class PBEParamsHelper {
-	private int keySize;
-	private PBEParametersGenerator generator;
+	private int _keySize;
+	private int _ivSize;
+	private PBEParametersGenerator _generator;
+	private Digest _digest;
 	
 	public PBEParamsHelper(String oid) {
-	    keySize = 0;
-	    generator = null;
+	    _keySize = 0;
+	    _ivSize = 0;
+	    _generator = null;
+	    _digest = null;
 	    createGeneratorAndDeriveKeySize(oid);
 	}
 	private void createGeneratorAndDeriveKeySize(String oid) {
-	    final String hashAlgoId = _HmacIdMap.get(oid);
-	    Digest digest = null;
-	    if ("hmacWithSHA1".equals(hashAlgoId)) {
-		keySize = 160;
-		digest = DigestFactory.createSHA1();
-	    } else if ("hmacWithSHA224".equals(hashAlgoId)) {
-		keySize = 224;
-		digest = DigestFactory.createSHA224();
-	    } else if ("hmacWithSHA256".equals(hashAlgoId)) {
-		keySize = 256;
-		digest = DigestFactory.createSHA256();
-	    } else if ("hmacWithSHA384".equals(hashAlgoId)) {
-		keySize = 384;
-		digest = DigestFactory.createSHA384();
-	    } else if ("hmacWithSHA512".equals(hashAlgoId)) {
-		keySize = 512;
-		digest = DigestFactory.createSHA512();
+	    String hashAlgoId = _HmacIdMap.get(oid);
+	    if (hashAlgoId == null) {
+		hashAlgoId = _PKCS12PbeIdMap.get(oid);
 	    }
-	    if (digest != null) {
-		generator = new PKCS5S2ParametersGenerator(digest);
+	    if ("hmacWithSHA1".equals(hashAlgoId)) {
+		_keySize = 160;
+		_digest = DigestFactory.createSHA1();
+	    } else if ("hmacWithSHA224".equals(hashAlgoId)) {
+		_keySize = 224;
+		_digest = DigestFactory.createSHA224();
+	    } else if ("hmacWithSHA256".equals(hashAlgoId)) {
+		_keySize = 256;
+		_digest = DigestFactory.createSHA256();
+	    } else if ("hmacWithSHA384".equals(hashAlgoId)) {
+		_keySize = 384;
+		_digest = DigestFactory.createSHA384();
+	    } else if ("hmacWithSHA512".equals(hashAlgoId)) {
+		_keySize = 512;
+		_digest = DigestFactory.createSHA512();
+	    } else if ("pbeWithSHA1And3-KeyTripleDES-CBC".equals(hashAlgoId)) {
+		_keySize = 24 * 8;
+		_ivSize = 8 * 8;
+		_digest = DigestFactory.createSHA1();
+		_generator = new PKCS12ParametersGenerator(_digest);
+	    } else if ("pbeWithSHA1And2-KeyTripleDES-CBC".equals(hashAlgoId)) {
+		_keySize = 16 * 8;
+		_ivSize = 8 * 8;
+		_digest = DigestFactory.createSHA1();
+		_generator = new PKCS12ParametersGenerator(_digest);
+	    }
+	    if (_digest != null && _generator == null) {
+		_generator = new PKCS5S2ParametersGenerator(_digest);
 	    }
 	}
 	public PBEParametersGenerator getGenerator() {
-	    return generator;
+	    return _generator;
 	}
 	public int getKeySize() {
-	    return keySize;
+	    return _keySize;
+	}
+	public int getIvSize() {
+	    return _ivSize;
+	}
+	public Digest getDigest() {
+	    return _digest;
 	}
     }
 
@@ -557,53 +611,84 @@ public abstract class PDFSigBase {
 	}
 	final ASN1Sequence pkcs5PbeSeq = (ASN1Sequence) pkcs5DataSeq.getObjectAt(1);
 
-	if (!verifySequenceOid(OID_PBES2, pkcs5PbeSeq.getObjectAt(0))) {
-	    throw new IllegalArgumentException("Invalid PKCS5-PBE sequence");
-	}
+	// Check PKCS12 vanilla or PKCS12 wrapping PKCS5.
 	final EncryptedContentInfo contentInfo = EncryptedContentInfo.getInstance(pkcs5DataSeq);
 	final AlgorithmIdentifier algo = contentInfo.getContentEncryptionAlgorithm();
 	final ASN1Sequence algoSeq = (ASN1Sequence) algo.getParameters();
 
-	/////// 1. Parse decryptor ///////
-	final PBES2Parameters pbes2Params = PBES2Parameters.getInstance
-	    (contentInfo.getContentEncryptionAlgorithm().getParameters());
-	final PBKDF2Params pbkdf2Params = PBKDF2Params.getInstance
-	    (AlgorithmIdentifier.getInstance(algoSeq.getObjectAt(0)).getParameters());
-	final EncryptionScheme encScheme = EncryptionScheme.getInstance(algoSeq.getObjectAt(1));
+	DecryptHelper decryptHelper = null;
+	if (verifySequenceOid(OID_PBE_SHA_3DES, algo.getAlgorithm()) ||
+	    verifySequenceOid(OID_PBE_SHA_EDE, algo.getAlgorithm())) {
+	    // PKCS12 vanilla
+	    final PKCS12PBEParams pkcs12PbeParams = PKCS12PBEParams.getInstance(algoSeq);
+	    final PBEParamsHelper pbeParamsHelper = new PBEParamsHelper(algo.getAlgorithm().getId());
+	    final PBEParametersGenerator generator = pbeParamsHelper.getGenerator();
 
-	final PBEParamsHelper pbeParamsHelper =
-	    new PBEParamsHelper(pbkdf2Params.getPrf().getAlgorithm().getId());
-	final PBEParametersGenerator generator = pbeParamsHelper.getGenerator();
-	final int keySize = pbeParamsHelper.getKeySize();
-	if (generator == null || keySize == 0) {
-	    throw new IllegalArgumentException("Unsupported PBES2 HMAC algorithm");
+	    generator.init(PBEParametersGenerator.PKCS12PasswordToBytes
+                           (password.toCharArray()),
+                           pkcs12PbeParams.getIV(),  // salt
+                           pkcs12PbeParams.getIterations().intValue());
+	    final CipherParameters cipherParams =
+		generator.generateDerivedParameters(pbeParamsHelper.getKeySize(),
+						    pbeParamsHelper.getIvSize());
+	    decryptHelper = DecryptHelper.newInstance(algo.getAlgorithm().getId());
+	    decryptHelper.newCipher(cipherParams);
+
+	    if (_VERBOSE) {
+		System.out.print("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize());
+                System.out.print(getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true));
+                System.out.print("; iteration: " + pkcs12PbeParams.getIterations());
+                System.out.println("; decryptHelper: " + decryptHelper + ")");
+	    }
+
+	} else if (verifySequenceOid(OID_PBES2, algo.getAlgorithm())) {
+	    // PKCS12 wrapping PKCS5
+	    /////// 1. Determine the cipher ///////
+	    final PBES2Parameters pbes2Params = PBES2Parameters.getInstance
+		(contentInfo.getContentEncryptionAlgorithm().getParameters());
+	    final PBKDF2Params pbkdf2Params = PBKDF2Params.getInstance
+		(AlgorithmIdentifier.getInstance(algoSeq.getObjectAt(0)).getParameters());
+
+	    // workaround BC's bug
+	    //final EncryptionScheme encScheme = EncryptionScheme.getInstance(algoSeq.getObjectAt(1));
+	    final PBEParamsHelper pbeParamsHelper =
+		new PBEParamsHelper(pbkdf2Params.getPrf().getAlgorithm().getId());
+	    final PBEParametersGenerator generator = pbeParamsHelper.getGenerator();
+	    final int keySize = pbeParamsHelper.getKeySize();
+	    if (generator == null || keySize == 0) {
+		throw new IllegalArgumentException("Unsupported PBES2 HMAC algorithm");
+	    }
+	    final byte[] iv = ((DEROctetString)
+			       (((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(1))).getOctets();
+	    decryptHelper = DecryptHelper.newInstance
+		(((ASN1ObjectIdentifier) ((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(0)).getId());
+	    /////// 2. Decrypt and extract certs ///////
+	    generator.init(PBEParametersGenerator.PKCS5PasswordToUTF8Bytes
+			   (password.toCharArray()),
+			   pbkdf2Params.getSalt(),
+			   pbkdf2Params.getIterationCount().intValue());
+	    final CipherParameters cipherParams =
+		new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
+	    decryptHelper.newCipher(cipherParams);
+	    
+	    if (_VERBOSE) {
+		System.out.print("PBKDF2 (keyLength: " + keySize);
+		System.out.print("; iteration: " + pbkdf2Params.getIterationCount());
+		System.out.print(getDebugByteArrayString("; IV:", iv, true));
+		System.out.println("; decryptHelper: " + decryptHelper + ")");
+	    }
+	    
+	} else {
+	    throw new IllegalArgumentException("Invalid PKCS5-PBE sequence: " +
+					       pkcs5PbeSeq.getObjectAt(0));
 	}
-	
-	final byte[] iv = ((DEROctetString)
-			   (((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(1))).getOctets();
+
 	final byte[] encryptedBytes = contentInfo.getEncryptedContent().getOctets();
-	final DecryptHelper decryptHelper = DecryptHelper.newInstance
-	    (((ASN1ObjectIdentifier) ((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(0)).getId());
-	if (_VERBOSE) {
-	    System.out.println("PBKDF2Params getKeyLength: " + keySize);
-	    System.out.println(getDebugByteArrayString("PBKDF2Params IV", iv, true));
-	    debugByteArrayString("encryptedBytes", encryptedBytes);
-	    System.out.println("decryptHelper: " + decryptHelper);
-	}
-
-	/////// 2. Decrypt and extract certs ///////
-	generator.init(PBEParametersGenerator.PKCS5PasswordToBytes
-		       (password.toCharArray()),
-		       pbkdf2Params.getSalt(),
-		       pbkdf2Params.getIterationCount().intValue());
-	final CipherParameters cipherParams =
-	    new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
-        final BufferedBlockCipher cipher =
-	    new DefaultBufferedBlockCipher(CBCBlockCipher.newInstance(AESEngine.newInstance()));
- 
-	decryptHelper.newCipher(cipherParams);
 	final byte[] decryptedBytes = decryptHelper.decrypt(encryptedBytes);
+	debugByteArrayString("encryptedBytes", encryptedBytes);
+	debugByteArrayString("decryptedBytes", decryptedBytes);
 
+	// Load certs from the decryptedBytes, use stream so that we can ignore some extra bytes.
 	final ASN1InputStream decryptedIS = new ASN1InputStream(new ByteArrayInputStream(decryptedBytes));
 	final ASN1Sequence certsSeq = (ASN1Sequence) decryptedIS.readObject();
         for (int i = 0; i < certsSeq.size(); ++i) {
@@ -647,7 +732,7 @@ public abstract class PDFSigBase {
 		}
 	    }
 	} catch (Exception e) {
-	    System.err.println("Fail tot read an object: " + e);
+	    System.err.println("Fail to read an object: " + e);
 	    e.printStackTrace(System.err);
 	}
     }
