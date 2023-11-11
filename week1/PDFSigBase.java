@@ -305,13 +305,13 @@ public abstract class PDFSigBase {
     private static final Map<String, String> _PKCS5PbeIdMap =
 	Stream.of(new String[][] {
 		// PKCS5
-		{ "1.2.840.113549.1.5.1",  "pbeWithMD2AndDES-CBC"  },
-		{ "1.2.840.113549.1.5.3",  "pbeWithMD5AndDES-CBC"  },
-		{ "1.2.840.113549.1.5.4",  "pbeWithMD2AndRC2-CBC"  },
-		{ "1.2.840.113549.1.5.6",  "pbeWithMD5AndRC2-CBC"  },
-		{ "1.2.840.113549.1.5.9",  "pbeWithMD5AndXOR-CBC"  },
-		{ "1.2.840.113549.1.5.10", "pbeWithSHA1AndDES-CBC" },
-		{ "1.2.840.113549.1.5.11", "pbeWithSHA1AndRC2-CBC" },
+		//{ "1.2.840.113549.1.5.1",  "pbeWithMD2AndDES-CBC"  },
+		//{ "1.2.840.113549.1.5.3",  "pbeWithMD5AndDES-CBC"  },
+		//{ "1.2.840.113549.1.5.4",  "pbeWithMD2AndRC2-CBC"  },
+		//{ "1.2.840.113549.1.5.6",  "pbeWithMD5AndRC2-CBC"  },
+		//{ "1.2.840.113549.1.5.9",  "pbeWithMD5AndXOR-CBC"  },
+		//{ "1.2.840.113549.1.5.10", "pbeWithSHA1AndDES-CBC" },
+		//{ "1.2.840.113549.1.5.11", "pbeWithSHA1AndRC2-CBC" },
 		{ "1.2.840.113549.1.5.12", "PBKDF2" },
 		{ "1.2.840.113549.1.5.13", "PBES2"  },
 		{ "1.2.840.113549.1.5.14", "PBMAC1" },
@@ -319,12 +319,12 @@ public abstract class PDFSigBase {
     private static final Map<String, String> _PKCS12PbeIdMap =
 	Stream.of(new String[][] {
 		// PKCS12
-		{ "1.2.840.113549.1.12.1.1", "pbeWithSHA1And128BitRC4"          },
-		{ "1.2.840.113549.1.12.1.2", "pbeWithSHA1And40BitRC4"           },
+		//{ "1.2.840.113549.1.12.1.1", "pbeWithSHA1And128BitRC4"        },
+		//{ "1.2.840.113549.1.12.1.2", "pbeWithSHA1And40BitRC4"         },
 		{ "1.2.840.113549.1.12.1.3", "pbeWithSHA1And3-KeyTripleDES-CBC" },
 		{ "1.2.840.113549.1.12.1.4", "pbeWithSHA1And2-KeyTripleDES-CBC" },
-		{ "1.2.840.113549.1.12.1.5", "pbeWithSHA1And128BitRC2-CBC"      },
-		{ "1.2.840.113549.1.12.1.6", "pbeWithSHA1And40BitRC2-CBC"       },
+		//{ "1.2.840.113549.1.12.1.5", "pbeWithSHA1And128BitRC2-CBC"    },
+		//{ "1.2.840.113549.1.12.1.6", "pbeWithSHA1And40BitRC2-CBC"     },
 	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     private static final Map<String, String> _HmacIdMap =
