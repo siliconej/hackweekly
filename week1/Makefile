@@ -21,4 +21,4 @@ test_cert: classes/${PACKAGE}/PDFSigVerifier.class
 	--verbose --pkcs12 actalis_weakpassword.p12 --password reddart123# reddart_homepage_signed.pdf
 
 clean:
-	rm PDFSigVerifier.class
+	rm -rf classes
