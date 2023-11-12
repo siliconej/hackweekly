@@ -120,7 +120,7 @@ public abstract class PDFSigBase {
 		{ OID_ALGO_SHA1,      "SHA-1"     },
 		{ OID_ALGO_MD5,       "MD5"       },
 	        { OID_ALGO_RIPEMD160, "RIPEMD160" },
-	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
     
     private static final Map<String, String> _SignatureAlgorithmIdMap =
         Stream.of(new String[][] {
@@ -133,7 +133,7 @@ public abstract class PDFSigBase {
 		{ OID_PKCS_ECDSA_SHA256, "ecdsaWithSHA256" },
 		{ OID_PKCS_ECDSA_SHA384, "ecdsaWithSHA384" },
 		{ OID_PKCS_ECDSA_SHA512, "ecdsaWithSHA512" },
-            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+            }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
 
     private static final Map<String, String> _SignatureDigestIdMap =
         Stream.of(new String[][] {
@@ -146,7 +146,7 @@ public abstract class PDFSigBase {
 		{ OID_PKCS_ECDSA_SHA256, "SHA-256" },
 		{ OID_PKCS_ECDSA_SHA384, "SHA-384" },
 		{ OID_PKCS_ECDSA_SHA512, "SHA-512" },
-            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+            }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
 
     private enum CipherType {
 	AES, DES, EDE
@@ -265,28 +265,28 @@ public abstract class PDFSigBase {
     private static final String OID_AES = "2.16.840.1.101.3.4.1";
     private static final Map<String, DecryptHelper> _SymmetricCipherIdMap;
     static {
-	Map<String, DecryptHelper> _M =
+	Map<String, DecryptHelper> $ =
 	    _SymmetricCipherIdMap = new HashMap<String, DecryptHelper>(20);
 	// AES128
-	_M.put(OID_AES + ".2", new DecryptHelper(CipherType.AES, ModeType.CBC, 128));
-	_M.put(OID_AES + ".3", new DecryptHelper(CipherType.AES, ModeType.OFB, 128));
-	_M.put(OID_AES + ".4", new DecryptHelper(CipherType.AES, ModeType.CFB, 128));
-	_M.put(OID_AES + ".6", new DecryptHelper(CipherType.AES, ModeType.GCM, 128));
-	_M.put(OID_AES + ".7", new DecryptHelper(CipherType.AES, ModeType.CCM, 128));
+	$.put(OID_AES + ".2", new DecryptHelper(CipherType.AES, ModeType.CBC, 128));
+	$.put(OID_AES + ".3", new DecryptHelper(CipherType.AES, ModeType.OFB, 128));
+	$.put(OID_AES + ".4", new DecryptHelper(CipherType.AES, ModeType.CFB, 128));
+	$.put(OID_AES + ".6", new DecryptHelper(CipherType.AES, ModeType.GCM, 128));
+	$.put(OID_AES + ".7", new DecryptHelper(CipherType.AES, ModeType.CCM, 128));
 	// AES192
-	_M.put(OID_AES + ".22", new DecryptHelper(CipherType.AES, ModeType.CBC, 192));
-	_M.put(OID_AES + ".23", new DecryptHelper(CipherType.AES, ModeType.OFB, 192));
-	_M.put(OID_AES + ".24", new DecryptHelper(CipherType.AES, ModeType.CFB, 192));
-	_M.put(OID_AES + ".26", new DecryptHelper(CipherType.AES, ModeType.GCM, 192));
-	_M.put(OID_AES + ".27", new DecryptHelper(CipherType.AES, ModeType.CCM, 192));
+	$.put(OID_AES + ".22", new DecryptHelper(CipherType.AES, ModeType.CBC, 192));
+	$.put(OID_AES + ".23", new DecryptHelper(CipherType.AES, ModeType.OFB, 192));
+	$.put(OID_AES + ".24", new DecryptHelper(CipherType.AES, ModeType.CFB, 192));
+	$.put(OID_AES + ".26", new DecryptHelper(CipherType.AES, ModeType.GCM, 192));
+	$.put(OID_AES + ".27", new DecryptHelper(CipherType.AES, ModeType.CCM, 192));
 	// AES256
-	_M.put(OID_AES + ".42", new DecryptHelper(CipherType.AES, ModeType.CBC, 256));
-	_M.put(OID_AES + ".43", new DecryptHelper(CipherType.AES, ModeType.OFB, 256));
-	_M.put(OID_AES + ".44", new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
-	_M.put(OID_AES + ".46", new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
+	$.put(OID_AES + ".42", new DecryptHelper(CipherType.AES, ModeType.CBC, 256));
+	$.put(OID_AES + ".43", new DecryptHelper(CipherType.AES, ModeType.OFB, 256));
+	$.put(OID_AES + ".44", new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
+	$.put(OID_AES + ".46", new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
 	// 3DES
-	_M.put("1.2.840.113549.1.12.1.3", new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
-	_M.put("1.2.840.113549.1.12.1.4", new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
+	$.put("1.2.840.113549.1.12.1.3", new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
+	$.put("1.2.840.113549.1.12.1.4", new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
     }
 
     private static final String OID_PBKDF2 = "1.2.840.113549.1.5.12";
@@ -307,7 +307,7 @@ public abstract class PDFSigBase {
 		{ "1.2.840.113549.1.5.12", "PBKDF2" },
 		{ "1.2.840.113549.1.5.13", "PBES2"  },
 		{ "1.2.840.113549.1.5.14", "PBMAC1" },
-	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
     private static final Map<String, String> _PKCS12PbeIdMap =
 	Stream.of(new String[][] {
 		// PKCS12
@@ -317,7 +317,7 @@ public abstract class PDFSigBase {
 		{ "1.2.840.113549.1.12.1.4", "pbeWithSHA1And2-KeyTripleDES-CBC" },
 		//{ "1.2.840.113549.1.12.1.5", "pbeWithSHA1And128BitRC2-CBC"    },
 		//{ "1.2.840.113549.1.12.1.6", "pbeWithSHA1And40BitRC2-CBC"     },
-	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
 
     private static final Map<String, String> _HmacIdMap =
 	Stream.of(new String[][] {
@@ -326,7 +326,7 @@ public abstract class PDFSigBase {
 		{ "1.2.840.113549.2.9",  "hmacWithSHA256" },
 		{ "1.2.840.113549.2.10", "hmacWithSHA384" },
 		{ "1.2.840.113549.2.11", "hmacWithSHA512" },
-	    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
 
     protected enum AsymmetricCipherType {
 	RSA, DSA, ECDSA
@@ -344,6 +344,10 @@ public abstract class PDFSigBase {
 	if (_VERBOSE) {
 	    System.out.println(log);
 	}
+    }
+
+    protected static final void WLOG(String log) {
+	System.err.println("\u001B[35mWARNING: " + log + "\u001B[0m");
     }
     
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
@@ -482,7 +486,7 @@ public abstract class PDFSigBase {
 	throws IllegalArgumentException {
 	final String id = _SignatureAlgorithmIdMap.get(oid.getId());
 	if (id == null) {
-	    System.err.println("WARNING: Unknown cert signature algorithm found: " + oid.getId());
+	    WLOG("Unknown cert signature algorithm found: " + oid.getId());
 	}
 	return id;
     }
@@ -647,7 +651,8 @@ public abstract class PDFSigBase {
 	return null;
     }
 
-    protected static void loadCertBags(ASN1Primitive rootPrim, String password) throws Exception {
+    protected static void loadCertBags(ASN1Primitive rootPrim, String password)
+	throws NoSuchAlgorithmException, InvalidCipherTextException, IOException {
 	/////// parse wrappers ///////
 	final ASN1Sequence pkcs5Seq = (ASN1Sequence) ((ASN1Sequence) rootPrim).getObjectAt(0);
 	if (!verifySequenceOid(OID_CTYPE_ENC_DATA, pkcs5Seq.getObjectAt(0))) {
@@ -758,7 +763,7 @@ public abstract class PDFSigBase {
 	    final AlgorithmIdentifier digestAlgoObj =
 		AlgorithmIdentifier.getInstance(((ASN1Sequence) macSeq.getObjectAt(0)).getObjectAt(0));
 	    if (!verifySequenceOid(OID_CTYPE_PKCS7, certBagSeq.getObjectAt(0))) {
-		System.err.println("WARNING: unsupported cert bag: " + certBagSeq.getObjectAt(0));
+		WLOG("unsupported cert bag: " + certBagSeq.getObjectAt(0));
 	    }
 	    // PKCS7 bag
 	    byte[] cmsBytes = DEROctetString.getInstance(((ASN1TaggedObject) certBagSeq.getObjectAt(1)).
@@ -776,16 +781,21 @@ public abstract class PDFSigBase {
 			      password, macSeq)) {
 		    VLOG("MAC verified successfully.");
 		} else {
-		    VLOG("WARNING: MAC failed.");
+		    WLOG("MAC failed.");
 		}
 	    } catch (NoSuchAlgorithmException e) {
 		System.err.println("MAC verifier failed to load: " + e);
-		e.printStackTrace(System.err);
 	    }
 	    loadCertBags(cmsSeq, password);
 	    VLOG("Certificate bag size: " + _certBags.size());
-	} catch (Exception e) {
+	} catch (IOException e) {
 	    System.err.println("Fail to read an object: " + e);
+	    e.printStackTrace(System.err);
+	} catch (InvalidCipherTextException e) {
+	    System.err.println("Invalid cipher text: " + e);
+	    e.printStackTrace(System.err);
+	} catch (NoSuchAlgorithmException e) {
+	    System.err.println("Unsupported algorithm: " + e);
 	    e.printStackTrace(System.err);
 	}
     }

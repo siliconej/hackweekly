@@ -135,9 +135,8 @@ public class PDFSigVerifier extends PDFSigBase {
 	    
 	    // Ideally we should get the official time from a time sever instead.
 	    if (!certHolder.isValidOn(new java.util.Date())) {
-		VLOG("\u001B[35mWARNING: Certificate outside of valid time range: " +
-		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter() +
-		     "\u001B[0m");
+		WLOG("Certificate outside of valid time range: " +
+		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter());
 	    }
 
 	    final String sigAlgoId = getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
@@ -326,17 +325,16 @@ public class PDFSigVerifier extends PDFSigBase {
 	    try {
 		if (certHolder.getSubject().equals(certHolder.getIssuer())) {
 		    if (verifyRSA(cipher, rsaPubKey, certHolder.getSignature(), sigDigestBytes)) {
-			System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+			WLOG("Self-signed cert.");
 		    } else {
-			System.out.println("\u001B[35mWARNING: Invalid self-signed cert.\u001B[0m");
+			WLOG("Invalid self-signed cert.");
 		    }
 		} else {
 		    if (verifyCertChain(certHolder.getIssuer(),
 					certHolder.getSignature(), sigDigestBytes)) {
 			VLOG("Cert issuer verified: " + certHolder.getIssuer());
 		    } else {
-			VLOG("\u001B[35mWARNING: Invalid issuer cert: " +
-			     certHolder.getIssuer() + "\u001B[0m");
+			WLOG("Invalid issuer cert: " + certHolder.getIssuer());
 		    }
 		}
 	    } catch (InvalidCipherTextException e) {
@@ -360,7 +358,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    if (verifyDSA(dsaSigner, dsaPubkeyParams,
 			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
 			  sigDigestBytes)) {
-		System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+		WLOG("Self-signed cert.");
 	    }
 	    return verifyDSA(dsaSigner, dsaPubkeyParams,
 			     (ASN1Sequence) digestPrimitive, plainDigest);
@@ -393,7 +391,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    if (verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
 			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
 			  sigDigestBytes)) {
-		System.out.println("\u001B[35mWARNING: Self-signed cert.\u001B[0m");
+		WLOG("Self-signed cert.");
 	    }
 	    return verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
 			     (ASN1Sequence) digestPrimitive, plainDigest);
