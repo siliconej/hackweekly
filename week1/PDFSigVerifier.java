@@ -235,14 +235,11 @@ public class PDFSigVerifier extends PDFSigBase {
 				   (cipherType == AsymmetricCipherType.DSA ||
 				    cipherType == AsymmetricCipherType.ECDSA));
 	} catch (IOException e) {
-	    System.err.println("I/O failure during PKCS7 verification: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("I/O failure during PKCS7 verification", e);
 	} catch (InvalidCipherTextException e) {
-	    System.err.println("Cipher failure during PKCS7 verification: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Cipher failure during PKCS7 verification", e);
 	} catch (IllegalArgumentException e) {
-	    System.err.println("Errors in the PKCS7 signature: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Errors in the PKCS7 signature", e);
 	}
 	return false;
     }			       
@@ -256,14 +253,11 @@ public class PDFSigVerifier extends PDFSigBase {
 				   digestASN1, plainDigest,
 				   /* digest in ASN.1 = */ true);
 	} catch (IOException e) {
-	    System.err.println("I/O failure during PKCS1 verification: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("I/O failure during PKCS1 verification", e);
 	} catch (InvalidCipherTextException e) {
-	    System.err.println("Cipher failure during PKCS7 verification: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Cipher failure during PKCS7 verification", e);
 	} catch (IllegalArgumentException e) {
-	    System.err.println("Errors in the PKCS7 signature: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Errors in the PKCS7 signature", e);
 	}
 	return false;
     }
@@ -416,7 +410,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	}
 	// according to other resources, PDF also support VeriSign, PPKMS signature scheme.
 	if (!"Adobe.PPKLite".equals(((COSName) dict.getItem(COSName.FILTER)).getName())) {
-	    System.err.println("Unsupported signature object: " + dict.getItem(COSName.FILTER));
+	    FLOG("Unsupported signature object: " + dict.getItem(COSName.FILTER));
 	}
 	
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
@@ -444,8 +438,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    cosDocument.getXrefTable().keySet().stream()
 		.forEach(obj -> processObject(cosDocument.getObjectFromPool(obj)));
 	} catch (IOException e) {
-	    System.err.println("Failed to parse PDF file: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Failed to parse PDF file", e);
 	}
     }
 

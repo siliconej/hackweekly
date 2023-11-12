@@ -347,7 +347,20 @@ public abstract class PDFSigBase {
     }
 
     protected static final void WLOG(String log) {
-	System.err.println("\u001B[35mWARNING: " + log + "\u001B[0m");
+	System.out.println("\u001B[35mWARNING: " + log + "\u001B[0m");
+    }
+
+    protected static final void FLOG(String log, Exception e) {
+        if (e != null) {
+            System.err.println("\u001B[31mEXCEPTION: " + log + ": " + e.getMessage() + "\u001B[0m");
+            e.printStackTrace();
+        } else {
+            System.err.println("\u001B[31mFAILURE: " + log + "\u001B[0m");
+        }
+    }
+
+    protected static final void FLOG(String log) {
+        FLOG(log, /* exceptiton = */ null);
     }
     
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
@@ -518,8 +531,7 @@ public abstract class PDFSigBase {
 	    bos.close();
 	    return bos.toByteArray();
 	} catch (IOException e) {
-	    System.err.println("Error during extraction of bytes in ranges: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Error during extraction of bytes in ranges", e);
 	} finally {
 	    if (fis != null) {
 		try {
@@ -633,8 +645,7 @@ public abstract class PDFSigBase {
 	    }
 	    return calcMessageDigest(cosBuffer, hashAlgorithm);
 	} catch (IOException e) {	
-	    System.err.println("Failed to calculate message digest: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Failed to calculate message digest", e);
 	}
 	return null;
     }
@@ -645,8 +656,7 @@ public abstract class PDFSigBase {
 	    final byte[] plainDigest = messageDigest.digest(buffer);
 	    return plainDigest;
 	} catch (NoSuchAlgorithmException e) {
-	    System.err.println("Failed to calculate message digest: " + e.getMessage());
-	    e.printStackTrace(System.err);
+	    FLOG("Failed to calculate message digest", e);
 	}
 	return null;
     }
@@ -784,19 +794,16 @@ public abstract class PDFSigBase {
 		    WLOG("MAC failed.");
 		}
 	    } catch (NoSuchAlgorithmException e) {
-		System.err.println("MAC verifier failed to load: " + e);
+		FLOG("MAC verifier failed to load: " + e);
 	    }
 	    loadCertBags(cmsSeq, password);
 	    VLOG("Certificate bag size: " + _certBags.size());
 	} catch (IOException e) {
-	    System.err.println("Fail to read an object: " + e);
-	    e.printStackTrace(System.err);
+	    FLOG("Fail to read an object");
 	} catch (InvalidCipherTextException e) {
-	    System.err.println("Invalid cipher text: " + e);
-	    e.printStackTrace(System.err);
+	    FLOG("Invalid cipher text");
 	} catch (NoSuchAlgorithmException e) {
-	    System.err.println("Unsupported algorithm: " + e);
-	    e.printStackTrace(System.err);
+	    FLOG("Unsupported algorithm");
 	}
     }
     
