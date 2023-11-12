@@ -255,46 +255,38 @@ public abstract class PDFSigBase {
 	}
     }
 
+    protected static boolean verifySequenceOid(String oid, ASN1Encodable object) {
+	if (object instanceof ASN1ObjectIdentifier) {
+	    return oid.equals(((ASN1ObjectIdentifier) object).getId());
+	}
+	return false;
+    }
+
     private static final String OID_AES = "2.16.840.1.101.3.4.1";
     private static final Map<String, DecryptHelper> _SymmetricCipherIdMap;
     static {
-	_SymmetricCipherIdMap = new HashMap<String, DecryptHelper>(20);
+	Map<String, DecryptHelper> _M =
+	    _SymmetricCipherIdMap = new HashMap<String, DecryptHelper>(20);
 	// AES128
-	_SymmetricCipherIdMap.put(OID_AES + ".2",
-				  new DecryptHelper(CipherType.AES, ModeType.CBC, 128));
-	_SymmetricCipherIdMap.put(OID_AES + ".3",
-				  new DecryptHelper(CipherType.AES, ModeType.OFB, 128));
-	_SymmetricCipherIdMap.put(OID_AES + ".4",
-				  new DecryptHelper(CipherType.AES, ModeType.CFB, 128));
-	_SymmetricCipherIdMap.put(OID_AES + ".6",
-				  new DecryptHelper(CipherType.AES, ModeType.GCM, 128));
-	_SymmetricCipherIdMap.put(OID_AES + ".7",
-				  new DecryptHelper(CipherType.AES, ModeType.CCM, 128));
+	_M.put(OID_AES + ".2", new DecryptHelper(CipherType.AES, ModeType.CBC, 128));
+	_M.put(OID_AES + ".3", new DecryptHelper(CipherType.AES, ModeType.OFB, 128));
+	_M.put(OID_AES + ".4", new DecryptHelper(CipherType.AES, ModeType.CFB, 128));
+	_M.put(OID_AES + ".6", new DecryptHelper(CipherType.AES, ModeType.GCM, 128));
+	_M.put(OID_AES + ".7", new DecryptHelper(CipherType.AES, ModeType.CCM, 128));
 	// AES192
-	_SymmetricCipherIdMap.put(OID_AES + ".22",
-				  new DecryptHelper(CipherType.AES, ModeType.CBC, 192));
-	_SymmetricCipherIdMap.put(OID_AES + ".23",
-				  new DecryptHelper(CipherType.AES, ModeType.OFB, 192));
-	_SymmetricCipherIdMap.put(OID_AES + ".24",
-				  new DecryptHelper(CipherType.AES, ModeType.CFB, 192));
-	_SymmetricCipherIdMap.put(OID_AES + ".26",
-				  new DecryptHelper(CipherType.AES, ModeType.GCM, 192));
-	_SymmetricCipherIdMap.put(OID_AES + ".27",
-				  new DecryptHelper(CipherType.AES, ModeType.CCM, 192));
+	_M.put(OID_AES + ".22", new DecryptHelper(CipherType.AES, ModeType.CBC, 192));
+	_M.put(OID_AES + ".23", new DecryptHelper(CipherType.AES, ModeType.OFB, 192));
+	_M.put(OID_AES + ".24", new DecryptHelper(CipherType.AES, ModeType.CFB, 192));
+	_M.put(OID_AES + ".26", new DecryptHelper(CipherType.AES, ModeType.GCM, 192));
+	_M.put(OID_AES + ".27", new DecryptHelper(CipherType.AES, ModeType.CCM, 192));
 	// AES256
-	_SymmetricCipherIdMap.put(OID_AES + ".42",
-				  new DecryptHelper(CipherType.AES, ModeType.CBC, 256));
-	_SymmetricCipherIdMap.put(OID_AES + ".43",
-				  new DecryptHelper(CipherType.AES, ModeType.OFB, 256));
-	_SymmetricCipherIdMap.put(OID_AES + ".44",
-				  new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
-	_SymmetricCipherIdMap.put(OID_AES + ".46",
-				  new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
+	_M.put(OID_AES + ".42", new DecryptHelper(CipherType.AES, ModeType.CBC, 256));
+	_M.put(OID_AES + ".43", new DecryptHelper(CipherType.AES, ModeType.OFB, 256));
+	_M.put(OID_AES + ".44", new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
+	_M.put(OID_AES + ".46", new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
 	// 3DES
-	_SymmetricCipherIdMap.put("1.2.840.113549.1.12.1.3",
-				  new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
-	_SymmetricCipherIdMap.put("1.2.840.113549.1.12.1.4",
-				  new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
+	_M.put("1.2.840.113549.1.12.1.3", new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
+	_M.put("1.2.840.113549.1.12.1.4", new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
     }
 
     private static final String OID_PBKDF2 = "1.2.840.113549.1.5.12";
@@ -354,6 +346,15 @@ public abstract class PDFSigBase {
 	}
     }
     
+    protected static final void debugByteArrayString(final String header, final byte[] buffer) {
+	VLOG(getDebugByteArrayString(header, buffer, /* in full = */ false));
+    }
+
+    protected static final void showReport(String header, long objectNum, boolean verifyStatus) {
+	System.out.println(header + " Object #" + objectNum + ": " +
+			   "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
+    }
+
     protected static final String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
 	StringBuffer sb = new StringBuffer(128);
         final int len = buffer.length;
@@ -378,15 +379,46 @@ public abstract class PDFSigBase {
 	private int _ivSize;
 	private PBEParametersGenerator _generator;
 	private Digest _digest;
-	
-	public PBEParamsHelper(String oid) {
+
+	public PBEParamsHelper(String oid)
+	    throws NoSuchAlgorithmException {
+	    this(oid, /* MAC Only = */ false);
+	}
+	public PBEParamsHelper(String oid, boolean macOnly)
+	    throws NoSuchAlgorithmException {
 	    _keySize = 0;
-	    _ivSize = 0;
 	    _generator = null;
 	    _digest = null;
-	    createGeneratorAndDeriveKeySize(oid);
+	    if (macOnly) {
+		_ivSize = -1;
+		createGeneratorAndDeriveKeySize(oid, macOnly);
+	    }
+	    else {
+		_keySize = 0;
+		_ivSize = 0;
+		_generator = null;
+		createGeneratorAndDeriveKeySize(oid, macOnly);
+	    }
 	}
-	private void createGeneratorAndDeriveKeySize(String oid) {
+	private void createGeneratorAndDeriveKeySize(String oid, boolean macOnly)
+	    throws NoSuchAlgorithmException {
+	    if (macOnly) {
+		if ("SHA-256".equals(oid)) {
+		    _keySize = 256;
+		    _digest = DigestFactory.createSHA256();
+		} else if ("SHA-384".equals(oid)) {
+		    _keySize = 384;
+		    _digest = DigestFactory.createSHA384();
+		} else if ("SHA-512".equals(oid)) {
+		    _keySize = 512;
+		    _digest = DigestFactory.createSHA512();
+		} else {
+		    throw new NoSuchAlgorithmException("Unsupported hash algorithm: " + oid);
+		}
+		_generator = new PKCS12ParametersGenerator(_digest);
+		return;
+	    }
+	    
 	    String hashAlgoId = _HmacIdMap.get(oid);
 	    if (hashAlgoId == null) {
 		hashAlgoId = _PKCS12PbeIdMap.get(oid);
@@ -416,6 +448,8 @@ public abstract class PDFSigBase {
 		_ivSize = 8 * 8;
 		_digest = DigestFactory.createSHA1();
 		_generator = new PKCS12ParametersGenerator(_digest);
+	    } else {
+		throw new NoSuchAlgorithmException("Unsupported hash algorithm: " + hashAlgoId);
 	    }
 	    if (_digest != null && _generator == null) {
 		_generator = new PKCS5S2ParametersGenerator(_digest);
@@ -433,15 +467,6 @@ public abstract class PDFSigBase {
 	public Digest getDigest() {
 	    return _digest;
 	}
-    }
-
-    protected static final void debugByteArrayString(final String header, final byte[] buffer) {
-	VLOG(getDebugByteArrayString(header, buffer, /* in full = */ false));
-    }
-
-    protected static final void showReport(String header, long objectNum, boolean verifyStatus) {
-	System.out.println(header + " Object #" + objectNum + ": " +
-			   "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
 
     protected static final String getDigestAlgorithmId(ASN1ObjectIdentifier oid)
@@ -573,6 +598,29 @@ public abstract class PDFSigBase {
         return cipher.verifySignature(plainDigest, r, s);
     }
 
+    protected static final boolean verifyMac(AlgorithmIdentifier digestObject, byte[] data,
+					     byte[] md, String pass, ASN1Sequence macSeq)
+	    throws NoSuchAlgorithmException {
+	final String digestId = getDigestAlgorithmId(digestObject.getAlgorithm());
+	final PBEParamsHelper digestHelper = new PBEParamsHelper(digestId, /* mac only = */ true);
+	if (digestHelper == null) {
+	    return false;
+	}
+	final byte[] password = PBEParametersGenerator.PKCS12PasswordToBytes(pass.toCharArray());
+	final byte[] salt = ((ASN1OctetString) macSeq.getObjectAt(1)).getOctets();
+	final int iterationCount = ((BigInteger) ((ASN1Integer) macSeq.getObjectAt(2)).
+				    getValue()).intValue();
+	final PBEParametersGenerator generator = digestHelper.getGenerator();
+	generator.init(password,  salt, iterationCount);
+	CipherParameters hmacParams = generator.generateDerivedMacParameters(digestHelper.getKeySize());
+	final HMac hmac = new HMac(digestHelper.getDigest());
+	hmac.init(hmacParams);
+	final byte[] macBytes = new byte[hmac.getMacSize()];
+	hmac.update(data, 0, data.length);
+	hmac.doFinal(macBytes, 0);
+	return (0 == Arrays.compare(macBytes, md));
+    }
+    
     protected byte[] calcMessageDigest(COSArray byteRanges, String hashAlgorithm) {
 	try {
 	    final byte[] cosBuffer = getCOSBytesInRange(byteRanges);
@@ -617,6 +665,7 @@ public abstract class PDFSigBase {
 	final EncryptedContentInfo contentInfo = EncryptedContentInfo.getInstance(pkcs5DataSeq);
 	final AlgorithmIdentifier algo = contentInfo.getContentEncryptionAlgorithm();
 	final ASN1Sequence algoSeq = (ASN1Sequence) algo.getParameters();
+	final byte[] encryptedBytes = contentInfo.getEncryptedContent().getOctets();
 
 	DecryptHelper decryptHelper = null;
 	CipherParameters cipherParams = null;
@@ -663,8 +712,7 @@ public abstract class PDFSigBase {
 	    decryptHelper = DecryptHelper.newInstance
 		(((ASN1ObjectIdentifier) ((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(0)).getId());
 	    /////// 2. Decrypt and extract certs ///////
-	    generator.init(PBEParametersGenerator.PKCS5PasswordToUTF8Bytes
-			   (password.toCharArray()),
+	    generator.init(PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password.toCharArray()),
 			   pbkdf2Params.getSalt(),
 			   pbkdf2Params.getIterationCount().intValue());
 	    cipherParams = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
@@ -680,7 +728,6 @@ public abstract class PDFSigBase {
 	}
 
 	decryptHelper.newCipher(cipherParams);
-	final byte[] encryptedBytes = contentInfo.getEncryptedContent().getOctets();
 	final byte[] decryptedBytes = decryptHelper.decrypt(encryptedBytes);
 	debugByteArrayString("encryptedBytes", encryptedBytes);
 	debugByteArrayString("decryptedBytes", decryptedBytes);
@@ -699,30 +746,44 @@ public abstract class PDFSigBase {
 	decryptedIS.close();
     }
 
-    protected static boolean verifySequenceOid(String oid, ASN1Encodable object) {
-	if (object instanceof ASN1ObjectIdentifier) {
-	    return oid.equals(((ASN1ObjectIdentifier) object).getId());
-	}
-	return false;
-    }
-
     protected static void loadPKCS12(File pkcs12file, String password) {
 	try {
 	    final ASN1InputStream asnIS = new ASN1InputStream(new FileInputStream(pkcs12file));
-	    final ASN1Primitive asn1prim = asnIS.readObject();
+	    final ASN1Sequence asn1prim = (ASN1Sequence) asnIS.readObject();
 	    asnIS.close();
-	    final ASN1Sequence asn1Seq = (ASN1Sequence) (((ASN1Sequence) asn1prim).getObjectAt(1));
-	    if (verifySequenceOid(OID_CTYPE_PKCS7, asn1Seq.getObjectAt(0))) {
-		// PKCS7 bag
-		byte[] cmsBytes = DEROctetString.getInstance(((ASN1TaggedObject) asn1Seq.getObjectAt(1)).
-							     getBaseObject().getEncoded()).getOctets();
-		ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
-		if (_certBags == null) {
-		    _certBags = new HashMap<X500Name, X509CertificateHolder>();
-		}
-		loadCertBags(cmsSeq, password);
-		VLOG("Certificate bag size: " + _certBags.size());
+            //System.out.println("asn1prim: " + asn1prim.getObjectAt(2)
+	    final ASN1Sequence certBagSeq = (ASN1Sequence) asn1prim.getObjectAt(1);
+
+	    final ASN1Sequence macSeq = (ASN1Sequence) asn1prim.getObjectAt(2);
+	    final AlgorithmIdentifier digestAlgoObj =
+		AlgorithmIdentifier.getInstance(((ASN1Sequence) macSeq.getObjectAt(0)).getObjectAt(0));
+	    if (!verifySequenceOid(OID_CTYPE_PKCS7, certBagSeq.getObjectAt(0))) {
+		System.err.println("WARNING: unsupported cert bag: " + certBagSeq.getObjectAt(0));
 	    }
+	    // PKCS7 bag
+	    byte[] cmsBytes = DEROctetString.getInstance(((ASN1TaggedObject) certBagSeq.getObjectAt(1)).
+							 getBaseObject().getEncoded()).getOctets();
+	    ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
+	    if (_certBags == null) {
+		_certBags = new HashMap<X500Name, X509CertificateHolder>();
+	    }
+	    try {
+		if (verifyMac(digestAlgoObj, cmsBytes,
+			      /* md = */((ASN1OctetString)
+					 ((ASN1Sequence)
+					  ((ASN1Sequence)
+					   macSeq.getObjectAt(0))).getObjectAt(1)).getOctets(),
+			      password, macSeq)) {
+		    VLOG("MAC verified successfully.");
+		} else {
+		    VLOG("WARNING: MAC failed.");
+		}
+	    } catch (NoSuchAlgorithmException e) {
+		System.err.println("MAC verifier failed to load: " + e);
+		e.printStackTrace(System.err);
+	    }
+	    loadCertBags(cmsSeq, password);
+	    VLOG("Certificate bag size: " + _certBags.size());
 	} catch (Exception e) {
 	    System.err.println("Fail to read an object: " + e);
 	    e.printStackTrace(System.err);
