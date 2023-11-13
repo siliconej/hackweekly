@@ -1,8 +1,25 @@
+/**
+ * Copyright 2023 Edward Jiang
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the “Software”), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.reddart.pdf;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
@@ -35,7 +52,6 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.bc.EncryptedObjectStoreData;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.pkcs.CertBag;
 import org.bouncycastle.asn1.pkcs.EncryptedData;
@@ -48,7 +64,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.BlockCipher;
@@ -76,7 +91,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
-import org.bouncycastle.util.encoders.Hex;
 
 public abstract class PDFSigBase {
 
@@ -170,7 +184,7 @@ public abstract class PDFSigBase {
 	private CCMBlockCipher _ccmCipher;
 
 	public static DecryptHelper newInstance(String oid) {
-	    DecryptHelper helper = _SymmetricCipherIdMap.get(oid);
+	    final DecryptHelper helper = _SymmetricCipherIdMap.get(oid);
 	    if (helper == null) {
 		throw new IllegalArgumentException("Invalid cipher algorithm: " + oid);
 	    }
@@ -210,11 +224,13 @@ public abstract class PDFSigBase {
 		break;
 	    case GCM:
 		_gcmCipher = (GCMBlockCipher) GCMBlockCipher.newInstance(engine);
-		_gcmCipher.init(/* for encrypt = */ false, params);
+		_gcmCipher.init(false,  // for encrypt?
+				params);
 		return;
 	    case CCM:
 		_ccmCipher = (CCMBlockCipher) CCMBlockCipher.newInstance(engine);
-		_ccmCipher.init(/* for encrypt = */ false, params);
+		_ccmCipher.init(false,  // for encrypt?
+				params);
 		return;
 	    default:
 		throw new IllegalArgumentException("Unsupported mode: " + _modeType);
@@ -223,7 +239,8 @@ public abstract class PDFSigBase {
 		throw new IllegalArgumentException("Fail to create a new cipher");
 	    }
 	    _bufferedCipher = new DefaultBufferedBlockCipher(mode);
-	    _bufferedCipher.init(/* for encrypt = */ false, params);
+	    _bufferedCipher.init(false,  // for encrypt?
+				 params);
 	}
 
 	public byte[] decrypt(byte[] in) throws InvalidCipherTextException {
@@ -353,18 +370,20 @@ public abstract class PDFSigBase {
     protected static final void FLOG(String log, Exception e) {
         if (e != null) {
             System.err.println("\u001B[31mEXCEPTION: " + log + ": " + e.getMessage() + "\u001B[0m");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         } else {
             System.err.println("\u001B[31mFAILURE: " + log + "\u001B[0m");
         }
     }
 
     protected static final void FLOG(String log) {
-        FLOG(log, /* exceptiton = */ null);
+        FLOG(log,
+	     null);  // no exception.
     }
     
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
-	VLOG(getDebugByteArrayString(header, buffer, /* in full = */ false));
+	VLOG(getDebugByteArrayString(header, buffer,
+				     false));  // in for hex string?
     }
 
     protected static final void showReport(String header, long objectNum, boolean verifyStatus) {
@@ -373,7 +392,7 @@ public abstract class PDFSigBase {
     }
 
     protected static final String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
-	StringBuffer sb = new StringBuffer(128);
+	final StringBuffer sb = new StringBuffer(128);
         final int len = buffer.length;
 	sb.append(header).append(" (len=").append(len).append(")[\u001B[34m");
 	if (full && len > 1) {
@@ -399,7 +418,8 @@ public abstract class PDFSigBase {
 
 	public PBEParamsHelper(String oid)
 	    throws NoSuchAlgorithmException {
-	    this(oid, /* MAC Only = */ false);
+	    this(oid,
+		 false);  // mac only?
 	}
 	public PBEParamsHelper(String oid, boolean macOnly)
 	    throws NoSuchAlgorithmException {
@@ -420,19 +440,21 @@ public abstract class PDFSigBase {
 	private void createGeneratorAndDeriveKeySize(String oid, boolean macOnly)
 	    throws NoSuchAlgorithmException {
 	    if (macOnly) {
-		if ("SHA-256".equals(oid)) {
-		    _keySize = 256;
+		switch (oid) {
+		case "SHA-256":
 		    _digest = DigestFactory.createSHA256();
-		} else if ("SHA-384".equals(oid)) {
-		    _keySize = 384;
+		    break;
+		case "SHA-384":
 		    _digest = DigestFactory.createSHA384();
-		} else if ("SHA-512".equals(oid)) {
-		    _keySize = 512;
+		    break;
+		case "SHA-512":
 		    _digest = DigestFactory.createSHA512();
-		} else {
+		    break;
+		default:
 		    throw new NoSuchAlgorithmException("Unsupported hash algorithm: " + oid);
 		}
 		_generator = new PKCS12ParametersGenerator(_digest);
+		_keySize = _digest.getDigestSize() * 8;
 		return;
 	    }
 	    
@@ -440,32 +462,40 @@ public abstract class PDFSigBase {
 	    if (hashAlgoId == null) {
 		hashAlgoId = _PKCS12PbeIdMap.get(oid);
 	    }
-	    if ("hmacWithSHA1".equals(hashAlgoId)) {
+	    switch (hashAlgoId) {
+	    case "hmacWithSHA1":
 		_keySize = 160;
 		_digest = DigestFactory.createSHA1();
-	    } else if ("hmacWithSHA224".equals(hashAlgoId)) {
+		break;
+	    case "hmacWithSHA224":
 		_keySize = 224;
 		_digest = DigestFactory.createSHA224();
-	    } else if ("hmacWithSHA256".equals(hashAlgoId)) {
+		break;
+	    case "hmacWithSHA256":
 		_keySize = 256;
 		_digest = DigestFactory.createSHA256();
-	    } else if ("hmacWithSHA384".equals(hashAlgoId)) {
+		break;
+	    case "hmacWithSHA384":
 		_keySize = 384;
 		_digest = DigestFactory.createSHA384();
-	    } else if ("hmacWithSHA512".equals(hashAlgoId)) {
+		break;
+	    case "hmacWithSHA512":
 		_keySize = 512;
 		_digest = DigestFactory.createSHA512();
-	    } else if ("pbeWithSHA1And3-KeyTripleDES-CBC".equals(hashAlgoId)) {
+		break;
+	    case "pbeWithSHA1And3-KeyTripleDES-CBC":
 		_keySize = 24 * 8;
 		_ivSize = 8 * 8;
 		_digest = DigestFactory.createSHA1();
 		_generator = new PKCS12ParametersGenerator(_digest);
-	    } else if ("pbeWithSHA1And2-KeyTripleDES-CBC".equals(hashAlgoId)) {
+		break;
+	    case "pbeWithSHA1And2-KeyTripleDES-CBC":
 		_keySize = 16 * 8;
 		_ivSize = 8 * 8;
 		_digest = DigestFactory.createSHA1();
 		_generator = new PKCS12ParametersGenerator(_digest);
-	    } else {
+		break;
+	    default:
 		throw new NoSuchAlgorithmException("Unsupported hash algorithm: " + hashAlgoId);
 	    }
 	    if (_digest != null && _generator == null) {
@@ -543,10 +573,14 @@ public abstract class PDFSigBase {
     }
 
     protected static boolean verifyCertChain(X500Name parentIssuer,
-					     byte[] startCertSignature, byte[] startSigDigestBytes)
+					     byte[] startCertSignature,
+					     byte[] startSigDigestBytes)
 	throws InvalidCipherTextException, IOException {
-	X500Name issuer = parentIssuer;
+	if (_certBags == null) {
+	    return false;
+	}
 	int maxDepth = 2;
+	X500Name issuer = parentIssuer;
 	byte[] certSignature = startCertSignature;
 	byte[] sigDigestBytes = startSigDigestBytes;
 	AsymmetricBlockCipher cipher = new RSAEngine();
@@ -555,9 +589,13 @@ public abstract class PDFSigBase {
 	    if (root == null) {
 		return false;
 	    }
-	    RSAPublicKey rsaPubKey =
+	    final RSAPublicKey rsaPubKey =
 		RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().parsePublicKey());
-	    if (!verifyRSA(cipher, rsaPubKey, certSignature, sigDigestBytes)) {
+	    if (!verify(cipher,
+			new RSAKeyParameters(false,  // isPrivateKey = false
+					     rsaPubKey.getModulus(),
+					     rsaPubKey.getPublicExponent()),
+			certSignature, sigDigestBytes)) {
 		return false;
 	    }
 	    if (root.getSubject().equals(root.getIssuer())) {
@@ -573,6 +611,60 @@ public abstract class PDFSigBase {
 	return false;
     }
 
+    protected static final boolean verify(AsymmetricBlockCipher cipher, CipherParameters params,
+					  byte[] encryptedBytes, byte[] clearBytes)
+        throws InvalidCipherTextException {
+        cipher.init(false,  // for encryption?
+		    params);
+        final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
+        final ASN1Sequence decryptedSeq =
+            ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
+        return (0 == Arrays.compare
+                (((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets(), clearBytes));
+    }
+
+    protected static final boolean verify(DSA cipher, CipherParameters params,
+					  ASN1Sequence encDigestSequence, byte[] plainDigest) {
+        cipher.init(false,  // for signing?
+		    params);
+        final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
+        final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
+	VLOG("Extracted DSA digest r = " + r.toString(16));
+	VLOG("Extracted DSA digest s = " + s.toString(16));
+        return cipher.verifySignature(plainDigest, r, s);
+    }
+
+    protected static final boolean verify(DSA cipher, CipherParameters params,
+					  byte[] encryptedBytes, byte[] clearBytes)
+	throws IOException {
+	return verify(cipher, params,
+		      (ASN1Sequence) ASN1Primitive.fromByteArray(encryptedBytes), clearBytes);
+    }
+
+    protected static final boolean verifyMac(AlgorithmIdentifier digestObject, byte[] data,
+					     byte[] md, String pass, ASN1Sequence macSeq)
+	    throws NoSuchAlgorithmException {
+	final String digestId = getDigestAlgorithmId(digestObject.getAlgorithm());
+	final PBEParamsHelper digestHelper = new PBEParamsHelper(digestId,
+								 true);  // mac only
+	if (digestHelper == null) {
+	    return false;
+	}
+	final byte[] password = PBEParametersGenerator.PKCS12PasswordToBytes(pass.toCharArray());
+	final byte[] salt = ((ASN1OctetString) macSeq.getObjectAt(1)).getOctets();
+	final int iterationCount = ((BigInteger) ((ASN1Integer) macSeq.getObjectAt(2)).
+				    getValue()).intValue();
+	final PBEParametersGenerator generator = digestHelper.getGenerator();
+	generator.init(password,  salt, iterationCount);
+	final CipherParameters hmacParams = generator.generateDerivedMacParameters(digestHelper.getKeySize());
+	final HMac hmac = new HMac(digestHelper.getDigest());
+	hmac.init(hmacParams);
+	final byte[] macBytes = new byte[hmac.getMacSize()];
+	hmac.update(data, 0, data.length);
+	hmac.doFinal(macBytes, 0);
+	return (0 == Arrays.compare(macBytes, md));
+    }
+    
     protected static final byte[] decrypt(AsymmetricBlockCipher cipher, byte[] digest)
         throws InvalidCipherTextException {
         int offset = 0;
@@ -590,53 +682,6 @@ public abstract class PDFSigBase {
         return outputBlock;
     }
 
-    protected static final boolean verifyRSA(AsymmetricBlockCipher cipher, RSAPublicKey rsaPubKey,
-					     byte[] encryptedBytes, byte[] cleanBytes)
-        throws InvalidCipherTextException {
-        RSAKeyParameters pubkeyParams =
-            new RSAKeyParameters(/* isPriviate = */ false,
-                                 rsaPubKey.getModulus(), rsaPubKey.getPublicExponent());
-        cipher.init(/* forEncryption = */ false, pubkeyParams);
-        final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
-        final ASN1Sequence decryptedSeq =
-            ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
-        return (0 == Arrays.compare
-                (((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets(), cleanBytes));
-    }
-
-    protected static final boolean verifyDSA(DSA cipher, CipherParameters params,
-				       ASN1Sequence encDigestSequence, byte[] plainDigest) {
-        cipher.init(/* for signing = */ false, params);
-        final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
-        final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
-	VLOG("Extracted DSA digest r = " + r.toString(16));
-	VLOG("Extracted DSA digest s = " + s.toString(16));
-        return cipher.verifySignature(plainDigest, r, s);
-    }
-
-    protected static final boolean verifyMac(AlgorithmIdentifier digestObject, byte[] data,
-					     byte[] md, String pass, ASN1Sequence macSeq)
-	    throws NoSuchAlgorithmException {
-	final String digestId = getDigestAlgorithmId(digestObject.getAlgorithm());
-	final PBEParamsHelper digestHelper = new PBEParamsHelper(digestId, /* mac only = */ true);
-	if (digestHelper == null) {
-	    return false;
-	}
-	final byte[] password = PBEParametersGenerator.PKCS12PasswordToBytes(pass.toCharArray());
-	final byte[] salt = ((ASN1OctetString) macSeq.getObjectAt(1)).getOctets();
-	final int iterationCount = ((BigInteger) ((ASN1Integer) macSeq.getObjectAt(2)).
-				    getValue()).intValue();
-	final PBEParametersGenerator generator = digestHelper.getGenerator();
-	generator.init(password,  salt, iterationCount);
-	CipherParameters hmacParams = generator.generateDerivedMacParameters(digestHelper.getKeySize());
-	final HMac hmac = new HMac(digestHelper.getDigest());
-	hmac.init(hmacParams);
-	final byte[] macBytes = new byte[hmac.getMacSize()];
-	hmac.update(data, 0, data.length);
-	hmac.doFinal(macBytes, 0);
-	return (0 == Arrays.compare(macBytes, md));
-    }
-    
     protected byte[] calcMessageDigest(COSArray byteRanges, String hashAlgorithm) {
 	try {
 	    final byte[] cosBuffer = getCOSBytesInRange(byteRanges);
@@ -776,18 +821,19 @@ public abstract class PDFSigBase {
 		WLOG("unsupported cert bag: " + certBagSeq.getObjectAt(0));
 	    }
 	    // PKCS7 bag
-	    byte[] cmsBytes = DEROctetString.getInstance(((ASN1TaggedObject) certBagSeq.getObjectAt(1)).
-							 getBaseObject().getEncoded()).getOctets();
-	    ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
+	    final byte[] cmsBytes =
+		DEROctetString.getInstance(((ASN1TaggedObject) certBagSeq.getObjectAt(1)).
+					   getBaseObject().getEncoded()).getOctets();
+	    final ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
 	    if (_certBags == null) {
 		_certBags = new HashMap<X500Name, X509CertificateHolder>();
 	    }
 	    try {
 		if (verifyMac(digestAlgoObj, cmsBytes,
-			      /* md = */((ASN1OctetString)
-					 ((ASN1Sequence)
-					  ((ASN1Sequence)
-					   macSeq.getObjectAt(0))).getObjectAt(1)).getOctets(),
+			      ((ASN1OctetString)
+			       ((ASN1Sequence)
+				((ASN1Sequence)
+				 macSeq.getObjectAt(0))).getObjectAt(1)).getOctets(),  // MD
 			      password, macSeq)) {
 		    VLOG("MAC verified successfully.");
 		} else {

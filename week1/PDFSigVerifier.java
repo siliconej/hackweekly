@@ -1,3 +1,21 @@
+/**
+ * Copyright 2023 Edward Jiang
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the “Software”), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.reddart.pdf;
 
 import java.io.File;
@@ -37,8 +55,6 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DLTaggedObject;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.eac.PublicKeyDataObject;
@@ -65,10 +81,6 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 
 public class PDFSigVerifier extends PDFSigBase {
 
@@ -231,8 +243,7 @@ public class PDFSigVerifier extends PDFSigBase {
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
 	    return verifySignature(cipherType, certHolder, cert.getTBSCertificate(),
 				   encDigestBytes, calcMessageDigest(sigAttrBytes, digestAlgoId),
-				   /* digest in ASN.1 = */
-				   (cipherType == AsymmetricCipherType.DSA ||
+				   (cipherType == AsymmetricCipherType.DSA ||    // Digest in ASN.1 encoding?
 				    cipherType == AsymmetricCipherType.ECDSA));
 	} catch (IOException e) {
 	    FLOG("I/O failure during PKCS7 verification", e);
@@ -312,20 +323,28 @@ public class PDFSigVerifier extends PDFSigBase {
 	byte[] sigDigestBytes = calcMessageDigest
 	    (tbsCert.getEncoded(), getSignatureDigestId(certHolder.getSignatureAlgorithm().
 							getAlgorithm()));
+	final boolean sameSubject = certHolder.getSubject().equals(certHolder.getIssuer());
+	CipherParameters pubKeyParams = null;
+	
 	switch (cipherType) {
 	case RSA:
 	    final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(pubKeyEncoded);
+	    pubKeyParams = new RSAKeyParameters(false,  // isPrivate
+						rsaPubKey.getModulus(),
+						rsaPubKey.getPublicExponent());
 	    final AsymmetricBlockCipher cipher = new RSAEngine();
 	    try {
-		if (certHolder.getSubject().equals(certHolder.getIssuer())) {
-		    if (verifyRSA(cipher, rsaPubKey, certHolder.getSignature(), sigDigestBytes)) {
+		if (sameSubject) {
+		    if (verify(cipher, pubKeyParams,
+			       certHolder.getSignature(), sigDigestBytes)) {
 			WLOG("Self-signed cert.");
 		    } else {
 			WLOG("Invalid self-signed cert.");
 		    }
 		} else {
 		    if (verifyCertChain(certHolder.getIssuer(),
-					certHolder.getSignature(), sigDigestBytes)) {
+					certHolder.getSignature(),
+					sigDigestBytes)) {
 			VLOG("Cert issuer verified: " + certHolder.getIssuer());
 		    } else {
 			WLOG("Invalid issuer cert: " + certHolder.getIssuer());
@@ -335,60 +354,64 @@ public class PDFSigVerifier extends PDFSigBase {
 		// this could happen when the cert is not self-signed.
 		// we silently ignore.
 	    }		
-	    return verifyRSA(cipher, rsaPubKey, digest, plainDigest);			     
+	    return verify(cipher, pubKeyParams, digest, plainDigest);			     
 	    
 	case DSA:
-	    final ASN1Sequence dsaParams = (ASN1Sequence) pubKeyInfo.getAlgorithm().getParameters();
-	    if (dsaParams.size() != 3) {
-		throw new IllegalArgumentException("Unsupported DSA algorithm parameter size: " + dsaParams.size());
-	    }
-
-	    DSA dsaSigner = new DSASigner();	    
-	    final CipherParameters dsaPubkeyParams = new DSAPublicKeyParameters
-		(/* Y = */ ((ASN1Integer) pubKeyEncoded).getValue(),
-		 new DSAParameters(/* P = */ ((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),
-				   /* Q = */ ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),
-				   /* G = */ ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));
-	    if (verifyDSA(dsaSigner, dsaPubkeyParams,
-			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
-			  sigDigestBytes)) {
-		WLOG("Self-signed cert.");
-	    }
-	    return verifyDSA(dsaSigner, dsaPubkeyParams,
-			     (ASN1Sequence) digestPrimitive, plainDigest);
-
 	case ECDSA:
-	    final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
-	    if (ecdsaPubKeySeq.size() != 2 ||
-		!OID_CIPHER_ECDSA.equals(((AlgorithmIdentifier)
-					  ecdsaPubKeySeq.getObjectAt(0)).getAlgorithm().getId())) {
-		throw new IllegalArgumentException("Invalid public key algorithm identifier");
-	    }
-	    final X9ECParameters ecParams =
-		ECNamedCurveTable.getByOID((ASN1ObjectIdentifier)
-					   ((AlgorithmIdentifier) ecdsaPubKeySeq.getObjectAt(0)).
-					   getParameters());
-	    if (ecParams == null) {
-		throw new IllegalArgumentException("Unsupported EC curve");
-	    }
-	    final DSA ecdsaSigner = new ECDSASigner();
-	    final CipherParameters ecdsaPubkeyParams = new ECPublicKeyParameters
-		(ecParams.getCurve().
-		 decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
-			     getBytes()),
-		 new ECDomainParameters(ecParams.getCurve(),
-					ecParams.getG(),
-					ecParams.getN(),
-					ecParams.getH(),
-					ecParams.getSeed()));
+	    DSA dsaSigner = null;
+	    if (cipherType == AsymmetricCipherType.DSA) {
+		final ASN1Sequence dsaParams = (ASN1Sequence) pubKeyInfo.getAlgorithm().getParameters();
+		if (dsaParams.size() != 3) {
+		    throw new IllegalArgumentException
+			("Unsupported DSA algorithm parameter size: " + dsaParams.size());
+		}
 
-	    if (verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
-			  (ASN1Sequence) ASN1Primitive.fromByteArray(certHolder.getSignature()),
-			  sigDigestBytes)) {
-		WLOG("Self-signed cert.");
+		dsaSigner = new DSASigner();	    
+		pubKeyParams = new DSAPublicKeyParameters
+		    (((ASN1Integer) pubKeyEncoded).getValue(),  // Y
+		     new DSAParameters(((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),  // P
+				       ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),  // Q
+				       ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));  // G
+	    } else if (cipherType == AsymmetricCipherType.ECDSA) {
+		final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
+		if (ecdsaPubKeySeq.size() != 2 ||
+		    !OID_CIPHER_ECDSA.equals(((AlgorithmIdentifier)
+					      ecdsaPubKeySeq.getObjectAt(0)).getAlgorithm().getId())) {
+		    throw new IllegalArgumentException("Invalid public key algorithm identifier");
+		}
+		final X9ECParameters ecParams =
+		    ECNamedCurveTable.getByOID((ASN1ObjectIdentifier)
+					       ((AlgorithmIdentifier) ecdsaPubKeySeq.getObjectAt(0)).
+					       getParameters());
+		if (ecParams == null) {
+		    throw new IllegalArgumentException("Unsupported EC curve");
+		}
+		dsaSigner = new ECDSASigner();
+		pubKeyParams = new ECPublicKeyParameters
+		    (ecParams.getCurve().
+		     decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
+				 getBytes()),
+		     new ECDomainParameters(ecParams.getCurve(),
+					    ecParams.getG(),
+					    ecParams.getN(),
+					    ecParams.getH(),
+					    ecParams.getSeed()));
+	    } else {
+		throw new IOException("Invalid cipher type");
 	    }
-	    return verifyDSA(ecdsaSigner, ecdsaPubkeyParams,
-			     (ASN1Sequence) digestPrimitive, plainDigest);
+	    
+	    if (sameSubject) {
+		if (verify(dsaSigner, pubKeyParams,
+			   certHolder.getSignature(), sigDigestBytes)) {
+		    WLOG("Self-signed cert.");
+		} else {
+		    WLOG("Invalid self-signed cert.");
+		}
+	    } else {
+		throw new IOException("Unsupported DSA Cert chain validation.");
+	    }
+	    return verify(dsaSigner, pubKeyParams,
+			  (ASN1Sequence) digestPrimitive, plainDigest);
 	    
 	default:
 	    return false;
@@ -424,7 +447,7 @@ public class PDFSigVerifier extends PDFSigBase {
 		       verifyPKCS1Signature(((COSString) dict.getItem(COSName.CERT)).getBytes(),
 					    ((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
 					    calcMessageDigest((COSArray) dict.getItem(COSName.BYTERANGE),
-							      /* hash algorithm = */ "SHA-1")));
+							      "SHA-1")));
 	} else {
 	    System.out.println("Unsupported signer algorithm: " + signerAlgorithm);
 	}
@@ -432,7 +455,8 @@ public class PDFSigVerifier extends PDFSigBase {
 
     public void verify() {
 	try {
-	    final PDDocument doc = Loader.loadPDF(_pdfFile, /* password= */ (String) null);
+	    final PDDocument doc = Loader.loadPDF(_pdfFile,
+						  (String) null);  // password?
 	    doc.setAllSecurityToBeRemoved(true);
 	    final COSDocument cosDocument = doc.getDocument();
 	    cosDocument.getXrefTable().keySet().stream()
@@ -443,7 +467,7 @@ public class PDFSigVerifier extends PDFSigBase {
     }
 
     public void sign() {
-	throw new RuntimeException("Use io.reddart.pdf.PDFSigCreator intead.");
+	throw new RuntimeException("Use io.reddart.pdf.PDFSigCreator instead.");
     }
 
     public static final void main(String[] args) throws Exception {

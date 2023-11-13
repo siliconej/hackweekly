@@ -18,7 +18,7 @@ test: classes/${PACKAGE}/PDFSigVerifier.class
 
 test_cert: classes/${PACKAGE}/PDFSigVerifier.class
 	@java -cp ${JARFILE}:classes io.reddart.pdf.PDFSigVerifier \
-	--verbose --pkcs12 actalis_weakpassword.p12 --password reddart123# reddart_homepage_signed.pdf
+	--verbose --pkcs12 actalis_weakpassword_aes.p12 --password reddart123# reddart_homepage_signed.pdf
 
 clean:
 	rm -rf classes
