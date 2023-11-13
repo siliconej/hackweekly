@@ -126,6 +126,13 @@ public abstract class PDFSigBase {
     static final String OID_CTYPE_ENC_DATA     = "1.2.840.113549.1.7.6";
     static final String OID_CTYPE_DATA_W_ATTRS = "1.2.840.113549.1.7.7";
 
+    static final String OID_EXT_KEY_USE        = "2.5.29.37";
+    static final String OID_EXT_KEY_USE_ANY    = "2.5.29.37.0";
+    static final String OID_USE_EMAIL_PROTECT  = "1.3.6.1.5.5.7.3.4";  // mostly used.
+    static final String OID_USE_CODE_SIGN      = "1.3.6.1.5.5.7.3.3";
+    static final String OID_AUTH_DOC_TRUST     = "1.2.840.113583.1.1.5";  // mostly used.
+    static final String OID_ENTERPRISE_DOC     = "1.3.6.1.4.1.311.10.3.12";
+    
     private static final Map<String, String> _DigestAlgorithmIdMap =
 	Stream.of(new String[][] {
 		{ OID_ALGO_SHA256,    "SHA-256"   },
@@ -275,6 +282,20 @@ public abstract class PDFSigBase {
     protected static boolean verifySequenceOid(String oid, ASN1Encodable object) {
 	if (object instanceof ASN1ObjectIdentifier) {
 	    return oid.equals(((ASN1ObjectIdentifier) object).getId());
+	}
+	return false;
+    }
+
+    protected static boolean verifyKeyUsage(ASN1Sequence usageSeq) {
+	for (int i = 0; i < usageSeq.size(); ++i) {
+	    String oid = ((ASN1ObjectIdentifier) usageSeq.getObjectAt(i)).getId();
+	    if (OID_USE_EMAIL_PROTECT.equals(oid) ||
+		OID_EXT_KEY_USE_ANY.equals(oid) ||
+		OID_USE_CODE_SIGN.equals(oid) ||
+		OID_AUTH_DOC_TRUST.equals(oid) ||
+		OID_ENTERPRISE_DOC.equals(oid)) {
+		return true;
+	    }
 	}
 	return false;
     }

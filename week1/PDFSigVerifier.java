@@ -63,6 +63,7 @@ import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.DigestInfo;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -239,6 +240,18 @@ public class PDFSigVerifier extends PDFSigBase {
 	    
 	    // CRLs are not supported yet.
 	    final ASN1Set crls = signedData.getCRLs();
+
+	    // Verify certificate usage.
+	    final Extension exKeyUsageObj = certHolder.getExtension(Extension.extendedKeyUsage);
+	    if (exKeyUsageObj != null) {
+		final ASN1Sequence keyUsageSeq = ASN1Sequence.getInstance
+		    (certHolder.getExtension(Extension.extendedKeyUsage).getExtnValue().getOctets());
+		if (!verifyKeyUsage(keyUsageSeq)) {
+		    WLOG("Key usage doesn't cover PDF signing");
+		}
+	    } else {
+		WLOG("No key usage specified in the cert");
+	    }
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
 	    return verifySignature(cipherType, certHolder, cert.getTBSCertificate(),
