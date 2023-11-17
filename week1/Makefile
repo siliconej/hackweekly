@@ -8,11 +8,11 @@ all: test test_cert
 classes/${PACKAGE}/PDFSigBase.class: PDFSigBase.java classes/${PKCS_PACKAGE}/PkcsIdentifiers.class
 	if [ ! -d "classes" ]; then mkdir classes; fi
 	@echo "Compile PDFSigBase"
-	@javac ${JAVA_FLAGS} -cp ${JARFILE} -d classes PDFSigBase.java
+	@javac ${JAVAC_FLAGS} -cp ${JARFILE} -d classes PDFSigBase.java
 
 classes/${PDF_PACKAGE}/PDFSigVerifier.class: PDFSigVerifier.java classes/${PDF_PACKAGE}/PDFSigBase.class classes/${PKCS_PACKAGE}/Pkcs9Attr.class 
 	@echo "Compile PDFSigVerifier"
-	@javac ${JAVA_FLAGS} -cp ${JARFILE} -d classes PDFSigVerifier.java
+	@javac ${JAVAC_FLAGS} -cp ${JARFILE} -d classes PDFSigVerifier.java
 
 classes/io/reddart/pkcs/Pkcs9Attr.class: Pkcs9Attr.java classes/io/reddart/pkcs/PkcsIdentifiers.class classes/${PKCS_PACKAGE}/PkcsIdentifiers.class
 	@echo "Compile Pkcs9Attr"
