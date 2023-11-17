@@ -501,28 +501,42 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
 
     protected static final String getDigestAlgorithmId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
-	final String id = _DigestAlgorithmIdMap.get(oid.getId());
+	return getDigestAlgorithmId(oid.getId());
+    }
+
+    protected static final String getDigestAlgorithmId(String oid)
+	throws IllegalArgumentException {
+	final String id = _DigestAlgorithmIdMap.get(oid);
 	if (id == null) {
-	    throw new IllegalArgumentException("Unsupported digest algorithm: " + oid.getId());
+	    throw new IllegalArgumentException("Unsupported digest algorithm: " + oid);
 	}
 	return id;
     }
 
     protected static final String getSignatureAlgorithmId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
-	final String id = _SignatureAlgorithmIdMap.get(oid.getId());
+	return getSignatureAlgorithmId(oid.getId());
+    }
+
+    protected static final String getSignatureAlgorithmId(String oid)
+	throws IllegalArgumentException {
+	final String id = _SignatureAlgorithmIdMap.get(oid);
 	if (id == null) {
-	    WLOG("Unknown cert signature algorithm found: " + oid.getId());
+	    WLOG("Unknown cert signature algorithm found: " + oid);
 	}
 	return id;
     }
 
     protected static final String getSignatureDigestId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
-	final String id = _SignatureDigestIdMap.get(oid.getId());
+	return getSignatureDigestId(oid.getId());
+    }
+
+    protected static final String getSignatureDigestId(String oid)
+	throws IllegalArgumentException {
+	final String id = _SignatureDigestIdMap.get(oid);
 	if (id == null) {
-	    throw new IllegalArgumentException("Unsupported signature digest algorithm: " +
-					       oid.getId());
+	    throw new IllegalArgumentException("Unsupported signature digest algorithm: " + oid);
 	}
 	return id;
     }

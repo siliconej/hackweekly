@@ -1,5 +1,24 @@
+/**
+ * Copyright 2023 Edward Jiang
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the “Software”), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.reddart.pkcs;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +30,8 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.cert.X509CertificateHolder;
 // import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
@@ -21,15 +42,15 @@ public class Pkcs9Attr implements PkcsIdentifiers {
     static final Map<String, Class<? extends Pkcs9Attr>> AttrMap;
     static {
 	Map<String, Class<? extends Pkcs9Attr>> $ = AttrMap = new HashMap<>(60);
-	$.put("1",       EmailAddress.class);
-	$.put("2",       UnstructuredName.class);
-	$.put("3",       ContentType.class);
-	$.put("4",       MessageDigest.class);
-	$.put("5",       SigningTime.class);
-	$.put("6",       CounterSignature.class);
-	$.put("7",       ChallengePassword.class);
-	$.put("8",       UnstructuredAddress.class);
-	$.put("9",       ExtCertAttributes.class);
+	$.put( "1",      EmailAddress.class);
+	$.put( "2",      UnstructuredName.class);
+	$.put( "3",      ContentType.class);
+	$.put( "4",      MessageDigest.class);
+	$.put( "5",      SigningTime.class);
+	$.put( "6",      CounterSignature.class);
+	$.put( "7",      ChallengePassword.class);
+	$.put( "8",      UnstructuredAddress.class);
+	$.put( "9",      ExtCertAttributes.class);
 	$.put("13",      SigningDescription.class);
 	$.put("14",      ExtensionRequest.class);
 	$.put("15",      SMimeCapabilities.class);
@@ -74,11 +95,61 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	$.put("52",      IdaaCmsAlgorithmProtect.class);	
     }
 
+    /**
+     * Visitor pattern based, provided by the called to capture the values of
+     * the attritube parsed.
+     */
     public interface AttrVisitor {
 	public void setMessageDigest(byte[] md);
 	public void setContentType(String type);
 	public void setSigningTime(Date datetime);
 	public void addCertificate(X509CertificateHolder holder);
+	public void setMdAlgorithm(String id);
+	public void setMdSignAlgorithm(String id);
+	public void setIdaaSigningCertificate(byte[] certHash);
+	public void setIdaaSigningCertificateV2(byte[] certHash);
+    }
+
+    /**
+     * Pkcs9 Exception, an extension of IllegalArgumentException
+     */
+    public static class Pkcs9AttrException extends IllegalArgumentException {
+	public Pkcs9AttrException(String msg) {
+	    super(msg);
+	}
+	public Pkcs9AttrException(String msg, Throwable cause) {
+	    super(msg, cause);
+	}
+    }
+
+    /**
+     * PKCS9 attribute that carry an octet string.
+     */
+    protected static abstract class Pkcs9ByteArrayAttr extends Pkcs9Attr {
+	protected byte[] payload;
+
+        protected Pkcs9ByteArrayAttr(String id) {
+            super(id);
+        }
+
+        @Override
+        public boolean parse(ASN1Sequence seq)
+            throws Pkcs9AttrException {
+            final ASN1OctetString mdObj = getAttrValue(seq, ASN1OctetString.class);
+            payload = mdObj.getOctets();
+            return true;
+        }
+
+	@Override
+        public abstract boolean visit(AttrVisitor visitor) throws Pkcs9AttrException;
+
+        @Override
+        public String toString() {
+            return super.toString() + ": [" +
+                String.format("%02x", payload[0] & 0xff) + " .. " +
+                String.format("%02x", payload[payload.length - 1] & 0xff) +
+                "]";
+        }
     }
 
     private String friendlyAttrName;
@@ -92,28 +163,51 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	friendlyAttrName.intern();
     }
 
-    protected void ensureAttrSize(ASN1Sequence seq, int size) {
+    protected <T extends ASN1Encodable> T getAttrValue(ASN1Sequence seq, Class<T> dataType) {
 	if (seq.size() != 2) {
-	    throw new Pkcs9AttrException("Invalid message digest sequence");
+	    throw new Pkcs9AttrException("Invalid attribute value sequence");
+	}
+	final ASN1Encodable valueSetObj = seq.getObjectAt(1);
+	if (valueSetObj instanceof ASN1Set && ((ASN1Set) valueSetObj).size() == 1) {
+	    final ASN1Encodable valueObj = ((ASN1Set) valueSetObj).getObjectAt(0);
+	    try {
+		return dataType.cast(valueObj);
+	    } catch (ClassCastException e) {
+		throw new Pkcs9AttrException("Invalid attribute value data type", e);
+	    }
+	} else {
+	    throw new Pkcs9AttrException("Invalid attribute value object");
 	}
     }
-    
-    public static class Pkcs9AttrException extends IllegalArgumentException {
-	public Pkcs9AttrException(String msg) {
-	    super(msg);
+
+    protected <T extends ASN1Encodable> T drillDownUntil(ASN1Sequence seq, Class<T> dataType)
+	throws Pkcs9AttrException {
+	if (seq.size() != 2) {
+	    throw new Pkcs9AttrException("Invalid attribute value sequence");
 	}
-	public Pkcs9AttrException(String msg, Throwable cause) {
-	    super(msg, cause);
+	ASN1Encodable obj = seq.getObjectAt(1);
+	while (true) {
+	    if ((obj instanceof ASN1Set) && ((ASN1Set) obj).size() > 0) {
+		obj = ((ASN1Set) obj).getObjectAt(0);
+	    } else if ((obj instanceof ASN1Sequence) && ((ASN1Sequence) obj).size() > 0) {
+		obj = ((ASN1Sequence) obj).getObjectAt(0);
+	    } else {
+		try {
+		    return dataType.cast(obj);
+		} catch (ClassCastException e) {
+		    throw new Pkcs9AttrException("Invalid attribute value data type", e);
+		}
+	    }
 	}
     }
 
     // subclass implement this and call back parse the given sequence.
-    public boolean parse(ASN1Sequence seq) {
+    public boolean parse(ASN1Sequence seq) throws Pkcs9AttrException {
 	return false;
     }
     
     // subclass implement this and call back to populate visitor's properties.
-    public boolean visit(AttrVisitor visitor) {
+    public boolean visit(AttrVisitor visitor) throws Pkcs9AttrException {
 	return false;
     }
 
@@ -137,7 +231,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	if (attrSeq == null || attrSeq.size() == 0) {
 	    throw new IllegalArgumentException("Invalid atribute sequence to begin with");
 	}
-	ASN1Encodable firstObj = attrSeq.getObjectAt(0);
+	final ASN1Encodable firstObj = attrSeq.getObjectAt(0);
 	if (!(firstObj instanceof ASN1ObjectIdentifier)) {
 	    throw new IllegalArgumentException("Invalid attribute object: " +
 					       firstObj.getClass());
@@ -146,13 +240,13 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	if (!oid.startsWith(ATTR_OID)) {
 	    throw new IllegalArgumentException("Invalid attribute object: " + oid);
 	}
-	Class<? extends Pkcs9Attr> attrClass =
+	final Class<? extends Pkcs9Attr> attrClass =
 	    AttrMap.get(oid.substring(ATTR_OID.length()));
 	if (attrClass == null) {
 	    throw new IllegalArgumentException("Unsupported attribute object");
 	}
 	try {
-	    Pkcs9Attr attrObj = attrClass.getDeclaredConstructor().newInstance();
+	    final Pkcs9Attr attrObj = attrClass.getDeclaredConstructor().newInstance();
 	    if (attrObj.parse((ASN1Sequence) attr)) {
 		attrObj.visit(visitor);
 	    }
@@ -182,7 +276,8 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	}
     }
 
-    // 1.2.840.113549.1.9.3
+    // {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) contentType(3)}
+    // Example: [1.2.840.113549.1.9.3, [1.2.840.113549.1.7.1]]
     protected static class ContentType extends Pkcs9Attr {
 
 	private String contentType;
@@ -194,26 +289,19 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	@Override
 	public boolean parse(ASN1Sequence seq)
 	    throws Pkcs9AttrException {
-	    ensureAttrSize(seq, 2);
-	    ASN1Encodable mdObj = seq.getObjectAt(1);
-	    if ((mdObj instanceof ASN1Set) && ((ASN1Set) mdObj).size() == 1) {
-		ASN1Encodable contentTypeObj = ((ASN1Set) mdObj).getObjectAt(0);
-		if (contentTypeObj instanceof ASN1ObjectIdentifier) {
-		    String oid = ((ASN1ObjectIdentifier) contentTypeObj).getId();
-		    switch (oid) {
-		    case OID_CTYPE_PKCS7:
-			contentType = "id-data";
-			break;
-		    case OID_CTYPE_TST_INFO:
-			contentType = "id-ct-TSTInfo";
-			break;
-		    default:
-			contentType = oid;
-		    }
-		    return true;
-		}
+	    final ASN1ObjectIdentifier contentTypeObj = getAttrValue(seq, ASN1ObjectIdentifier.class);
+	    final String oid = contentTypeObj.getId();
+	    switch (oid) {
+	    case OID_CTYPE_PKCS7:
+		contentType = "id-data";
+		break;
+	    case OID_CTYPE_TST_INFO:
+		contentType = "id-ct-TSTInfo";
+		break;
+	    default:
+		contentType = oid;
 	    }
-	    return false;
+	    return true;
 	}
 
 	@Override
@@ -231,49 +319,56 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	}
     }
 
-    // 1.2.840.113549.1.9.4
-    protected static class MessageDigest extends Pkcs9Attr {
+    // {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) messageDigest(4)}
+    // Example: [1.2.840.113549.1.9.4, [# ...]]
+    protected static class MessageDigest extends Pkcs9ByteArrayAttr {
 	protected MessageDigest() {
 	    super("Message Digest");
 	}
+	@Override
+	public boolean visit(AttrVisitor visitor) {
+	    if (visitor != null && payload != null) {
+		visitor.setMessageDigest(payload);
+		return true;
+	    }
+	    return false;
+	}
+    }
 
-	private byte[] messageDigest;
+    // {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) signing-time(5)}
+    // Example: [1.2.840.113549.1.9.5, [231114195104Z]]
+    protected static class SigningTime extends Pkcs9Attr {
+	private Date signingTime;
 	
+	protected SigningTime() {
+	    super("Signing Time");
+	}
+
 	@Override
 	public boolean parse(ASN1Sequence seq)
 	    throws Pkcs9AttrException {
-	    ensureAttrSize(seq, 2);
-	    ASN1Encodable mdObj = seq.getObjectAt(1);
-	    if ((mdObj instanceof ASN1Set) && ((ASN1Set) mdObj).size() == 1) {
-		messageDigest = ((ASN1OctetString) ((ASN1Set) mdObj).getObjectAt(0)).getOctets();
-	    } else {	
-		throw new Pkcs9AttrException("Unsupported MD object: " + mdObj.getClass());
+	    final ASN1UTCTime stObj = getAttrValue(seq, ASN1UTCTime.class);
+	    try {
+		signingTime = stObj.getDate();
+		return true;
+	    } catch (ParseException e) {
+		throw new Pkcs9AttrException("Invalid data presentation", e);
 	    }
-	    return true;
 	}
 
 	@Override
 	public boolean visit(AttrVisitor visitor) {
-	    if (visitor != null && messageDigest != null) {
-		visitor.setMessageDigest(messageDigest);
+	    if (visitor != null && signingTime != null) {
+		visitor.setSigningTime(signingTime);
 		return true;
 	    }
 	    return false;
 	}
 
-	@Override
-	public String toString() {
-	    return super.toString() + ": " +
-		String.format("%02x", messageDigest[0] & 0xff) + " .. " +
-		String.format("%02x", messageDigest[messageDigest.length - 1] & 0xff);
-	} 
-    }
-
-    // 1.2.840.113549.1.9.5
-    protected static class SigningTime extends Pkcs9Attr {
-	protected SigningTime() {
-	    super("Signing Time");
-	}
+        @Override
+        public String toString() {
+            return super.toString() + ": " + signingTime;
+        }
     }
 
     // 1.2.840.113549.1.9.6
@@ -366,10 +461,34 @@ public class Pkcs9Attr implements PkcsIdentifiers {
     }
 
     // 1.2.840.113549.1.9.16.2.12
-    protected static class IdaaSigningCertificate extends Pkcs9Attr {
-	protected IdaaSigningCertificate() {
-	    super("Id-aa Signing Certificate");
+    // Example: [1.2.840.113549.1.9.16.2.12,
+    //           [[[[#66f02b32c2c2c90f825dceaa8ac9c64f199ccf40]]]]]
+    //
+    // Notice that the signing certificate field should possibility have a list of
+    // of certificate. Right now, we only treat it as a single octet string in
+    // multiple level of sequence.
+    protected static class IdaaSigningCertificate extends Pkcs9ByteArrayAttr {
+	protected IdaaSigningCertificate(String name) {
+	    super(name);
 	}
+	protected IdaaSigningCertificate() {
+	    this("Id-aa Signing Certificate");
+	}
+
+	@Override
+	public boolean parse(ASN1Sequence seq) throws Pkcs9AttrException {
+	    payload = (drillDownUntil(seq, ASN1OctetString.class)).getOctets();
+	    return true;
+	}
+
+        @Override
+        public boolean visit(AttrVisitor visitor) {
+            if (visitor != null && payload != null) {
+                visitor.setIdaaSigningCertificate(payload);
+                return true;
+            }
+            return false;
+        }
     }
 
     // 1.2.840.113549.1.9.16.2.14
@@ -450,10 +569,18 @@ public class Pkcs9Attr implements PkcsIdentifiers {
     }
     
     // 1.2.840.113549.1.9.16.2.47
-    protected static class IdaaSigningCertificateV2 extends Pkcs9Attr {
+    protected static class IdaaSigningCertificateV2 extends IdaaSigningCertificate {
 	protected IdaaSigningCertificateV2() {
 	    super("Id-aa Signing Certificate v2");
 	}
+	@Override
+        public boolean visit(AttrVisitor visitor) {
+            if (visitor != null && payload != null) {
+                visitor.setIdaaSigningCertificateV2(payload);
+                return true;
+            }
+            return false;
+        }
     }
 
     // 1.2.840.113549.1.9.16.2.54
@@ -487,10 +614,76 @@ public class Pkcs9Attr implements PkcsIdentifiers {
     protected static class CrlTypes extends Pkcs9Attr {
     }
 
-    // 1.2.840.113549.1.9.52
+    /**
+     * {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9)
+     *    id-aa-CMSAlgorithmProtection(52)}
+     * Example: [1.2.840.113549.1.9.52, [[[2.16.840.1.101.3.4.2.1],
+     *                                    [CONTEXT 1][1.2.840.113549.1.1.11, NULL]]]]
+     *
+     * CMSAlgorithmProtection ::= SEQUENCE {
+     *     digestAlgorithm         DigestAlgorithmIdentifier,
+     *     signatureAlgorithm  [1] SignatureAlgorithmIdentifier OPTIONAL,
+     *     macAlgorithm        [2] MessageAuthenticationCodeAlgorithm
+     *                                      OPTIONAL
+     * }
+     * (WITH COMPONENTS { signatureAlgorithm PRESENT,
+     *                    macAlgorithm ABSENT } |
+     *  WITH COMPONENTS { signatureAlgorithm ABSENT,
+     *                    macAlgorithm PRESENT })
+     */
     protected static class IdaaCmsAlgorithmProtect extends Pkcs9Attr {
+
+	private String mdAlgorithm;
+	private String mdSignAlgorithm;
+	private String macAlgorithm;  // not implemented yet.
+
 	protected IdaaCmsAlgorithmProtect() {
 	    super("Id-aa CMS Algorithm Protect");
 	}
+
+	@Override
+        public boolean parse(ASN1Sequence seq)
+            throws Pkcs9AttrException {
+	    final ASN1Sequence algoSeq = getAttrValue(seq, ASN1Sequence.class);
+	    if (algoSeq.size() == 0) {
+		return false;
+	    }
+	    if (!(algoSeq.getObjectAt(0) instanceof ASN1Sequence)) {
+		return false;
+	    }
+	    // Mandetory
+	    final ASN1Sequence mdSeq = (ASN1Sequence) algoSeq.getObjectAt(0);
+	    if (!(mdSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {
+		return false;
+	    }
+	    mdAlgorithm = ((ASN1ObjectIdentifier) mdSeq.getObjectAt(0)).getId();
+	    // Optional
+	    if (algoSeq.size() > 1 &&
+		algoSeq.getObjectAt(1) instanceof ASN1TaggedObject) {
+		ASN1Encodable mdsObj = ((ASN1TaggedObject) algoSeq.getObjectAt(1)).getBaseObject();
+		if (mdsObj instanceof ASN1Sequence) {
+		    final ASN1Sequence mdsSeq = (ASN1Sequence) mdsObj;
+		    if (mdsSeq.size() > 0 && (mdsSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {
+			mdSignAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(0)).getId();
+		    }
+		    if (mdsSeq.size() > 1 && (mdsSeq.getObjectAt(1) instanceof ASN1ObjectIdentifier)) {
+			mdSignAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(1)).getId();
+		    }
+		}
+	    }
+	    return true;
+        }
+
+        @Override
+        public boolean visit(AttrVisitor visitor) {
+	    visitor.setMdAlgorithm(mdAlgorithm);
+	    visitor.setMdSignAlgorithm(mdSignAlgorithm);
+	    return true;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + ": " + mdAlgorithm + "/" + mdSignAlgorithm;
+        }
     }
 }

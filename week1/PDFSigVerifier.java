@@ -91,19 +91,35 @@ public final class PDFSigVerifier extends PDFSigBase {
 
     //////////// Implementing AttrVisitor ////////////
     protected static class SignatureContext implements Pkcs9Attr.AttrVisitor {
+
 	private byte[] messageDigest;
 	private Date signingTime;
 	private String contentType;
 	private ArrayList<X509CertificateHolder> certificates;
+	private String mdAlgorithm;
+	private String mdSignAlgorithm;
+	private byte[] idaaSigningCertificate;
+	private byte[] idaaSigningCertificateV2;
 	
 	public SignatureContext() {
 	    certificates = new ArrayList<>(10);
 	}
 
+	private static final byte[] copyBytes(byte[] src) {
+	    byte[] octets = new byte[src.length];
+	    System.arraycopy(src, 0, octets, 0, octets.length);
+	    return octets;
+	}
+
+	/////////////// Context Methods ///////////////////////////
+	public byte[] getMessageDigest() {
+	    return messageDigest;
+	}
+
+	/////////////// AttrVisitor Implementation ////////////////
 	@Override
 	public void setMessageDigest(byte[] md) {
-	    messageDigest = new byte[md.length];
-	    System.arraycopy(md, 0, messageDigest, 0, messageDigest.length);
+	    messageDigest = copyBytes(md);
 	}
 
 	@Override
@@ -120,6 +136,36 @@ public final class PDFSigVerifier extends PDFSigBase {
 	public void addCertificate(X509CertificateHolder holder) {
 	    if (!certificates.contains(holder)) {
 		certificates.add(holder);
+	    }
+	}
+
+	@Override
+	public void setMdAlgorithm(String id) {
+	    final String mdId = getDigestAlgorithmId(id);
+	    if (mdId != null) {
+		mdAlgorithm = mdId;
+	    }
+	}
+
+	@Override
+	public void setMdSignAlgorithm(String id) {
+	    final String mdsId = getSignatureDigestId(id);
+	    if (mdsId != null) {
+		mdSignAlgorithm = mdsId;
+	    }
+	}
+
+	@Override
+	public void setIdaaSigningCertificate(byte[] certHash) {
+	    if (certHash != null) {
+		idaaSigningCertificate = copyBytes(certHash);
+	    }
+	}
+
+	@Override
+	public void setIdaaSigningCertificateV2(byte[] certHash) {
+	    if (certHash != null) {
+		idaaSigningCertificateV2 = copyBytes(certHash);
 	    }
 	}
     }
@@ -269,43 +315,20 @@ public final class PDFSigVerifier extends PDFSigBase {
 	    byte[] digestAttribute = null;
 
 	    // Roughly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
-	    //
-	    // Notice that if the Signature attribute sequence doesn't exist, we will use the plainDigest
-	    // calculated above.
-	    //
-	    // For exploration purpose we're only using
 	    final SignerInfo signerInfo = SignerInfo.getInstance(signerInfoSeq);
 	    if (signerInfoSeq.getObjectAt(3) instanceof ASN1TaggedObject) {
 		// The signatureAttribute needs to take the explicit DER encoding format.
 		ASN1Set sigAttr = signerInfo.getAuthenticatedAttributes();
 		sigAttrBytes = sigAttr.getEncoded();
 		
-		// here we analyze the digest attributes.
 		for (int i = 0; i < sigAttr.size(); ++i) {
-		    /* ASN1Sequence seq = (ASN1Sequence) sigAttr.getObjectAt(i);
-		    VLOG("sig attr (#" + i + "): " + seq);
-		    VLOG("Auth attribute: " + Pkcs9Attr.getInstance(seq));
-
-		    String oidString = ((ASN1ObjectIdentifier) seq.getObjectAt(0)).getId();
-		    
-		    if (OID_CONTENT_TYPE.equals(oidString) &&
-			OID_CTYPE_PKCS7.equals(((ASN1ObjectIdentifier)(((ASN1Set) seq.getObjectAt(1)).
-								       getObjectAt(0))).getId())) {
-			VLOG("Content Type found: PKCS7");
-		    }
-		    if (OID_MD_ID.equals(oidString)) {
-			ASN1Set set2 = (ASN1Set) seq.getObjectAt(1);
-			digestAttribute = ((DEROctetString) set2.getObjectAt(0)).getOctets();
-			debugByteArrayString("Plain digest found", digestAttribute);
-			// We can now verify the message digest in plain text first.
-			if (0 != Arrays.compare(digestAttribute, plainDigest)) {
-			    return false;
-			}
-		    }
-		    */
-		    VLOG("sig attr (#" + i + "): " + sigAttr.getObjectAt(i));
-		    VLOG("Auth attribute: " +
+		    VLOG("Auth attr: " +
 			 Pkcs9Attr.getAndVisitInstance(sigAttr.getObjectAt(i), documentSignatureContext));
+		}
+		// We can now verify the message digest in plain text first.
+		if (0 != Arrays.compare(plainDigest,
+					documentSignatureContext.getMessageDigest())) {
+		    return false;
 		}
 		encDigestAlgoIndex++;
 	    }
@@ -329,8 +352,8 @@ public final class PDFSigVerifier extends PDFSigBase {
 		    SignerInfo tsSignerInfo = SignerInfo.getInstance(tsSignedData.getSignerInfos().getObjectAt(0));
 		    ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
 		    for (int i = 0; i < tsAttrSeq.size(); ++i) {
-			VLOG("ts sig attr (#" + i + "): " + tsAttrSeq.getObjectAt(i));
-			VLOG("Unauth attribute: " + Pkcs9Attr.getInstance(tsAttrSeq.getObjectAt(i)));
+			VLOG("Unauth attribute: " + Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i),
+										  timestampSignatureContext));
 		    }
 		    //VLOG("TS Signer auth: " + tsSignerInfo.getAuthenticatedAttributes());
 		    VLOG("TS Signer encrypted digest: " + tsSignerInfo.getEncryptedDigest().getOctets().length);
