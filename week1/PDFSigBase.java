@@ -39,8 +39,9 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.CertificateException;
 
-import org.apache.pdfbox.cos.COSArray;
+import io.reddart.pkcs.PkcsIdentifiers;
 
+import org.apache.pdfbox.cos.COSArray;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -92,46 +93,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
 
-public abstract class PDFSigBase {
-
-    static final String OID_CIPHER_RSA         = "1.2.840.113549.1.1.1";
-    static final String OID_PKCS_RSA_MD5       = "1.2.840.113549.1.1.4";
-    static final String OID_PKCS_RSA_SHA1      = "1.2.840.113549.1.1.5";
-    static final String OID_PKCS_RSA_SHA256    = "1.2.840.113549.1.1.11";
-    static final String OID_PKCS_RSA_SHA384    = "1.2.840.113549.1.1.12";
-    static final String OID_PKCS_RSA_SHA512    = "1.2.840.113549.1.1.13";
-    static final String OID_CIPHER_DSA         = "1.2.840.10040.4.1";
-    static final String OID_PKCS_DSA_SHA1      = "1.2.840.10040.4.3";
-
-    static final String OID_CIPHER_ECDSA       = "1.2.840.10045.2.1";
-    static final String OID_PKCS_ECDSA_SHA256  = "1.2.840.10045.4.3.2";
-    static final String OID_PKCS_ECDSA_SHA384  = "1.2.840.10045.4.3.3";
-    static final String OID_PKCS_ECDSA_SHA512  = "1.2.840.10045.4.3.4";
-
-    static final String OID_SIGNED_DATA        = "1.2.840.113549.1.7.2";
-    static final String OID_CONTENT_TYPE       = "1.2.840.113549.1.9.3";
-    static final String OID_MD_ID              = "1.2.840.113549.1.9.4";
-    static final String OID_ALGO_MD5           = "1.2.840.113549.2.5";
-    static final String OID_ALGO_SHA1          = "1.3.14.3.2.26";
-    static final String OID_ALGO_SHA256        = "2.16.840.1.101.3.4.2.1";
-    static final String OID_ALGO_SHA384        = "2.16.840.1.101.3.4.2.2";
-    static final String OID_ALGO_SHA512        = "2.16.840.1.101.3.4.2.3";
-    static final String OID_ALGO_RIPEMD160     = "1.3.36.3.2.1";
-
-    static final String OID_CTYPE_PKCS7        = "1.2.840.113549.1.7.1";
-    static final String OID_CTYPE_SIG_DATA     = "1.2.840.113549.1.7.2";
-    static final String OID_CTYPE_EVP_DATA     = "1.2.840.113549.1.7.3";
-    static final String OID_CTYPE_SIG_EVP_DATA = "1.2.840.113549.1.7.4";
-    static final String OID_CTYPE_DIGEST_DATA  = "1.2.840.113549.1.7.5";
-    static final String OID_CTYPE_ENC_DATA     = "1.2.840.113549.1.7.6";
-    static final String OID_CTYPE_DATA_W_ATTRS = "1.2.840.113549.1.7.7";
-
-    static final String OID_EXT_KEY_USE        = "2.5.29.37";
-    static final String OID_EXT_KEY_USE_ANY    = "2.5.29.37.0";
-    static final String OID_USE_EMAIL_PROTECT  = "1.3.6.1.5.5.7.3.4";  // mostly used.
-    static final String OID_USE_CODE_SIGN      = "1.3.6.1.5.5.7.3.3";
-    static final String OID_AUTH_DOC_TRUST     = "1.2.840.113583.1.1.5";  // mostly used.
-    static final String OID_ENTERPRISE_DOC     = "1.3.6.1.4.1.311.10.3.12";
+public abstract class PDFSigBase implements PkcsIdentifiers {
     
     private static final Map<String, String> _DigestAlgorithmIdMap =
 	Stream.of(new String[][] {
@@ -867,10 +829,8 @@ public abstract class PDFSigBase {
 	    VLOG("Certificate bag size: " + _certBags.size());
 	} catch (IOException e) {
 	    FLOG("Fail to read an object");
-	} catch (InvalidCipherTextException e) {
-	    FLOG("Invalid cipher text");
-	} catch (NoSuchAlgorithmException e) {
-	    FLOG("Unsupported algorithm");
+	} catch (InvalidCipherTextException | NoSuchAlgorithmException e) {
+	    FLOG("Invalid cipher text or algorithm");
 	}
     }
     
