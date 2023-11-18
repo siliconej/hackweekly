@@ -22,8 +22,13 @@ import java.util.Date;
 
 import org.bouncycastle.cert.X509CertificateHolder;
 
+/**
+ * All APIs requires to perform a verfication process.
+ * TODO(siliconej): implement signing process.
+ */
 public interface SigningContext {
 
+    // Data Model Accessors.
     public void setMessageDigest(byte[] md);
     public void setContentType(String type);
     public void setSigningTime(Date datetime);
@@ -34,4 +39,7 @@ public interface SigningContext {
 
     public void addCertificate(X509CertificateHolder holder);
     public void addSigningContext(String oid, SigningContext context);
+
+    // Verification APIs.
+    // Signing APIs.
 }

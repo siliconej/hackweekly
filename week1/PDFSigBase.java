@@ -94,7 +94,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
 
-public abstract class PDFSigBase implements PkcsIdentifiers {
+public abstract class PdfSigBase implements PkcsIdentifiers {
     
     private enum CipherType {
 	AES, DES, EDE
@@ -302,7 +302,7 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
     protected static boolean _WARNING;
     private static Map<X500Name, X509CertificateHolder> _certBags;
 
-    public PDFSigBase(String pdfFileName) throws IOException {
+    public PdfSigBase(String pdfFileName) throws IOException {
 	_pdfFile = new File(pdfFileName);
     }
 

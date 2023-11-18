@@ -16,8 +16,10 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.reddart.pkcs;
+package io.reddart.pdf;
 
+import io.reddart.pkcs.PkcsIdentifiers;
+import io.reddart.pkcs.SigningContext;
 import io.reddart.util.IdUtil;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +56,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
  *  }
  *  <pre>
  */
-public class Pkcs7SigningContext implements PkcsIdentifiers, SigningContext {
+public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     //////////// Global context ////////////////
     private ASN1Sequence contentSequence;
@@ -157,7 +159,7 @@ public class Pkcs7SigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     // SignedData encapsulated in an encoded byte array.
-    public Pkcs7SigningContext(byte[] pkcs7bytes) throws Pkcs7ParseException {
+    public PdfSigningContext(byte[] pkcs7bytes) throws Pkcs7ParseException {
 	try {
 	    parseSignedData(pkcs7bytes);
 	} catch (IOException e) {
@@ -167,7 +169,7 @@ public class Pkcs7SigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     // SignedData encapsulated in an attribute.
-    public Pkcs7SigningContext(ASN1TaggedObject obj) throws Pkcs7ParseException {
+    public PdfSigningContext(ASN1TaggedObject obj) throws Pkcs7ParseException {
 	contentInfo = null;
 	signedData = SignedData.getInstance(obj.getBaseObject());
 	initContext();

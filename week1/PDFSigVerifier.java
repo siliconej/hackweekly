@@ -35,9 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Security;
 
-import io.reddart.pkcs.Pkcs7SigningContext;
 import io.reddart.pkcs.Pkcs9Attr;
-import io.reddart.pkcs.SigningContext;
 import io.reddart.util.IdUtil;
 
 import org.apache.pdfbox.Loader;
@@ -90,11 +88,11 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 
-public final class PDFSigVerifier extends PDFSigBase {
+public final class PdfSigVerifier extends PdfSigBase {
 
-    private Pkcs7SigningContext globalSigningContext;
+    private PdfSigningContext globalSigningContext;
 
-    public PDFSigVerifier(String pdfFileName) throws IOException {
+    public PdfSigVerifier(String pdfFileName) throws IOException {
 	super(pdfFileName);
     }
 
@@ -114,7 +112,7 @@ public final class PDFSigVerifier extends PDFSigBase {
      */
     private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
 	try {
-	    globalSigningContext = new Pkcs7SigningContext(pkcs7Bytes);
+	    globalSigningContext = new PdfSigningContext(pkcs7Bytes);
 	    final SignedData signedData = globalSigningContext.getSignedData();
 	    
 	    // parse digest algorithm
@@ -481,7 +479,7 @@ public final class PDFSigVerifier extends PDFSigBase {
     }
 
     public void sign() {
-	throw new RuntimeException("Use io.reddart.pdf.PDFSigCreator instead.");
+	throw new RuntimeException("Use io.reddart.pdf.PdfSigCreator instead.");
     }
 
     public static final void main(String[] args) throws Exception {
@@ -511,11 +509,11 @@ public final class PDFSigVerifier extends PDFSigBase {
 	    }
 	}
 	if (fileNames.isEmpty()) {
-	    throw new IllegalArgumentException("Usage: java PDFSigVerifier [--verbose] <file_name.pdf>");
+	    throw new IllegalArgumentException("Usage: java PdfSigVerifier [--verbose] <file_name.pdf>");
 	}
 
 	for (String fileName : fileNames) {
-	    (new PDFSigVerifier(fileName)).verify();
+	    (new PdfSigVerifier(fileName)).verify();
 	}
     }
 }
