@@ -35,7 +35,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Security;
 
+import io.reddart.pkcs.Pkcs7SigningContext;
 import io.reddart.pkcs.Pkcs9Attr;
+import io.reddart.pkcs.SigningContext;
+import io.reddart.util.IdUtil;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSArray;
@@ -70,9 +73,9 @@ import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.TBSCertificate;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DSA;
@@ -89,149 +92,10 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 
 public final class PDFSigVerifier extends PDFSigBase {
 
-    //////////// Implementing AttrVisitor ////////////
-    protected static class SignatureContext implements Pkcs9Attr.AttrVisitor {
+    private Pkcs7SigningContext globalSigningContext;
 
-	private byte[] messageDigest;
-	private Date signingTime;
-	private String contentType;
-	private ArrayList<X509CertificateHolder> certificates;
-	private String mdAlgorithm;
-	private String mdSignAlgorithm;
-	private byte[] idaaSigningCertificate;
-	private byte[] idaaSigningCertificateV2;
-	
-	public SignatureContext() {
-	    certificates = new ArrayList<>(10);
-	}
-
-	private static final byte[] copyBytes(byte[] src) {
-	    byte[] octets = new byte[src.length];
-	    System.arraycopy(src, 0, octets, 0, octets.length);
-	    return octets;
-	}
-
-	/////////////// Context Methods ///////////////////////////
-	public byte[] getMessageDigest() {
-	    return messageDigest;
-	}
-
-	/////////////// AttrVisitor Implementation ////////////////
-	@Override
-	public void setMessageDigest(byte[] md) {
-	    messageDigest = copyBytes(md);
-	}
-
-	@Override
-	public void setContentType(String type) {
-	    contentType = type;
-	}
-
-	@Override
-	public void setSigningTime(Date datetime) {
-	    signingTime = datetime;
-	}
-
-	@Override
-	public void addCertificate(X509CertificateHolder holder) {
-	    if (!certificates.contains(holder)) {
-		certificates.add(holder);
-	    }
-	}
-
-	@Override
-	public void setMdAlgorithm(String id) {
-	    final String mdId = getDigestAlgorithmId(id);
-	    if (mdId != null) {
-		mdAlgorithm = mdId;
-	    }
-	}
-
-	@Override
-	public void setMdSignAlgorithm(String id) {
-	    final String mdsId = getSignatureDigestId(id);
-	    if (mdsId != null) {
-		mdSignAlgorithm = mdsId;
-	    }
-	}
-
-	@Override
-	public void setIdaaSigningCertificate(byte[] certHash) {
-	    if (certHash != null) {
-		idaaSigningCertificate = copyBytes(certHash);
-	    }
-	}
-
-	@Override
-	public void setIdaaSigningCertificateV2(byte[] certHash) {
-	    if (certHash != null) {
-		idaaSigningCertificateV2 = copyBytes(certHash);
-	    }
-	}
-    }
-
-    private SignatureContext documentSignatureContext;
-    private SignatureContext timestampSignatureContext;
-    
     public PDFSigVerifier(String pdfFileName) throws IOException {
 	super(pdfFileName);
-	documentSignatureContext = new SignatureContext();
-	timestampSignatureContext = new SignatureContext();
-    }
-
-    /**
-     *  Parse PKCS7, as known as SignedData, and verify the signatre encoutered.
-     *
-     *  See details at: <a href="https:// www.rfc-editor.org/rfc/rfc3369#section-5.3">RFC 3369</a>
-     *  Or a more concise
-     *  <a href="https://www.itu.int/ITU-T/formal-language/itu-t/x/x420/1999/PKCS7.html">ASN.1 schema</a>
-     *
-     *  <pre>
-     *  SignedData ::= SEQUENCE {
-     *    version           Version,
-     *    digestAlgorithms  DigestAlgorithmIdentifiers,
-     *    contentInfo       ContentInfo,
-     *    certificates      [0]  CertificateSet OPTIONAL,
-     *    crls              [1]  CertificateRevocationLists OPTIONAL,
-     *    signerInfos       SignerInfos
-     *  }
-     *  <pre>
-     */
-    private static class GenericSignedContent {
-	private ASN1Sequence contentSequence;
-	private ContentInfo contentInfo;
-	private SignedData signedData;
-	
-	public GenericSignedContent(byte[] pkcs7bytes) throws IllegalArgumentException {
-	    try {
-		parseSignedData(pkcs7bytes);
-	    } catch (IOException e) {
-		throw new IllegalArgumentException("Invalid pkcs7 bytes: " + e.getMessage());
-	    }
-	}
-	private void parseSignedData(byte[] pkcs7bytes)
-	    throws IOException, IllegalArgumentException {
-	    final ASN1InputStream asn1is = new ASN1InputStream(new ByteArrayInputStream(pkcs7bytes));
-	    contentSequence = (ASN1Sequence) asn1is.readObject();
-	    
-	    if (!OID_SIGNED_DATA.equals(((ASN1ObjectIdentifier)
-                                         contentSequence.getObjectAt(0)).getId())) {
-		throw new IllegalArgumentException("Invalid PKCS7 data");
-	    }
-	    contentInfo = ContentInfo.getInstance(contentSequence);
-	    signedData = SignedData.getInstance(contentInfo.getContent());
-	    asn1is.close();
-	}
-
-	public ContentInfo asContentInfo() {
-	    return contentInfo;
-	}
-	public ASN1Sequence asSequence() {
-	    return contentSequence;
-	}
-	public SignedData getSignedData() {
-	    return signedData;
-	}
     }
 
     /**
@@ -248,14 +112,10 @@ public final class PDFSigVerifier extends PDFSigBase {
      *  }
      *  </pre>
      */
-    private static class GenericSignerInfo {}
-
-    private static class TsaSignerInfo extends GenericSignerInfo {}
-
     private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
 	try {
-	    final GenericSignedContent signedContent = new GenericSignedContent(pkcs7Bytes);
-	    final SignedData signedData = signedContent.getSignedData();
+	    globalSigningContext = new Pkcs7SigningContext(pkcs7Bytes);
+	    final SignedData signedData = globalSigningContext.getSignedData();
 	    
 	    // parse digest algorithm
 	    final ASN1Set digestAlgorithms = signedData.getDigestAlgorithms();
@@ -267,7 +127,7 @@ public final class PDFSigVerifier extends PDFSigBase {
 	    final String digestAlgoOid = ((ASN1ObjectIdentifier) algoSequence.getObjectAt(0)).getId();
 	    
 	    final String digestAlgoId =
-		getDigestAlgorithmId((ASN1ObjectIdentifier) algoSequence.getObjectAt(0));
+		IdUtil.getDigestAlgorithmId((ASN1ObjectIdentifier) algoSequence.getObjectAt(0));
 	    VLOG("PDF digest algorithm found: " + digestAlgoId);
     
 	    final byte[] plainDigest = calcMessageDigest(byteRanges, digestAlgoId);
@@ -305,7 +165,7 @@ public final class PDFSigVerifier extends PDFSigBase {
 		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter());
 	    }
 
-	    final String sigAlgoId = getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
+	    final String sigAlgoId = IdUtil.getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
 	    VLOG("Certificate signature algorithm recognized: " + sigAlgoId);
 	    final byte[] signatureBytes = certHolder.getSignature();
 	    debugByteArrayString("Signature of cert found", signatureBytes);
@@ -322,12 +182,12 @@ public final class PDFSigVerifier extends PDFSigBase {
 		sigAttrBytes = sigAttr.getEncoded();
 		
 		for (int i = 0; i < sigAttr.size(); ++i) {
-		    VLOG("Auth attr: " +
-			 Pkcs9Attr.getAndVisitInstance(sigAttr.getObjectAt(i), documentSignatureContext));
+		    VLOG("▸auth attr: " +
+			 Pkcs9Attr.getAndVisitInstance(sigAttr.getObjectAt(i), globalSigningContext));
 		}
 		// We can now verify the message digest in plain text first.
 		if (0 != Arrays.compare(plainDigest,
-					documentSignatureContext.getMessageDigest())) {
+					globalSigningContext.getMessageDigest())) {
 		    return false;
 		}
 		encDigestAlgoIndex++;
@@ -335,30 +195,11 @@ public final class PDFSigVerifier extends PDFSigBase {
 
 	    // UnauthenticatedAttributes is at the last.
 	    // unauthenticated attrs are the attributes that are not signed.
-	    ASN1Set tsSet = signerInfo.getUnauthenticatedAttributes();
-            if (tsSet != null) {
-		ASN1Set tsSignerDataSet = (ASN1Set) ((ASN1Sequence) tsSet.getObjectAt(0)).getObjectAt(1);
-		ASN1Sequence tsCertDataSeq = (ASN1Sequence) tsSignerDataSet.getObjectAt(0);
-
-		if (!OID_SIGNED_DATA.equals(((ASN1ObjectIdentifier) tsCertDataSeq.getObjectAt(0)).getId())) {
-		    WLOG("Invalid timestamp signed data");
-		} else {
-		    final SignedData tsSignedData = SignedData.getInstance
-			(((ASN1TaggedObject) tsCertDataSeq.getObjectAt(1)).getBaseObject());
-		    final ASN1Sequence tsObj  = (ASN1Sequence) ASN1Primitive.fromByteArray
-			(((ASN1OctetString) tsSignedData.getEncapContentInfo().getContent()).getOctets());
-		    VLOG("TS Time: " + ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime());
-		    //TODO(ejiang): implement TSA cert verficiation.
-		    SignerInfo tsSignerInfo = SignerInfo.getInstance(tsSignedData.getSignerInfos().getObjectAt(0));
-		    ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
-		    for (int i = 0; i < tsAttrSeq.size(); ++i) {
-			VLOG("Unauth attribute: " + Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i),
-										  timestampSignatureContext));
-		    }
-		    //VLOG("TS Signer auth: " + tsSignerInfo.getAuthenticatedAttributes());
-		    VLOG("TS Signer encrypted digest: " + tsSignerInfo.getEncryptedDigest().getOctets().length);
-		    VLOG("TS Digest Enc algorithm: " + tsSignerInfo.getDigestEncryptionAlgorithm().getAlgorithm());
-		    VLOG("TS Signer ID: " + tsSignerInfo.getSID().getId());
+	    ASN1Set unauthSet = signerInfo.getUnauthenticatedAttributes();
+	    if (unauthSet != null) {
+		for (int i = 0; i < unauthSet.size(); ++i) {
+		    VLOG("▸unauth attr: " +
+			 Pkcs9Attr.getAndVisitInstance(unauthSet.getObjectAt(i), globalSigningContext));
 		}
 	    }
 		    
@@ -388,8 +229,8 @@ public final class PDFSigVerifier extends PDFSigBase {
 	    
 	    
 	    // Extract Possible PKCS7 RSA Data
-	    if (signedContent.asSequence().size() > 2) {
-		ASN1Sequence dataSeq = (ASN1Sequence) signedContent.asSequence().getObjectAt(2);
+	    if (globalSigningContext.asSequence().size() > 2) {
+		ASN1Sequence dataSeq = (ASN1Sequence) globalSigningContext.asSequence().getObjectAt(2);
 		if (dataSeq.size() <= 1) {
 		    throw new IllegalArgumentException("Invalid cipher data presented in PKCS7 DER");
 		}
@@ -494,8 +335,8 @@ public final class PDFSigVerifier extends PDFSigBase {
 	     : pubKeyInfo.parsePublicKey());
 	byte[] decryptedDigest = null;
 	byte[] sigDigestBytes = calcMessageDigest
-	    (tbsCert.getEncoded(), getSignatureDigestId(certHolder.getSignatureAlgorithm().
-							getAlgorithm()));
+	    (tbsCert.getEncoded(), IdUtil.getSignatureDigestId(certHolder.getSignatureAlgorithm().
+					    	               getAlgorithm()));
 	final boolean sameSubject = certHolder.getSubject().equals(certHolder.getIssuer());
 	CipherParameters pubKeyParams = null;
 	
@@ -649,9 +490,13 @@ public final class PDFSigVerifier extends PDFSigBase {
 	String pkcs12password = null;
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+	_WARNING = true;
 	for (int i = 0; i < args.length; ++i) {
 	    if ("--verbose".equals(args[i])) {
 		_VERBOSE = true;
+		continue;
+	    } else if ("--nowarning".equals(args[i])) {
+		_WARNING = false;
 		continue;
 	    } else if ("--pkcs12".equals(args[i])) {
 		pkcs12file = new File(args[++i]);

@@ -32,92 +32,20 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.cert.X509CertificateHolder;
 // import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 public class Pkcs9Attr implements PkcsIdentifiers {
 
-    private static final String ATTR_OID = "1.2.840.113549.1.9.";
-    
-    static final Map<String, Class<? extends Pkcs9Attr>> AttrMap;
-    static {
-	Map<String, Class<? extends Pkcs9Attr>> $ = AttrMap = new HashMap<>(60);
-	$.put( "1",      EmailAddress.class);
-	$.put( "2",      UnstructuredName.class);
-	$.put( "3",      ContentType.class);
-	$.put( "4",      MessageDigest.class);
-	$.put( "5",      SigningTime.class);
-	$.put( "6",      CounterSignature.class);
-	$.put( "7",      ChallengePassword.class);
-	$.put( "8",      UnstructuredAddress.class);
-	$.put( "9",      ExtCertAttributes.class);
-	$.put("13",      SigningDescription.class);
-	$.put("14",      ExtensionRequest.class);
-	$.put("15",      SMimeCapabilities.class);
-	$.put("15.1",    PreferSignedData.class);
-	$.put("15.2",    CanNotDecryptAny.class);
-	$.put("15.3",    SMimeCapabilitiesVersions.class);
-	$.put("16",      IdSMime.class);
-	$.put("16.2",    Idaa.class);
-	$.put("16.2.1",  IdaaReceiptRequest.class);
-	$.put("16.2.4",  IdaaContentHint.class);
-	$.put("16.2.5",  IdaaMsgSigDigest.class);
-	$.put("16.2.10", IdaaContentReference.class);
-	$.put("16.2.11", IdaaEncrypKeyPref.class);
-	$.put("16.2.12", IdaaSigningCertificate.class);
-	$.put("16.2.14", IdaaSignatureTimestampToken.class);
-	$.put("16.2.15", IdaaEtsSigPolicyId.class);
-	$.put("16.2.16", IdaaEtsCommitmentType.class);
-	$.put("16.2.17", IdaaEtsSignerLocation.class);
-	$.put("16.2.18", IdaaEtsSignerAttr.class);
-	$.put("16.2.19", IdaaEtsOtherSigCert.class);
-	$.put("16.2.20", IdaaEtsContentTimestamp.class);
-	$.put("16.2.21", IdaaEtsCertificateRefs.class);
-	$.put("16.2.22", IdaaEtsRevocationRefs.class);
-	$.put("16.2.23", IdaaEtsCertValues.class);
-	$.put("16.2.24", IdaaEtsRevocationValues.class);
-	$.put("16.2.25", IdaaEtsEscTimestamp.class);
-	$.put("16.2.26", IdaaEtsCertCrlTimestamp.class);
-	$.put("16.2.27", IdaaEtsArchiveTimestamp.class);
-	$.put("16.2.37", IdaaDecryptKeyId.class);
-	$.put("16.2.38", IdaaImplCryptoAlgs.class);
-	$.put("16.2.40", IdaaCommunityIdentifiers.class);
-	$.put("16.2.43", IdaaImplCompressAlgs.class);
-	$.put("16.2.46", IdaaBinarySigningTime.class);
-	$.put("16.2.47", IdaaSigningCertificateV2.class);
-	$.put("16.2.54", IdaaAsymmDecryptKeyId.class);
-	$.put("20",      FriendlyName.class);
-	$.put("21",      LocalKeyId.class);
-	$.put("22",      X509CertType.class);
-	$.put("22.1",    X509Certificate.class);
-	$.put("22.2",    SdsiCertificate.class);
-	$.put("23",      CrlTypes.class);
-	$.put("52",      IdaaCmsAlgorithmProtect.class);	
-    }
-
-    /**
-     * Visitor pattern based, provided by the called to capture the values of
-     * the attritube parsed.
-     */
-    public interface AttrVisitor {
-	public void setMessageDigest(byte[] md);
-	public void setContentType(String type);
-	public void setSigningTime(Date datetime);
-	public void addCertificate(X509CertificateHolder holder);
-	public void setMdAlgorithm(String id);
-	public void setMdSignAlgorithm(String id);
-	public void setIdaaSigningCertificate(byte[] certHash);
-	public void setIdaaSigningCertificateV2(byte[] certHash);
-    }
-
     /**
      * Pkcs9 Exception, an extension of IllegalArgumentException
      */
-    public static class Pkcs9AttrException extends IllegalArgumentException {
-	public Pkcs9AttrException(String msg) {
+    public static class Pkcs9ParseException extends IllegalArgumentException {
+	public Pkcs9ParseException(String msg) {
 	    super(msg);
 	}
-	public Pkcs9AttrException(String msg, Throwable cause) {
+	public Pkcs9ParseException(String msg, Throwable cause) {
 	    super(msg, cause);
 	}
     }
@@ -134,14 +62,14 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
         @Override
         public boolean parse(ASN1Sequence seq)
-            throws Pkcs9AttrException {
+            throws Pkcs9ParseException {
             final ASN1OctetString mdObj = getAttrValue(seq, ASN1OctetString.class);
             payload = mdObj.getOctets();
             return true;
         }
 
 	@Override
-        public abstract boolean visit(AttrVisitor visitor) throws Pkcs9AttrException;
+        public abstract boolean visit(SigningContext context) throws Pkcs9ParseException;
 
         @Override
         public String toString() {
@@ -163,9 +91,10 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	friendlyAttrName.intern();
     }
 
-    protected <T extends ASN1Encodable> T getAttrValue(ASN1Sequence seq, Class<T> dataType) {
+    protected <T extends ASN1Encodable> T getAttrValue(ASN1Sequence seq, Class<T> dataType)
+	throws Pkcs9ParseException {
 	if (seq.size() != 2) {
-	    throw new Pkcs9AttrException("Invalid attribute value sequence");
+	    throw new Pkcs9ParseException("Invalid attribute value sequence");
 	}
 	final ASN1Encodable valueSetObj = seq.getObjectAt(1);
 	if (valueSetObj instanceof ASN1Set && ((ASN1Set) valueSetObj).size() == 1) {
@@ -173,17 +102,17 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    try {
 		return dataType.cast(valueObj);
 	    } catch (ClassCastException e) {
-		throw new Pkcs9AttrException("Invalid attribute value data type", e);
+		throw new Pkcs9ParseException("Invalid attribute value data type", e);
 	    }
 	} else {
-	    throw new Pkcs9AttrException("Invalid attribute value object");
+	    throw new Pkcs9ParseException("Invalid attribute value object");
 	}
     }
 
     protected <T extends ASN1Encodable> T drillDownUntil(ASN1Sequence seq, Class<T> dataType)
-	throws Pkcs9AttrException {
+	throws Pkcs9ParseException {
 	if (seq.size() != 2) {
-	    throw new Pkcs9AttrException("Invalid attribute value sequence");
+	    throw new Pkcs9ParseException("Invalid attribute value sequence");
 	}
 	ASN1Encodable obj = seq.getObjectAt(1);
 	while (true) {
@@ -195,19 +124,19 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 		try {
 		    return dataType.cast(obj);
 		} catch (ClassCastException e) {
-		    throw new Pkcs9AttrException("Invalid attribute value data type", e);
+		    throw new Pkcs9ParseException("Invalid attribute value data type", e);
 		}
 	    }
 	}
     }
 
     // subclass implement this and call back parse the given sequence.
-    public boolean parse(ASN1Sequence seq) throws Pkcs9AttrException {
+    public boolean parse(ASN1Sequence seq) throws Pkcs9ParseException {
 	return false;
     }
     
-    // subclass implement this and call back to populate visitor's properties.
-    public boolean visit(AttrVisitor visitor) throws Pkcs9AttrException {
+    // subclass implement this and call back to populate context's properties.
+    public boolean visit(SigningContext context) throws Pkcs9ParseException {
 	return false;
     }
 
@@ -218,11 +147,11 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
     public static Pkcs9Attr getInstance(ASN1Encodable attr) {
 	return getAndVisitInstance(attr,
-				   null);  // visitor
+				   null);  // context
     }
     
-    public static Pkcs9Attr getAndVisitInstance(ASN1Encodable attr, AttrVisitor visitor)
-	throws Pkcs9AttrException {
+    public static Pkcs9Attr getAndVisitInstance(ASN1Encodable attr, SigningContext context)
+	throws Pkcs9ParseException {
 	if (!(attr instanceof ASN1Sequence)) {
 	    throw new IllegalArgumentException("Invalid attribute data type: " +
 					       attr.getClass());
@@ -248,12 +177,12 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	try {
 	    final Pkcs9Attr attrObj = attrClass.getDeclaredConstructor().newInstance();
 	    if (attrObj.parse((ASN1Sequence) attr)) {
-		attrObj.visit(visitor);
+		attrObj.visit(context);
 	    }
 	    return attrObj;
 	} catch (InstantiationException | IllegalAccessException |
 		 NoSuchMethodException | InvocationTargetException e) {
-	    throw new Pkcs9AttrException("Unsupported attribute", e);
+	    throw new Pkcs9ParseException("Unsupported attribute", e);
 	}
     }
 
@@ -278,6 +207,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
     // {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) contentType(3)}
     // Example: [1.2.840.113549.1.9.3, [1.2.840.113549.1.7.1]]
+    //
+    // id-ct-TSTInfo  OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+    //   us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) ct(1) 4}
     protected static class ContentType extends Pkcs9Attr {
 
 	private String contentType;
@@ -288,7 +220,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	
 	@Override
 	public boolean parse(ASN1Sequence seq)
-	    throws Pkcs9AttrException {
+	    throws Pkcs9ParseException {
 	    final ASN1ObjectIdentifier contentTypeObj = getAttrValue(seq, ASN1ObjectIdentifier.class);
 	    final String oid = contentTypeObj.getId();
 	    switch (oid) {
@@ -305,9 +237,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	}
 
 	@Override
-	public boolean visit(AttrVisitor visitor) {
-	    if (visitor != null && contentType != null) {
-		visitor.setContentType(contentType);
+	public boolean visit(SigningContext context) {
+	    if (context != null && contentType != null) {
+		context.setContentType(contentType);
 		return true;
 	    }
 	    return false;
@@ -326,9 +258,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    super("Message Digest");
 	}
 	@Override
-	public boolean visit(AttrVisitor visitor) {
-	    if (visitor != null && payload != null) {
-		visitor.setMessageDigest(payload);
+	public boolean visit(SigningContext context) {
+	    if (context != null && payload != null) {
+		context.setMessageDigest(payload);
 		return true;
 	    }
 	    return false;
@@ -346,20 +278,20 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
 	@Override
 	public boolean parse(ASN1Sequence seq)
-	    throws Pkcs9AttrException {
+	    throws Pkcs9ParseException {
 	    final ASN1UTCTime stObj = getAttrValue(seq, ASN1UTCTime.class);
 	    try {
 		signingTime = stObj.getDate();
 		return true;
 	    } catch (ParseException e) {
-		throw new Pkcs9AttrException("Invalid data presentation", e);
+		throw new Pkcs9ParseException("Invalid data presentation", e);
 	    }
 	}
 
 	@Override
-	public boolean visit(AttrVisitor visitor) {
-	    if (visitor != null && signingTime != null) {
-		visitor.setSigningTime(signingTime);
+	public boolean visit(SigningContext context) {
+	    if (context != null && signingTime != null) {
+		context.setSigningTime(signingTime);
 		return true;
 	    }
 	    return false;
@@ -476,23 +408,96 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	}
 
 	@Override
-	public boolean parse(ASN1Sequence seq) throws Pkcs9AttrException {
+	public boolean parse(ASN1Sequence seq) throws Pkcs9ParseException {
 	    payload = (drillDownUntil(seq, ASN1OctetString.class)).getOctets();
 	    return true;
 	}
 
         @Override
-        public boolean visit(AttrVisitor visitor) {
-            if (visitor != null && payload != null) {
-                visitor.setIdaaSigningCertificate(payload);
+        public boolean visit(SigningContext context) {
+            if (context != null && payload != null) {
+                context.setIdaaSigningCertificate(payload);
                 return true;
             }
             return false;
         }
     }
 
-    // 1.2.840.113549.1.9.16.2.14
+    /**
+     * TSTInfo ::= SEQUENCE  {
+     *  version                      INTEGER  { v1(1) },
+     *  policy                       TSAPolicyId,
+     *   messageImprint               MessageImprint,
+     *     -- MUST have the same value as the similar field in
+     *     -- TimeStampReq
+     *  serialNumber                 INTEGER,
+     *   -- Time-Stamping users MUST be ready to accommodate integers
+     *   -- up to 160 bits.
+     *  genTime                      GeneralizedTime,
+     *  accuracy                     Accuracy                 OPTIONAL,
+     *  ordering                     BOOLEAN             DEFAULT FALSE,
+     *  nonce                        INTEGER                  OPTIONAL,
+     *   -- MUST be present if the similar field was present
+     *   -- in TimeStampReq.  In that case it MUST have the same value.
+     *  tsa                          [0] GeneralName          OPTIONAL,
+     *  extensions                   [1] IMPLICIT Extensions  OPTIONAL }
+     *
+     * 1.2.840.113549.1.9.16.2.14
+     */
     protected static class IdaaSignatureTimestampToken extends Pkcs9Attr {
+	private SignedData signedData;
+
+	protected IdaaSignatureTimestampToken() {
+	    super("Signature Timestamp Token");
+	}
+	
+	@Override
+	public boolean parse(ASN1Sequence seq) throws Pkcs9ParseException {
+	    final ASN1Sequence tokenSeq = getAttrValue(seq, ASN1Sequence.class);
+	    //System.err.println("tokenSeq(1): " + tokenSeq.getObjectAt(1));
+	    ASN1Encodable obj = tokenSeq.getObjectAt(1);
+	    if (obj instanceof ASN1TaggedObject) {
+		signedData = SignedData.getInstance(((ASN1TaggedObject) obj).getBaseObject());
+		return true;
+	    }
+	    return false;
+	}
+
+        @Override
+        public boolean visit(SigningContext context) {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+	    StringBuffer sb = new StringBuffer(100);
+            sb.append(super.toString()).append(": ")
+		.append("v" + signedData.getVersion() + " ")
+		.append("Certificate(" + ((signedData.getCertificates() != null) ?
+					  signedData.getCertificates().size() : 0) + ") ")
+		.append("SignerInfos(" + ((signedData.getSignerInfos() != null) ?
+					  signedData.getSignerInfos().size() : 0) + ")");
+	    return sb.toString();
+	}
+
+	private void parseToken() {
+	    /*
+	    final ASN1Sequence tsObj  = (ASN1Sequence) ASN1Primitive.fromByteArray
+		(((ASN1OctetString) tsSignedData.getEncapContentInfo().getContent()).getOctets());
+	    System.out.println("TS Time: " + ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime());
+	    //TODO(ejiang): implement TSA cert verficiation.
+	    SignerInfo tsSignerInfo = SignerInfo.getInstance(tsSignedData.getSignerInfos().getObjectAt(0));
+	    ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
+	    for (int i = 0; i < tsAttrSeq.size(); ++i) {
+		System.out.println("▸unauth attribute: " + Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i),
+											 timestampSignatureContext));
+	    }
+	    //System.out.println("TS Signer auth: " + tsSignerInfo.getAuthenticatedAttributes());
+	    System.out.println("TS Signer encrypted digest: " + tsSignerInfo.getEncryptedDigest().getOctets().length);
+	    System.out.println("TS Digest Enc algorithm: " + tsSignerInfo.getDigestEncryptionAlgorithm().getAlgorithm());
+	    System.out.println("TS Signer ID: " + tsSignerInfo.getSID().getId());
+	    */
+	}
     }
 
     //////////////// Id-aa ETS /////////////
@@ -574,9 +579,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    super("Id-aa Signing Certificate v2");
 	}
 	@Override
-        public boolean visit(AttrVisitor visitor) {
-            if (visitor != null && payload != null) {
-                visitor.setIdaaSigningCertificateV2(payload);
+        public boolean visit(SigningContext context) {
+            if (context != null && payload != null) {
+                context.setIdaaSigningCertificateV2(payload);
                 return true;
             }
             return false;
@@ -643,7 +648,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
 	@Override
         public boolean parse(ASN1Sequence seq)
-            throws Pkcs9AttrException {
+            throws Pkcs9ParseException {
 	    final ASN1Sequence algoSeq = getAttrValue(seq, ASN1Sequence.class);
 	    if (algoSeq.size() == 0) {
 		return false;
@@ -675,9 +680,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
         }
 
         @Override
-        public boolean visit(AttrVisitor visitor) {
-	    visitor.setMdAlgorithm(mdAlgorithm);
-	    visitor.setMdSignAlgorithm(mdSignAlgorithm);
+        public boolean visit(SigningContext context) {
+	    context.setMdAlgorithm(mdAlgorithm);
+	    context.setMdSignAlgorithm(mdSignAlgorithm);
 	    return true;
         }
 
@@ -686,4 +691,62 @@ public class Pkcs9Attr implements PkcsIdentifiers {
             return super.toString() + ": " + mdAlgorithm + "/" + mdSignAlgorithm;
         }
     }
+
+    private static final String ATTR_OID = "1.2.840.113549.1.9.";
+    
+    static final Map<String, Class<? extends Pkcs9Attr>> AttrMap;
+    static {
+	Map<String, Class<? extends Pkcs9Attr>> $ = AttrMap = new HashMap<>(60);
+	$.put( "1",      EmailAddress.class);
+	$.put( "2",      UnstructuredName.class);
+	$.put( "3",      ContentType.class);
+	$.put( "4",      MessageDigest.class);
+	$.put( "5",      SigningTime.class);
+	$.put( "6",      CounterSignature.class);
+	$.put( "7",      ChallengePassword.class);
+	$.put( "8",      UnstructuredAddress.class);
+	$.put( "9",      ExtCertAttributes.class);
+	$.put("13",      SigningDescription.class);
+	$.put("14",      ExtensionRequest.class);
+	$.put("15",      SMimeCapabilities.class);
+	$.put("15.1",    PreferSignedData.class);
+	$.put("15.2",    CanNotDecryptAny.class);
+	$.put("15.3",    SMimeCapabilitiesVersions.class);
+	$.put("16",      IdSMime.class);
+	$.put("16.2",    Idaa.class);
+	$.put("16.2.1",  IdaaReceiptRequest.class);
+	$.put("16.2.4",  IdaaContentHint.class);
+	$.put("16.2.5",  IdaaMsgSigDigest.class);
+	$.put("16.2.10", IdaaContentReference.class);
+	$.put("16.2.11", IdaaEncrypKeyPref.class);
+	$.put("16.2.12", IdaaSigningCertificate.class);
+	$.put("16.2.14", IdaaSignatureTimestampToken.class);
+	$.put("16.2.15", IdaaEtsSigPolicyId.class);
+	$.put("16.2.16", IdaaEtsCommitmentType.class);
+	$.put("16.2.17", IdaaEtsSignerLocation.class);
+	$.put("16.2.18", IdaaEtsSignerAttr.class);
+	$.put("16.2.19", IdaaEtsOtherSigCert.class);
+	$.put("16.2.20", IdaaEtsContentTimestamp.class);
+	$.put("16.2.21", IdaaEtsCertificateRefs.class);
+	$.put("16.2.22", IdaaEtsRevocationRefs.class);
+	$.put("16.2.23", IdaaEtsCertValues.class);
+	$.put("16.2.24", IdaaEtsRevocationValues.class);
+	$.put("16.2.25", IdaaEtsEscTimestamp.class);
+	$.put("16.2.26", IdaaEtsCertCrlTimestamp.class);
+	$.put("16.2.27", IdaaEtsArchiveTimestamp.class);
+	$.put("16.2.37", IdaaDecryptKeyId.class);
+	$.put("16.2.38", IdaaImplCryptoAlgs.class);
+	$.put("16.2.40", IdaaCommunityIdentifiers.class);
+	$.put("16.2.43", IdaaImplCompressAlgs.class);
+	$.put("16.2.46", IdaaBinarySigningTime.class);
+	$.put("16.2.47", IdaaSigningCertificateV2.class);
+	$.put("16.2.54", IdaaAsymmDecryptKeyId.class);
+	$.put("20",      FriendlyName.class);
+	$.put("21",      LocalKeyId.class);
+	$.put("22",      X509CertType.class);
+	$.put("22.1",    X509Certificate.class);
+	$.put("22.2",    SdsiCertificate.class);
+	$.put("23",      CrlTypes.class);
+	$.put("52",      IdaaCmsAlgorithmProtect.class);	
+    }    
 }

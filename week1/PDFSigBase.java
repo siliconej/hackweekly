@@ -40,6 +40,7 @@ import java.security.Security;
 import java.security.cert.CertificateException;
 
 import io.reddart.pkcs.PkcsIdentifiers;
+import io.reddart.util.IdUtil;
 
 import org.apache.pdfbox.cos.COSArray;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -95,42 +96,6 @@ import org.bouncycastle.crypto.util.DigestFactory;
 
 public abstract class PDFSigBase implements PkcsIdentifiers {
     
-    private static final Map<String, String> _DigestAlgorithmIdMap =
-	Stream.of(new String[][] {
-		{ OID_ALGO_SHA256,    "SHA-256"   },
-		{ OID_ALGO_SHA384,    "SHA-384"   },
-		{ OID_ALGO_SHA512,    "SHA-512"   },
-		{ OID_ALGO_SHA1,      "SHA-1"     },
-		{ OID_ALGO_MD5,       "MD5"       },
-	        { OID_ALGO_RIPEMD160, "RIPEMD160" },
-	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
-    
-    private static final Map<String, String> _SignatureAlgorithmIdMap =
-        Stream.of(new String[][] {
-                { OID_PKCS_RSA_SHA256,   "rsaWithSHA256" },
-                { OID_PKCS_RSA_SHA384,   "rsaWithSHA384" },
-                { OID_PKCS_RSA_SHA512,   "rsaWithSHA512" },
-                { OID_PKCS_RSA_SHA1,     "rsaWithSHA1"   },
-		{ OID_PKCS_RSA_MD5,      "rsaWithMD5"    },
-		{ OID_PKCS_DSA_SHA1,     "dsaWithSHA1"   },
-		{ OID_PKCS_ECDSA_SHA256, "ecdsaWithSHA256" },
-		{ OID_PKCS_ECDSA_SHA384, "ecdsaWithSHA384" },
-		{ OID_PKCS_ECDSA_SHA512, "ecdsaWithSHA512" },
-            }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
-
-    private static final Map<String, String> _SignatureDigestIdMap =
-        Stream.of(new String[][] {
-                { OID_PKCS_RSA_SHA256,   "SHA-256" },
-                { OID_PKCS_RSA_SHA384,   "SHA-384" },
-                { OID_PKCS_RSA_SHA512,   "SHA-512" },
-                { OID_PKCS_RSA_SHA1,     "SHA-1"   },
-		{ OID_PKCS_RSA_MD5,      "MD5"     },
-		{ OID_PKCS_DSA_SHA1,     "SHA-1"   },
-		{ OID_PKCS_ECDSA_SHA256, "SHA-256" },
-		{ OID_PKCS_ECDSA_SHA384, "SHA-384" },
-		{ OID_PKCS_ECDSA_SHA512, "SHA-512" },
-            }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
-
     private enum CipherType {
 	AES, DES, EDE
     }
@@ -334,6 +299,7 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
 
     protected File _pdfFile;
     protected static boolean _VERBOSE;
+    protected static boolean _WARNING;
     private static Map<X500Name, X509CertificateHolder> _certBags;
 
     public PDFSigBase(String pdfFileName) throws IOException {
@@ -347,7 +313,9 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
     }
 
     protected static final void WLOG(String log) {
-	System.out.println("\u001B[35mWARNING: " + log + "\u001B[0m");
+	if (_WARNING) {
+	    System.out.println("\u001B[35mWARNING: " + log + "\u001B[0m");
+	}
     }
 
     protected static final void FLOG(String log, Exception e) {
@@ -499,48 +467,6 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
 	}
     }
 
-    protected static final String getDigestAlgorithmId(ASN1ObjectIdentifier oid)
-	throws IllegalArgumentException {
-	return getDigestAlgorithmId(oid.getId());
-    }
-
-    protected static final String getDigestAlgorithmId(String oid)
-	throws IllegalArgumentException {
-	final String id = _DigestAlgorithmIdMap.get(oid);
-	if (id == null) {
-	    throw new IllegalArgumentException("Unsupported digest algorithm: " + oid);
-	}
-	return id;
-    }
-
-    protected static final String getSignatureAlgorithmId(ASN1ObjectIdentifier oid)
-	throws IllegalArgumentException {
-	return getSignatureAlgorithmId(oid.getId());
-    }
-
-    protected static final String getSignatureAlgorithmId(String oid)
-	throws IllegalArgumentException {
-	final String id = _SignatureAlgorithmIdMap.get(oid);
-	if (id == null) {
-	    WLOG("Unknown cert signature algorithm found: " + oid);
-	}
-	return id;
-    }
-
-    protected static final String getSignatureDigestId(ASN1ObjectIdentifier oid)
-	throws IllegalArgumentException {
-	return getSignatureDigestId(oid.getId());
-    }
-
-    protected static final String getSignatureDigestId(String oid)
-	throws IllegalArgumentException {
-	final String id = _SignatureDigestIdMap.get(oid);
-	if (id == null) {
-	    throw new IllegalArgumentException("Unsupported signature digest algorithm: " + oid);
-	}
-	return id;
-    }
-
     protected byte[] getCOSBytesInRange(COSArray byteRanges) {
 	FileInputStream fis = null;
 	try {
@@ -603,7 +529,7 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
 	    certSignature = root.getSignature();
 	    sigDigestBytes =
 		calcMessageDigest(root.toASN1Structure().getTBSCertificate().getEncoded(),
-				  getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
+				  IdUtil.getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
 	} while ((--maxDepth) > 0);
 	return false;
     }
@@ -641,7 +567,7 @@ public abstract class PDFSigBase implements PkcsIdentifiers {
     protected static final boolean verifyMac(AlgorithmIdentifier digestObject, byte[] data,
 					     byte[] md, String pass, ASN1Sequence macSeq)
 	    throws NoSuchAlgorithmException {
-	final String digestId = getDigestAlgorithmId(digestObject.getAlgorithm());
+	final String digestId = IdUtil.getDigestAlgorithmId(digestObject.getAlgorithm());
 	final PBEParamsHelper digestHelper = new PBEParamsHelper(digestId,
 								 true);  // mac only
 	if (digestHelper == null) {
