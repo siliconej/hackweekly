@@ -639,7 +639,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
     protected static class IdaaCmsAlgorithmProtect extends Pkcs9Attr {
 
 	private String mdAlgorithm;
-	private String mdSignAlgorithm;
+	private String mdSigningAlgorithm;
 	private String macAlgorithm;  // not implemented yet.
 
 	protected IdaaCmsAlgorithmProtect() {
@@ -669,10 +669,10 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 		if (mdsObj instanceof ASN1Sequence) {
 		    final ASN1Sequence mdsSeq = (ASN1Sequence) mdsObj;
 		    if (mdsSeq.size() > 0 && (mdsSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {
-			mdSignAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(0)).getId();
+			mdSigningAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(0)).getId();
 		    }
 		    if (mdsSeq.size() > 1 && (mdsSeq.getObjectAt(1) instanceof ASN1ObjectIdentifier)) {
-			mdSignAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(1)).getId();
+			macAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(1)).getId();
 		    }
 		}
 	    }
@@ -681,14 +681,14 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
         @Override
         public boolean visit(SigningContext context) {
-	    context.setMdAlgorithm(mdAlgorithm);
-	    context.setMdSignAlgorithm(mdSignAlgorithm);
+	    context.setIdaaMdAlgorithm(mdAlgorithm);
+	    context.setIdaaMdSigningAlgorithm(mdSigningAlgorithm);
 	    return true;
         }
 
         @Override
         public String toString() {
-            return super.toString() + ": " + mdAlgorithm + "/" + mdSignAlgorithm;
+            return super.toString() + ": " + mdAlgorithm + "/" + mdSigningAlgorithm;
         }
     }
 

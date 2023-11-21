@@ -95,7 +95,7 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
 
 public abstract class PdfSigBase implements PkcsIdentifiers {
-    
+
     private enum CipherType {
 	AES, DES, EDE
     }
@@ -292,10 +292,6 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		{ "1.2.840.113549.2.10", "hmacWithSHA384" },
 		{ "1.2.840.113549.2.11", "hmacWithSHA512" },
 	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
-
-    protected enum AsymmetricCipherType {
-	RSA, DSA, ECDSA
-    }
 
     protected File _pdfFile;
     protected static boolean _VERBOSE;
@@ -528,8 +524,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    issuer = root.getIssuer();
 	    certSignature = root.getSignature();
 	    sigDigestBytes =
-		calcMessageDigest(root.toASN1Structure().getTBSCertificate().getEncoded(),
-				  IdUtil.getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
+		PdfSigningContext.calculateMessageDigest
+		(root.toASN1Structure().getTBSCertificate().getEncoded(),
+		 IdUtil.getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
 	} while ((--maxDepth) > 0);
 	return false;
     }
@@ -605,32 +602,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         return outputBlock;
     }
 
-    protected byte[] calcMessageDigest(COSArray byteRanges, String hashAlgorithm) {
-	try {
-	    final byte[] cosBuffer = getCOSBytesInRange(byteRanges);
-	    if (cosBuffer == null) {
-		throw new IOException("invalid cos bytes defined by ranges");
-	    }
-	    return calcMessageDigest(cosBuffer, hashAlgorithm);
-	} catch (IOException e) {	
-	    FLOG("Failed to calculate message digest", e);
-	}
-	return null;
-    }
-
-    protected static byte[] calcMessageDigest(byte[] buffer, String hashAlgorithm) {
-	try {
-	    final MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm);
-	    final byte[] plainDigest = messageDigest.digest(buffer);
-	    return plainDigest;
-	} catch (NoSuchAlgorithmException e) {
-	    FLOG("Failed to calculate message digest", e);
-	}
-	return null;
-    }
-
     protected static void loadCertBags(ASN1Primitive rootPrim, String password)
 	throws NoSuchAlgorithmException, InvalidCipherTextException, IOException {
+
 	/////// parse wrappers ///////
 	final ASN1Sequence pkcs5Seq = (ASN1Sequence) ((ASN1Sequence) rootPrim).getObjectAt(0);
 	if (!verifySequenceOid(OID_CTYPE_ENC_DATA, pkcs5Seq.getObjectAt(0))) {

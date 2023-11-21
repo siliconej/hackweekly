@@ -24,7 +24,11 @@ import io.reddart.util.IdUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +37,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
@@ -76,15 +81,18 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     //////////// Implementing SigningContext ////////////
-    private String mdAlgorithm;
-    private String mdSignAlgorithm;
+    private String idaaMdAlgorithm;
+    private String idaaMdSigningAlgorithm;
     private byte[] messageDigest;
     private byte[] idaaSigningCertificate;
     private byte[] idaaSigningCertificateV2;
     private Date signingTime;
     private String contentType;
-    private ArrayList<X509CertificateHolder> certificates;
+    private Map<BigInteger, Certificate> certificates;
     private Map<String, SigningContext> nestedSigningContext;
+    private String mdAlgorithmId;
+    private String mdSigningAlgorithmId;
+    private BigInteger signerId;
 
     /////////////// SigningContext Implementation ////////////////
     @Override
@@ -98,24 +106,44 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
+    public String getContentType() {
+	return contentType;
+    }
+
+    @Override
     public void setSigningTime(Date datetime) {
 	signingTime = datetime;
     }
 
     @Override
-    public void setMdAlgorithm(String id) {
+    public Date getSigningTime() {
+	return (Date) signingTime.clone();
+    }
+
+    @Override
+    public void setIdaaMdAlgorithm(String id) {
 	final String mdId = IdUtil.getDigestAlgorithmId(id);
 	if (mdId != null) {
-	    mdAlgorithm = mdId;
+	    idaaMdAlgorithm = mdId;
 	}
     }
 
     @Override
-    public void setMdSignAlgorithm(String id) {
+    public String getIdaaMdAlgorithm() {
+	return idaaMdAlgorithm;
+    }
+
+    @Override
+    public void setIdaaMdSigningAlgorithm(String id) {
 	final String mdsId = IdUtil.getSignatureDigestId(id);
 	if (mdsId != null) {
-	    mdSignAlgorithm = mdsId;
+	    idaaMdSigningAlgorithm = mdsId;
 	}
+    }
+
+    @Override
+    public String getIdaaMdSigningAlgorithm() {
+	return idaaMdSigningAlgorithm;
     }
 
     @Override
@@ -133,12 +161,77 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
-    public void addCertificate(X509CertificateHolder holder) {
-	if (!certificates.contains(holder)) {
-	    certificates.add(holder);
+    public void setMdAlgorithm(String id) {
+	if (id != null) {
+	    mdAlgorithmId = id;
 	}
     }
 
+    @Override
+    public String getMdAlgorithm() {
+	return mdAlgorithmId;
+    }
+	
+    @Override
+    public String getDerivedMdName() {
+	return IdUtil.getDigestAlgorithmId(mdAlgorithmId);
+    }
+
+    @Override
+    public void setMdSigningAlgorithm(String id) {
+	if (id != null) {
+	    mdSigningAlgorithmId = id;
+	}
+    }
+
+    @Override
+    public String getMdSigningAlgorithm() {
+	return mdSigningAlgorithmId;
+    }
+
+    @Override
+    public AsymmetricCipherType getDerivedCipherType() {
+	if (OID_CIPHER_RSA.equals(mdSigningAlgorithmId) ||
+	    OID_PKCS_RSA_SHA256.equals(mdSigningAlgorithmId) ||
+	    OID_PKCS_RSA_SHA384.equals(mdSigningAlgorithmId) ||
+	    OID_PKCS_RSA_SHA512.equals(mdSigningAlgorithmId)) {
+	    return AsymmetricCipherType.RSA;
+	} else if (OID_CIPHER_DSA.equals(mdSigningAlgorithmId)) {
+	    return AsymmetricCipherType.DSA;
+	} else if (OID_CIPHER_ECDSA.equals(mdSigningAlgorithmId)) {
+	    return AsymmetricCipherType.ECDSA;
+	}
+	return null;
+    }
+
+    @Override
+    public void setSignerId(BigInteger id) {
+        if (id != null) {
+            this.signerId = id;
+        }
+    }
+
+    @Override
+    public BigInteger getSignerId() {
+        return signerId;
+    }
+
+    @Override
+    public void addCertificate(Certificate cert) {
+	final BigInteger sn = cert.getSerialNumber().getValue();
+	if (!certificates.containsKey(signerId)) {
+	    certificates.put(sn, cert);
+	}
+    }
+
+    @Override
+    public Certificate getSigningCertificate() {
+	if (!signerId.equals(BigInteger.ZERO)) {
+	    return certificates.get(signerId);
+	}
+	return null;
+    }
+    
     @Override
     public void addSigningContext(String id, SigningContext signingContext) {
         if (id != null && id.length() > 0 && signingContext != null) {
@@ -190,17 +283,63 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     private void initContext() {
-	certificates = new ArrayList<>(10);
+	certificates = new HashMap<BigInteger, Certificate>(10);
         nestedSigningContext = new HashMap<String, SigningContext>(3);
+        signingTime = new Date(0);
+        signerId = BigInteger.ZERO;
     }
 
     public ContentInfo asContentInfo() {
 	return contentInfo;
     }
+
     public ASN1Sequence asSequence() {
 	return contentSequence;
     }
+
+    
     public SignedData getSignedData() {
 	return signedData;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
+    public byte[] calculateMessageDigest(byte[] buffer) {
+	final String hashName = getDerivedMdName();
+	if (hashName != null) {
+	    return calculateMessageDigest(buffer, hashName);
+	}
+	return null;
+    }
+
+    @Override
+    public boolean verifyMessageDigest(byte[] bytes) {
+	if (messageDigest == null || bytes == null) {
+	    return false;
+	}
+	byte[] verifyBytes = calculateMessageDigest(bytes);
+	return (verifyBytes != null &&
+		Arrays.compare(verifyBytes, messageDigest) == 0);
+    }
+
+    @Override
+    public boolean verifySigningTime() {
+	final Certificate signingCert = getSigningCertificate();
+	if (signingCert == null) {
+	    return false;
+	}
+	return (signingTime.getTime() >= signingCert.getStartDate().getDate().getTime() &&
+		signingTime.getTime() < signingCert.getEndDate().getDate().getTime());
+    }
+    
+    public static byte[] calculateMessageDigest(byte[] buffer, String mdName) {
+        try {
+            final MessageDigest messageDigest = MessageDigest.getInstance(mdName);
+            final byte[] plainDigest = messageDigest.digest(buffer);
+            return plainDigest;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Failed to calculate message digest: " + e.getMessage());
+        }
+        return null;
     }
 }

@@ -18,28 +18,48 @@
  */
 package io.reddart.pkcs;
 
+import java.math.BigInteger;
 import java.util.Date;
 
-import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.asn1.x509.Certificate;
 
 /**
  * All APIs requires to perform a verfication process.
  * TODO(siliconej): implement signing process.
  */
-public interface SigningContext {
+public interface SigningContext extends PkcsIdentifiers {
 
     // Data Model Accessors.
     public void setMessageDigest(byte[] md);
     public void setContentType(String type);
     public void setSigningTime(Date datetime);
-    public void setMdAlgorithm(String id);
-    public void setMdSignAlgorithm(String id);
+    
+    public void setIdaaMdAlgorithm(String id);
+    public void setIdaaMdSigningAlgorithm(String id);
     public void setIdaaSigningCertificate(byte[] certHash);
     public void setIdaaSigningCertificateV2(byte[] certHash);
+    public void setMdAlgorithm(String id);
+    public void setMdSigningAlgorithm(String id);
+    public void setSignerId(BigInteger signerId);
 
-    public void addCertificate(X509CertificateHolder holder);
+    public String getContentType();
+    public Date getSigningTime();
+    public String getIdaaMdAlgorithm();
+    public String getIdaaMdSigningAlgorithm();
+    public String getMdAlgorithm();
+    public String getMdSigningAlgorithm();
+    public BigInteger getSignerId();
+    public Certificate getSigningCertificate();
+
+    public String getDerivedMdName();
+    public AsymmetricCipherType getDerivedCipherType();
+
+    public void addCertificate(Certificate cert);
     public void addSigningContext(String oid, SigningContext context);
 
-    // Verification APIs.
-    // Signing APIs.
+    // TODO(siliconej): Verification APIs.
+    // TODO(siliconej): Signing APIs.
+    public boolean verifyMessageDigest(byte[] ranges);
+    public boolean verifySigningTime();
+    public byte[] calculateMessageDigest(byte[] buffer);
 }

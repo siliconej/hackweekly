@@ -18,7 +18,12 @@
  */
 package io.reddart.pkcs;
 
-public interface PkcsIdentifiers {    
+public interface PkcsIdentifiers {
+
+    enum AsymmetricCipherType {
+        RSA, DSA, ECDSA
+    }
+    
     final String OID_CIPHER_RSA         = "1.2.840.113549.1.1.1";
     final String OID_PKCS_RSA_MD5       = "1.2.840.113549.1.1.4";
     final String OID_PKCS_RSA_SHA1      = "1.2.840.113549.1.1.5";
