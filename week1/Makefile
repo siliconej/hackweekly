@@ -18,6 +18,7 @@ classes/${PDF_PACKAGE}/PdfSigVerifier.class: PdfSigVerifier.java \
 	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes PdfSigVerifier.java
 
 classes/${PDF_PACKAGE}/PdfSigBase.class: PdfSigBase.java \
+	classes/${PDF_PACKAGE}/PdfSigningContext.class \
 	classes/${PKCS_PACKAGE}/PkcsIdentifiers.class \
 	classes/${UTIL_PACKAGE}/IdUtil.class
 
@@ -37,7 +38,8 @@ classes/${PDF_PACKAGE}/PdfSigningContext.class: PdfSigningContext.java \
 
 	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes PdfSigningContext.java
 
-classes/${PKCS_PACKAGE}/SigningContext.class: SigningContext.java
+classes/${PKCS_PACKAGE}/SigningContext.class: SigningContext.java \
+	classes/${PKCS_PACKAGE}/PkcsIdentifiers.class
 
 	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes SigningContext.java
 
