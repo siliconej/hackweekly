@@ -21,6 +21,7 @@ package io.reddart.pkcs;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.Certificate;
 
 /**
@@ -50,6 +51,7 @@ public interface SigningContext extends PkcsIdentifiers {
     public String getMdSigningAlgorithm();
     public BigInteger getSignerId();
     public Certificate getSigningCertificate();
+    public SignedData getSignedData();
 
     public String getDerivedMdName();
     public AsymmetricCipherType getDerivedCipherType();

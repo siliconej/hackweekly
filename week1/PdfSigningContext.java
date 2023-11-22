@@ -297,7 +297,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	return contentSequence;
     }
 
-    
+    @Override
     public SignedData getSignedData() {
 	return signedData;
     }

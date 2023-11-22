@@ -20,6 +20,18 @@ package io.reddart.pkcs;
 
 public interface PkcsIdentifiers {
 
+    enum CipherType {
+	AES, DES, EDE
+    }
+
+    enum ModeType {
+	CBC, OFB, CFB, GCM, CCM
+    }
+
+    enum WrapperType {
+	PKCS5, PKCS12
+    }
+    
     enum AsymmetricCipherType {
         RSA, DSA, ECDSA
     }

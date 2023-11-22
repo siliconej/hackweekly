@@ -41,6 +41,7 @@ import java.security.cert.CertificateException;
 
 import io.reddart.pkcs.PkcsIdentifiers;
 import io.reddart.util.IdUtil;
+import io.reddart.util.LogUtil;
 
 import org.apache.pdfbox.cos.COSArray;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -96,16 +97,8 @@ import org.bouncycastle.crypto.util.DigestFactory;
 
 public abstract class PdfSigBase implements PkcsIdentifiers {
 
-    private enum CipherType {
-	AES, DES, EDE
-    }
-
-    private enum ModeType {
-	CBC, OFB, CFB, GCM, CCM
-    }
-
-    private enum WrapperType {
-	PKCS5, PKCS12
+    protected enum PdfSignatureType {
+	PKCS1, PKCS7_DETACHED
     }
     
     private static class DecryptHelper {
@@ -180,18 +173,22 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	public byte[] decrypt(byte[] in) throws InvalidCipherTextException {
 	    byte[] decryptedBytes = null;
 	    int len;
+
 	    if (_modeType == ModeType.GCM) {
                 decryptedBytes = new byte[_gcmCipher.getOutputSize(in.length)];
                 len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
                 len += _gcmCipher.doFinal(decryptedBytes, len);
+
 	    } else if (_modeType == ModeType.CCM) {
 		decryptedBytes = new byte[_ccmCipher.getOutputSize(in.length)];
 		len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
                 len += _gcmCipher.doFinal(decryptedBytes, len);
+
 	    } else if (_bufferedCipher != null) {
 		decryptedBytes = new byte[_bufferedCipher.getOutputSize(in.length)];
 		len = _bufferedCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
 		len += _bufferedCipher.doFinal(decryptedBytes, len);
+
 	    } else {
 		throw new IllegalArgumentException("Fail to decrypt");
 	    }
@@ -294,42 +291,14 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
 
     protected File _pdfFile;
-    protected static boolean _VERBOSE;
-    protected static boolean _WARNING;
     private static Map<X500Name, X509CertificateHolder> _certBags;
 
     public PdfSigBase(String pdfFileName) throws IOException {
 	_pdfFile = new File(pdfFileName);
     }
 
-    protected static final void VLOG(String log) {
-	if (_VERBOSE) {
-	    System.out.println(log);
-	}
-    }
-
-    protected static final void WLOG(String log) {
-	if (_WARNING) {
-	    System.out.println("\u001B[35mWARNING: " + log + "\u001B[0m");
-	}
-    }
-
-    protected static final void FLOG(String log, Exception e) {
-        if (e != null) {
-            System.err.println("\u001B[31mEXCEPTION: " + log + ": " + e.getMessage() + "\u001B[0m");
-            e.printStackTrace(System.err);
-        } else {
-            System.err.println("\u001B[31mFAILURE: " + log + "\u001B[0m");
-        }
-    }
-
-    protected static final void FLOG(String log) {
-        FLOG(log,
-	     null);  // no exception.
-    }
-    
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
-	VLOG(getDebugByteArrayString(header, buffer,
+	LogUtil.V(getDebugByteArrayString(header, buffer,
 				     false));  // in for hex string?
     }
 
@@ -480,7 +449,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    bos.close();
 	    return bos.toByteArray();
 	} catch (IOException e) {
-	    FLOG("Error during extraction of bytes in ranges", e);
+	    LogUtil.F("Error during extraction of bytes in ranges", e);
 	} finally {
 	    if (fis != null) {
 		try {
@@ -549,8 +518,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		    params);
         final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
         final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
-	VLOG("Extracted DSA digest r = " + r.toString(16));
-	VLOG("Extracted DSA digest s = " + s.toString(16));
+	LogUtil.V("Extracted DSA digest r = " + r.toString(16));
+	LogUtil.V("Extracted DSA digest s = " + s.toString(16));
         return cipher.verifySignature(plainDigest, r, s);
     }
 
@@ -642,7 +611,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 							       pbeParamsHelper.getIvSize());
 	    decryptHelper = DecryptHelper.newInstance(algo.getAlgorithm().getId());
 
-	    VLOG("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize() +
+	    LogUtil.V("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize() +
 		 getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
 		 "; iteration: " + pkcs12PbeParams.getIterations() +
 		 "; decryptHelper: " + decryptHelper + ")");
@@ -674,7 +643,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 			   pbkdf2Params.getIterationCount().intValue());
 	    cipherParams = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
 	    
-	    VLOG("PBKDF2 (keyLength: " + keySize +
+	    LogUtil.V("PBKDF2 (keyLength: " + keySize +
 		 "; iteration: " + pbkdf2Params.getIterationCount() +
 		 getDebugByteArrayString("; IV:", iv, true) +
 		 "; decryptHelper: " + decryptHelper + ")");
@@ -715,7 +684,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    final AlgorithmIdentifier digestAlgoObj =
 		AlgorithmIdentifier.getInstance(((ASN1Sequence) macSeq.getObjectAt(0)).getObjectAt(0));
 	    if (!verifySequenceOid(OID_CTYPE_PKCS7, certBagSeq.getObjectAt(0))) {
-		WLOG("unsupported cert bag: " + certBagSeq.getObjectAt(0));
+		LogUtil.W("unsupported cert bag: " + certBagSeq.getObjectAt(0));
 	    }
 	    // PKCS7 bag
 	    final byte[] cmsBytes =
@@ -732,19 +701,19 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 				((ASN1Sequence)
 				 macSeq.getObjectAt(0))).getObjectAt(1)).getOctets(),  // MD
 			      password, macSeq)) {
-		    VLOG("MAC verified successfully.");
+		    LogUtil.V("MAC verified successfully.");
 		} else {
-		    WLOG("MAC failed.");
+		    LogUtil.W("MAC failed.");
 		}
 	    } catch (NoSuchAlgorithmException e) {
-		FLOG("MAC verifier failed to load: " + e);
+		LogUtil.F("MAC verifier failed to load: " + e);
 	    }
 	    loadCertBags(cmsSeq, password);
-	    VLOG("Certificate bag size: " + _certBags.size());
+	    LogUtil.V("Certificate bag size: " + _certBags.size());
 	} catch (IOException e) {
-	    FLOG("Fail to read an object");
+	    LogUtil.F("Fail to read an object");
 	} catch (InvalidCipherTextException | NoSuchAlgorithmException e) {
-	    FLOG("Invalid cipher text or algorithm");
+	    LogUtil.F("Invalid cipher text or algorithm");
 	}
     }
     

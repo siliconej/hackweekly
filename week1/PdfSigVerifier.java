@@ -37,6 +37,7 @@ import java.security.Security;
 
 import io.reddart.pkcs.Pkcs9Attr;
 import io.reddart.util.IdUtil;
+import io.reddart.util.LogUtil;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSArray;
@@ -120,7 +121,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		final ASN1Sequence algoSequence = (ASN1Sequence) digestAlgorithms.getObjectAt(0);
 		globalSigningContext.setMdAlgorithm
 		    (((ASN1ObjectIdentifier) algoSequence.getObjectAt(0)).getId());
-		VLOG("PDF digest algorithm found: " + globalSigningContext.getDerivedMdName());
+		LogUtil.V("PDF digest algorithm found: " + globalSigningContext.getDerivedMdName());
 	    } else {
 		throw new IllegalArgumentException("Invalid algorithm size");
 	    }
@@ -132,12 +133,11 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    if (signerInfos.size() != 1) {
 		throw new IllegalArgumentException("Only one signer info supported in pkcs7");
 	    }
-	    BigInteger signerId = BigInteger.ZERO;
 	    final ASN1Sequence signerInfoSeq = (ASN1Sequence) signerInfos.getObjectAt(0);
-	    signerId = ((ASN1Integer) (((ASN1Sequence) signerInfoSeq.getObjectAt(1)).
-				       getObjectAt(1))).getValue();
-	    globalSigningContext.setSignerId(signerId);
-	    VLOG("Signer serial number: " + signerId);
+	    globalSigningContext.setSignerId
+		(((ASN1Integer) (((ASN1Sequence) signerInfoSeq.getObjectAt(1)).
+				 getObjectAt(1))).getValue());
+	    LogUtil.V("Signer serial number: " + globalSigningContext.getSignerId());
 
 	    final ASN1Set certificates = signedData.getCertificates();
 	    for (int i = 0; i < certificates.size(); ++i) {
@@ -149,13 +149,13 @@ public final class PdfSigVerifier extends PdfSigBase {
 		throw new IOException("Failed to find the correct certificate to operate");
 	    }
 	    X509CertificateHolder certHolder = new X509CertificateHolder(cert);
-	    VLOG("Cert Subject: " + certHolder.getSubject());
+	    LogUtil.V("Cert Subject: " + certHolder.getSubject());
 
 	    // ======= Step 3 =======
 	    // timestamp extraction.
 	    // Ideally we should get the official time from a time sever instead.
 	    if (!certHolder.isValidOn(new java.util.Date())) {
-		WLOG("Certificate outside of valid time range: " +
+		LogUtil.W("Certificate outside of valid time range: " +
 		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter());
 	    }
 
@@ -163,14 +163,13 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    // extract the md signature algorithm and the signature of the cert
 	    final String sigAlgoId = IdUtil.getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
 	    final byte[] signatureBytes = certHolder.getSignature();
-	    VLOG("Certificate signature algorithm recognized: " + sigAlgoId);
+	    LogUtil.V("Certificate signature algorithm recognized: " + sigAlgoId);
 	    debugByteArrayString("Signature of cert found", signatureBytes);
 
 	    // ======= Step 5 =======
 	    // Parse the authenticated attributes
 	    int encDigestAlgoIndex = 3;
 	    byte[] sigAttrBytes  = null;
-	    byte[] digestAttribute = null;
 
 	    final SignerInfo signerInfo = SignerInfo.getInstance(signerInfoSeq);
 	    if (signerInfoSeq.getObjectAt(3) instanceof ASN1TaggedObject) {
@@ -179,7 +178,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		sigAttrBytes = sigAttr.getEncoded();
 		
 		for (int i = 0; i < sigAttr.size(); ++i) {
-		    VLOG("▸auth attr: " +
+		    LogUtil.V("▸auth attr: " +
 			 Pkcs9Attr.getAndVisitInstance(sigAttr.getObjectAt(i), globalSigningContext));
 		}
 		// We can now verify two important data integrity indicator:
@@ -188,11 +187,11 @@ public final class PdfSigVerifier extends PdfSigBase {
 		// 2. thee signing time should be within the certificate's validation
 		//    period.
 		if (!globalSigningContext.verifyMessageDigest(getCOSBytesInRange(byteRanges))) {
-		    WLOG("Message digest of byte range(s) doens't match");
+		    LogUtil.W("Message digest of byte range(s) doens't match");
 		    return false;
 		}
 		if (!globalSigningContext.verifySigningTime()) {
-		    WLOG("Signing time is not within the valid lifecycle of the cert");
+		    LogUtil.W("Signing time is not within the valid lifecycle of the cert");
 		    return false;
 		}
 		encDigestAlgoIndex++;
@@ -206,7 +205,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    ASN1Set unauthSet = signerInfo.getUnauthenticatedAttributes();
 	    if (unauthSet != null) {
 		for (int i = 0; i < unauthSet.size(); ++i) {
-		    VLOG("▸unauth attr: " +
+		    LogUtil.V("▸unauth attr: " +
 			 Pkcs9Attr.getAndVisitInstance(unauthSet.getObjectAt(i), globalSigningContext));
 		}
 	    }
@@ -237,25 +236,24 @@ public final class PdfSigVerifier extends PdfSigBase {
 		final ASN1Sequence keyUsageSeq = ASN1Sequence.getInstance
 		    (certHolder.getExtension(Extension.extendedKeyUsage).getExtnValue().getOctets());
 		if (!verifyKeyUsage(keyUsageSeq)) {
-		    WLOG("Key usage doesn't cover PDF signing");
+		    LogUtil.W("Key usage doesn't cover PDF signing");
 		}
 	    } else {
-		WLOG("No key usage specified in the cert");
+		LogUtil.W("No key usage specified in the cert");
 	    }
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
-	    return verifySignature
-		(cipherType, certHolder, cert.getTBSCertificate(),
-		 encDigestBytes,
-		 globalSigningContext.calculateMessageDigest(sigAttrBytes),
-		 (cipherType == AsymmetricCipherType.DSA ||    // Digest in ASN.1 encoding?
-		  cipherType == AsymmetricCipherType.ECDSA));
+	    return verifySignature(PdfSignatureType.PKCS7_DETACHED,
+				   cipherType,
+				   certHolder, cert.getTBSCertificate(),
+				   encDigestBytes,
+				   globalSigningContext.calculateMessageDigest(sigAttrBytes));
 	} catch (IOException e) {
-	    FLOG("I/O failure during PKCS7 verification", e);
+	    LogUtil.F("I/O failure during PKCS7 verification", e);
 	} catch (InvalidCipherTextException e) {
-	    FLOG("Cipher failure during PKCS7 verification", e);
+	    LogUtil.F("Cipher failure during PKCS7 verification", e);
 	} catch (IllegalArgumentException e) {
-	    FLOG("Errors in the PKCS7 signature", e);
+	    LogUtil.F("Errors in the PKCS7 signature", e);
 	}
 	return false;
     }
@@ -263,17 +261,17 @@ public final class PdfSigVerifier extends PdfSigBase {
     private boolean verifyPKCS1Signature(byte[] certBytes, byte[] digestASN1, byte[] plainDigest) {
 	try {
 	    X509CertificateHolder certHolder = new X509CertificateHolder(certBytes);
-	    return verifySignature(AsymmetricCipherType.RSA,
+	    return verifySignature(PdfSignatureType.PKCS1,
+				   AsymmetricCipherType.RSA,
 				   certHolder,
 				   certHolder.toASN1Structure().getTBSCertificate(),
-				   digestASN1, plainDigest,
-				   /* digest in ASN.1 = */ true);
+				   digestASN1, plainDigest);
 	} catch (IOException e) {
-	    FLOG("I/O failure during PKCS1 verification", e);
+	    LogUtil.F("I/O failure during PKCS1 verification", e);
 	} catch (InvalidCipherTextException e) {
-	    FLOG("Cipher failure during PKCS7 verification", e);
+	    LogUtil.F("Cipher failure during PKCS7 verification", e);
 	} catch (IllegalArgumentException e) {
-	    FLOG("Errors in the PKCS7 signature", e);
+	    LogUtil.F("Errors in the PKCS7 signature", e);
 	}
 	return false;
     }
@@ -289,13 +287,18 @@ public final class PdfSigVerifier extends PdfSigBase {
      * @param plainDigest the plain digest to be verified
      * @param digestInASN1 true if the encrypted digest data is in ASN.1 encoding
      */
-    private boolean verifySignature(AsymmetricCipherType cipherType,
+    private boolean verifySignature(PdfSignatureType signatureType,
+				    AsymmetricCipherType cipherType,
 				    X509CertificateHolder certHolder,
 				    TBSCertificate tbsCert,
 				    byte[] digestSrc,
-				    byte[] plainDigest,
-				    boolean digestInASN1)
+				    byte[] plainDigest)
 	throws IOException, InvalidCipherTextException {
+	final boolean digestInASN1 =
+	    (signatureType == PdfSignatureType.PKCS1) ||
+	    (signatureType == PdfSignatureType.PKCS7_DETACHED &&
+	     (cipherType == AsymmetricCipherType.DSA || cipherType == AsymmetricCipherType.ECDSA));
+
 	byte[] digest = null;
 	ASN1Primitive digestPrimitive = null;
 	if (digestInASN1) {
@@ -355,17 +358,17 @@ public final class PdfSigVerifier extends PdfSigBase {
 		if (sameSubject) {
 		    if (verify(cipher, pubKeyParams,
 			       certHolder.getSignature(), sigDigestBytes)) {
-			WLOG("Self-signed cert.");
+			LogUtil.W("Self-signed cert.");
 		    } else {
-			WLOG("Invalid self-signed cert.");
+			LogUtil.W("Invalid self-signed cert.");
 		    }
 		} else {
 		    if (verifyCertChain(certHolder.getIssuer(),
 					certHolder.getSignature(),
 					sigDigestBytes)) {
-			VLOG("Cert issuer verified: " + certHolder.getIssuer());
+			LogUtil.V("Cert issuer verified: " + certHolder.getIssuer());
 		    } else {
-			WLOG("Invalid issuer cert: " + certHolder.getIssuer());
+			LogUtil.W("Invalid issuer cert: " + certHolder.getIssuer());
 		    }
 		}
 	    } catch (InvalidCipherTextException e) {
@@ -421,9 +424,9 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    if (sameSubject) {
 		if (verify(dsaSigner, pubKeyParams,
 			   certHolder.getSignature(), sigDigestBytes)) {
-		    WLOG("Self-signed cert.");
+		    LogUtil.W("Self-signed cert.");
 		} else {
-		    WLOG("Invalid self-signed cert.");
+		    LogUtil.W("Invalid self-signed cert.");
 		}
 	    } else {
 		throw new IOException("Unsupported DSA Cert chain validation.");
@@ -451,7 +454,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	}
 	// according to other resources, PDF also support VeriSign, PPKMS signature scheme.
 	if (!"Adobe.PPKLite".equals(((COSName) dict.getItem(COSName.FILTER)).getName())) {
-	    FLOG("Unsupported signature object: " + dict.getItem(COSName.FILTER));
+	    LogUtil.F("Unsupported signature object: " + dict.getItem(COSName.FILTER));
 	}
 	
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
@@ -484,7 +487,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    cosDocument.getXrefTable().keySet().stream()
 		.forEach(obj -> processObject(cosDocument.getObjectFromPool(obj)));
 	} catch (IOException e) {
-	    FLOG("Failed to parse PDF file", e);
+	    LogUtil.F("Failed to parse PDF file", e);
 	}
     }
 
@@ -497,15 +500,19 @@ public final class PdfSigVerifier extends PdfSigBase {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
 	File pkcs12file = null;
 	String pkcs12password = null;
+	boolean warning = true;
+	boolean verbose = false;
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-	_WARNING = true;
+
 	for (int i = 0; i < args.length; ++i) {
 	    if ("--verbose".equals(args[i])) {
-		_VERBOSE = true;
+		verbose = true;
+		LogUtil.init(verbose, warning);
 		continue;
 	    } else if ("--nowarning".equals(args[i])) {
-		_WARNING = false;
+		warning = false;
+		LogUtil.init(verbose, warning);
 		continue;
 	    } else if ("--pkcs12".equals(args[i])) {
 		pkcs12file = new File(args[++i]);
