@@ -21,6 +21,7 @@ package io.reddart.pdf;
 import io.reddart.pkcs.PkcsIdentifiers;
 import io.reddart.pkcs.SigningContext;
 import io.reddart.util.IdUtil;
+import io.reddart.util.LogUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.cms.ContentInfo;
@@ -63,16 +65,16 @@ import org.bouncycastle.cert.X509CertificateHolder;
  */
 public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
-    public enum PdfSignatureType {
-	PKCS1, PKCS7_DETACHED
+    public enum SignatureType {
+	PKCS1, PKCS7_DETACHED, TIMESTAMP
     }
 
     //////////// Global context ////////////////
     private ASN1Sequence contentSequence;
     private ContentInfo contentInfo;
     private SignedData signedData;
-    private SignerInfo singerInfo;
-    private PdfSignatureType signatureType;
+    private SignerInfo signerInfo;
+    private SignatureType signatureType;
 
     private static final byte[] copyBytes(byte[] src) {
 	byte[] octets = new byte[src.length];
@@ -98,6 +100,9 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     private String mdAlgorithmId;
     private String mdSigningAlgorithmId;
     private BigInteger signerId;
+
+    private byte[] clearDigest;
+    private byte[] encryptedDigest;
 
     /////////////// SigningContext Implementation ////////////////
     @Override
@@ -173,13 +178,16 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
-    public String getMdAlgorithm() {
+    public String getDerivedMdAlgorithm() {
+	if (mdAlgorithmId == null && signerInfo != null) {
+            setMdAlgorithm(signerInfo.getDigestAlgorithm().getAlgorithm().getId());
+	}
 	return mdAlgorithmId;
     }
 	
     @Override
     public String getDerivedMdName() {
-	return IdUtil.getDigestAlgorithmId(mdAlgorithmId);
+	return IdUtil.getDigestAlgorithmId(getDerivedMdAlgorithm());
     }
 
     @Override
@@ -190,23 +198,28 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
-    public String getMdSigningAlgorithm() {
+    public String getDerivedMdSigningAlgorithm() {
+	if (mdSigningAlgorithmId == null && signerInfo != null) {
+	    setMdSigningAlgorithm(signerInfo.getDigestEncryptionAlgorithm().
+				  getAlgorithm().getId());
+	}
 	return mdSigningAlgorithmId;
     }
 
     @Override
     public AsymmetricCipherType getDerivedCipherType() {
-        if (signatureType == PdfSignatureType.PKCS1) {
+        if (signatureType == SignatureType.PKCS1) {
             return AsymmetricCipherType.RSA;
 	}
-	if (OID_CIPHER_RSA.equals(mdSigningAlgorithmId) ||
-	    OID_PKCS_RSA_SHA256.equals(mdSigningAlgorithmId) ||
-	    OID_PKCS_RSA_SHA384.equals(mdSigningAlgorithmId) ||
-	    OID_PKCS_RSA_SHA512.equals(mdSigningAlgorithmId)) {
+	final String signingAlgoId = getDerivedMdSigningAlgorithm();
+	if (OID_CIPHER_RSA.equals(signingAlgoId) ||
+	    OID_PKCS_RSA_SHA256.equals(signingAlgoId) ||
+	    OID_PKCS_RSA_SHA384.equals(signingAlgoId) ||
+	    OID_PKCS_RSA_SHA512.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.RSA;
-	} else if (OID_CIPHER_DSA.equals(mdSigningAlgorithmId)) {
+	} else if (OID_CIPHER_DSA.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.DSA;
-	} else if (OID_CIPHER_ECDSA.equals(mdSigningAlgorithmId)) {
+	} else if (OID_CIPHER_ECDSA.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.ECDSA;
 	}
 	return null;
@@ -241,6 +254,41 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
+    public void setClearDigest(byte[] digest) {
+        if (digest != null) {
+            clearDigest = copyBytes(digest);
+	}
+    }
+
+    @Override
+    public byte[] getClearDigest() {
+        if (clearDigest == null && signerInfo != null) {
+	    try {
+		clearDigest = calculateMessageDigest
+		    (signerInfo.getAuthenticatedAttributes().getEncoded());
+	    } catch (IOException e) {
+		LogUtil.F("Cannot parse authenticated attribute as byte array", e);
+	    }
+	}
+	return clearDigest;
+    }
+
+    @Override
+    public void setEncryptedDigest(byte[] digest) {
+        if (digest != null) {
+            encryptedDigest = copyBytes(digest);
+	}
+    }
+
+    @Override
+    public byte[] getEncryptedDigest() {
+        if (encryptedDigest == null && signerInfo != null) {
+	    encryptedDigest = signerInfo.getEncryptedDigest().getOctets();
+	}
+	return encryptedDigest;
+    }
+
+    @Override
     public void addSigningContext(String id, SigningContext signingContext) {
         if (id != null && id.length() > 0 && signingContext != null) {
             nestedSigningContext.put(id, signingContext);
@@ -259,16 +307,16 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
         }
     }
 
-    public void setSignatureType(PdfSignatureType type) {
+    public void setSignatureType(SignatureType type) {
         signatureType = type;
     }
 
-    public PdfSignatureType getSignatureType() {
+    public SignatureType getSignatureType() {
         return signatureType;
     }
 
     // SignedData encapsulated in an encoded byte array.
-    public PdfSigningContext(PdfSignatureType signatureType,
+    public PdfSigningContext(SignatureType signatureType,
 			     byte[] signatureBytes) throws Pkcs7ParseException {
 	initContext();
         setSignatureType(signatureType);
@@ -281,6 +329,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 		break;
 	    case PKCS7_DETACHED:
 		parseSignedData(signatureBytes);
+		parseSignerInfo();
 		break;
 	    }
 	} catch (IOException e) {
@@ -289,10 +338,13 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     // SignedData encapsulated in an attribute.
-    public PdfSigningContext(ASN1TaggedObject obj) throws Pkcs7ParseException {
+    public PdfSigningContext(SignatureType signatureType,
+                             ASN1TaggedObject obj) throws Pkcs7ParseException {
 	contentInfo = null;
 	initContext();
+	setSignatureType(signatureType);
 	signedData = SignedData.getInstance(obj.getBaseObject());
+        parseSignerInfo();
     }
     
     private void parseSignedData(byte[] pkcs7bytes)
@@ -307,6 +359,12 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	contentInfo = ContentInfo.getInstance(contentSequence);
 	signedData = SignedData.getInstance(contentInfo.getContent());
 	asn1is.close();
+    }
+
+    private void parseSignerInfo() {
+	if (signedData.getSignerInfos().size() > 0) {
+	    signerInfo = SignerInfo.getInstance(signedData.getSignerInfos().getObjectAt(0));
+	}
     }
 
     private void initContext() {
@@ -327,6 +385,11 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     @Override
     public SignedData getSignedData() {
 	return signedData;
+    }
+
+    @Override
+    public SignerInfo getSignerInfo() {
+        return signerInfo;
     }
 
     ////////////////////////////////////////////////////////////////////////////

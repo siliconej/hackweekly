@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.x509.Certificate;
 
 /**
@@ -42,16 +43,21 @@ public interface SigningContext extends PkcsIdentifiers {
     public void setMdAlgorithm(String id);
     public void setMdSigningAlgorithm(String id);
     public void setSignerId(BigInteger signerId);
+    public void setClearDigest(byte[] digest);
+    public void setEncryptedDigest(byte[] digest);
 
     public String getContentType();
     public Date getSigningTime();
     public String getIdaaMdAlgorithm();
     public String getIdaaMdSigningAlgorithm();
-    public String getMdAlgorithm();
-    public String getMdSigningAlgorithm();
+    public String getDerivedMdAlgorithm();
+    public String getDerivedMdSigningAlgorithm();
     public BigInteger getSignerId();
     public Certificate getSigningCertificate();
     public SignedData getSignedData();
+    public SignerInfo getSignerInfo();
+    public byte[] getClearDigest();
+    public byte[] getEncryptedDigest();
 
     public String getDerivedMdName();
     public AsymmetricCipherType getDerivedCipherType();

@@ -54,6 +54,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.pkcs.CertBag;
@@ -66,6 +67,10 @@ import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.TBSCertificate;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -90,10 +95,17 @@ import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.params.DESedeParameters;
+import org.bouncycastle.crypto.params.DSAParameters;
+import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.signers.DSASigner;
+import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.util.DigestFactory;
+import org.bouncycastle.crypto.engines.RSAEngine;
 
 public abstract class PdfSigBase implements PkcsIdentifiers {
 
@@ -550,6 +562,171 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return (0 == Arrays.compare(macBytes, md));
     }
     
+    /**
+     * Perform verification on a digital signature.
+     * Supports RCA, DSA, and ECDSA
+     *
+     * @param cipherType cipher type, could be RCA, DSA, or ECDSA
+     * @param certHolder certificate holder object of the singer
+     * @param tbsCert To-Be-Signed portion of the certication, used for cert chain verification
+     * @param digestSrc the encrypted digest to be decrypted and verify
+     * @param clearDigest the plain digest to be verified
+     * @param digestInASN1 true if the encrypted digest data is in ASN.1 encoding
+     */
+    public static boolean verifySignature(PdfSigningContext signingContext,
+                                          X509CertificateHolder certHolder, TBSCertificate tbsCert)
+	throws IOException, InvalidCipherTextException {
+	final PdfSigningContext.SignatureType signatureType = signingContext.getSignatureType();
+	final AsymmetricCipherType cipherType = signingContext.getDerivedCipherType();
+	final boolean digestInASN1 =
+	    (signatureType == PdfSigningContext.SignatureType.PKCS1) ||
+	    ((signatureType == PdfSigningContext.SignatureType.PKCS7_DETACHED ||
+	      signatureType == PdfSigningContext.SignatureType.TIMESTAMP) &&
+	     (cipherType == AsymmetricCipherType.DSA || cipherType == AsymmetricCipherType.ECDSA));
+
+	final byte[] digestSrc = signingContext.getEncryptedDigest();
+	final byte[] clearDigest = signingContext.getClearDigest();
+	byte[] digest = null;
+	ASN1Primitive digestPrimitive = null;
+	if (digestInASN1) {
+	    ASN1InputStream digestIS = new ASN1InputStream(new ByteArrayInputStream(digestSrc));
+	    digestPrimitive = digestIS.readObject();
+	    digestIS.close();
+
+	    switch (cipherType) {
+	    case RSA:
+		if (digestPrimitive instanceof ASN1TaggedObject) {
+		    digest = ((DEROctetString) ((ASN1TaggedObject) digestPrimitive).getBaseObject()).getOctets();
+		} else if (digestPrimitive instanceof DEROctetString) {
+		    digest = ((DEROctetString) digestPrimitive).getOctets();
+		} else {
+		    throw new IOException("Invalid rsa digest ASN1 object: " + digestPrimitive.getClass());
+		}
+		break;
+
+	    case DSA:
+	    case ECDSA:
+		if (digestPrimitive instanceof ASN1Sequence &&
+		    ((ASN1Sequence) digestPrimitive).size() == 2) {
+		    // following code will parse the params.
+		    break;
+		}
+
+	    default:
+		throw new IllegalArgumentException("Invalid digest encoding scheme");
+	    }
+	} else {
+	    digest = digestSrc;
+	}
+
+	final SubjectPublicKeyInfo pubKeyInfo = certHolder.getSubjectPublicKeyInfo();
+	final ASN1Primitive pubKeyEncoded = 
+	    (cipherType == AsymmetricCipherType.ECDSA
+	     // Bug identified in BC code, that doesn't handle the ECDSA pubkey well
+	     // here pubKeyEEncoded is a DERSequence.
+	     ? pubKeyInfo.toASN1Primitive()
+	     : pubKeyInfo.parsePublicKey());
+	byte[] decryptedDigest = null;
+	byte[] sigDigestBytes = PdfSigningContext.calculateMessageDigest
+	    (tbsCert.getEncoded(),
+	     IdUtil.getSignatureDigestId(certHolder.getSignatureAlgorithm().
+					 getAlgorithm()));
+	final boolean sameSubject = certHolder.getSubject().equals(certHolder.getIssuer());
+	CipherParameters pubKeyParams = null;
+	
+	switch (cipherType) {
+	case RSA:
+	    final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(pubKeyEncoded);
+	    pubKeyParams = new RSAKeyParameters(false,  // isPrivate
+						rsaPubKey.getModulus(),
+						rsaPubKey.getPublicExponent());
+	    final AsymmetricBlockCipher cipher = new RSAEngine();
+	    try {
+		if (sameSubject) {
+		    if (verify(cipher, pubKeyParams,
+			       certHolder.getSignature(), sigDigestBytes)) {
+			LogUtil.W("Self-signed cert.");
+		    } else {
+			LogUtil.W("Invalid self-signed cert.");
+		    }
+		} else {
+		    if (verifyCertChain(certHolder.getIssuer(),
+					certHolder.getSignature(),
+					sigDigestBytes)) {
+			LogUtil.V("Cert issuer verified: " + certHolder.getIssuer());
+		    } else {
+			LogUtil.W("Invalid issuer cert: " + certHolder.getIssuer());
+		    }
+		}
+	    } catch (InvalidCipherTextException e) {
+		// this could happen when the cert is not self-signed.
+		// we silently ignore.
+	    }		
+	    return verify(cipher, pubKeyParams, digest, clearDigest);			     
+	    
+	case DSA:
+	case ECDSA:
+	    DSA dsaSigner = null;
+	    if (cipherType == AsymmetricCipherType.DSA) {
+		final ASN1Sequence dsaParams = (ASN1Sequence) pubKeyInfo.getAlgorithm().getParameters();
+		if (dsaParams.size() != 3) {
+		    throw new IllegalArgumentException
+			("Unsupported DSA algorithm parameter size: " + dsaParams.size());
+		}
+
+		dsaSigner = new DSASigner();	    
+		pubKeyParams = new DSAPublicKeyParameters
+		    (((ASN1Integer) pubKeyEncoded).getValue(),  // Y
+		     new DSAParameters(((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),  // P
+				       ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),  // Q
+				       ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));  // G
+	    } else if (cipherType == AsymmetricCipherType.ECDSA) {
+		final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
+		if (ecdsaPubKeySeq.size() != 2 ||
+		    !OID_CIPHER_ECDSA.equals(((AlgorithmIdentifier)
+					      ecdsaPubKeySeq.getObjectAt(0)).getAlgorithm().getId())) {
+		    throw new IllegalArgumentException("Invalid public key algorithm identifier");
+		}
+		final X9ECParameters ecParams =
+		    ECNamedCurveTable.getByOID((ASN1ObjectIdentifier)
+					       ((AlgorithmIdentifier) ecdsaPubKeySeq.getObjectAt(0)).
+					       getParameters());
+		if (ecParams == null) {
+		    throw new IllegalArgumentException("Unsupported EC curve");
+		}
+		dsaSigner = new ECDSASigner();
+		pubKeyParams = new ECPublicKeyParameters
+		    (ecParams.getCurve().
+		     decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
+				 getBytes()),
+		     new ECDomainParameters(ecParams.getCurve(),
+					    ecParams.getG(),
+					    ecParams.getN(),
+					    ecParams.getH(),
+					    ecParams.getSeed()));
+	    } else {
+		throw new IOException("Invalid cipher type");
+	    }
+	    
+	    if (sameSubject) {
+		if (verify(dsaSigner, pubKeyParams,
+			   certHolder.getSignature(), sigDigestBytes)) {
+		    LogUtil.W("Self-signed cert.");
+		} else {
+		    LogUtil.W("Invalid self-signed cert.");
+		}
+	    } else {
+		throw new IOException("Unsupported DSA Cert chain validation.");
+	    }
+	    return verify(dsaSigner, pubKeyParams,
+			  (ASN1Sequence) digestPrimitive, clearDigest);
+	    
+	default:
+	    return false;
+	}
+
+    }
+
     protected static final byte[] decrypt(AsymmetricBlockCipher cipher, byte[] digest)
         throws InvalidCipherTextException {
         int offset = 0;

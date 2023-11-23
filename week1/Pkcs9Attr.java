@@ -25,11 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
 
+import io.reddart.pdf.PdfSigBase;
 import io.reddart.pdf.PdfSigningContext;
 import io.reddart.util.LogUtil;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -39,6 +41,7 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.cert.X509CertificateHolder;
 // import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
@@ -456,16 +459,16 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	protected IdaaSignatureTimestampToken() {
 	    super("Signature Timestamp Token");
 	}
-
+	
 	@Override
 	public boolean parse(ASN1Sequence seq) throws Pkcs9ParseException {
 	    final ASN1Sequence tokenSeq = getAttrValue(seq, ASN1Sequence.class);
 	    ASN1Encodable obj = tokenSeq.getObjectAt(1);
 	    if (obj instanceof ASN1TaggedObject) {
-		timestampSigningContext = new PdfSigningContext((ASN1TaggedObject) obj);
-		
+		timestampSigningContext = new PdfSigningContext
+		    (PdfSigningContext.SignatureType.TIMESTAMP, (ASN1TaggedObject) obj);
 		try {
-		    parseToken();
+		    verifyToken();
 		} catch (IOException e) {
 		    throw new Pkcs9ParseException("Fail to parse timestamp", e);
 		}
@@ -492,23 +495,40 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    return sb.toString();
 	}
 
-	private void parseToken() throws IOException {
+	private void verifyToken() throws IOException {
 	    final SignedData signedData = timestampSigningContext.getSignedData();
 	    final ASN1Sequence tsObj  = (ASN1Sequence) ASN1Primitive.fromByteArray
 		(((ASN1OctetString) signedData.getEncapContentInfo().getContent()).getOctets());
 	    LogUtil.V("TS Time: " + ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime());
 
-	    //TODO(ejiang): implement TSA cert verficiation.
-	    SignerInfo tsSignerInfo = SignerInfo.getInstance(signedData.getSignerInfos().getObjectAt(0));
+	    final ASN1Set certificates = signedData.getCertificates();
+            for (int i = 0; i < certificates.size(); ++i) {
+                timestampSigningContext.addCertificate
+                    (Certificate.getInstance(certificates.getObjectAt(i)));
+            }
+	    //timestampSigningContext.setSignerId(tsSignerInfo.getSID().getId());
+
+	    final SignerInfo tsSignerInfo = timestampSigningContext.getSignerInfo();
+	    final ASN1Sequence signerIdSeq = (ASN1Sequence) tsSignerInfo.getSID().getId();
+	    final ASN1Integer signerId = (ASN1Integer) signerIdSeq.getObjectAt(1);
+	    timestampSigningContext.setSignerId(signerId.getValue());
+            Certificate cert = timestampSigningContext.getSigningCertificate();
 	    ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
 	    for (int i = 0; i < tsAttrSeq.size(); ++i) {
-		LogUtil.V("▸unauth attribute: " +
-			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i),
-							timestampSigningContext));
+		LogUtil.V("▹unauth attribute: " +
+			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
 	    }
+	    LogUtil.V("TS Signing cert: " + cert);
 	    LogUtil.V("TS Signer encrypted digest: " + tsSignerInfo.getEncryptedDigest().getOctets().length);
 	    LogUtil.V("TS Digest Enc algorithm: " + tsSignerInfo.getDigestEncryptionAlgorithm().getAlgorithm());
-	    LogUtil.V("TS Signer ID: " + tsSignerInfo.getSID().getId());
+	    try {
+		LogUtil.V("TS Signature: " +
+			  PdfSigBase.verifySignature((PdfSigningContext) timestampSigningContext,
+						     new X509CertificateHolder(cert),
+						     cert.getTBSCertificate()));
+	    } catch (Exception e) {
+		LogUtil.F("Timetsamp signature verification failure", e);
+	    }
 	}
     }
 
