@@ -20,10 +20,6 @@ package io.reddart.pkcs;
 
 public interface PkcsIdentifiers {
 
-    enum CipherType {
-	AES, DES, EDE
-    }
-
     enum ModeType {
 	CBC, OFB, CFB, GCM, CCM
     }
@@ -36,6 +32,10 @@ public interface PkcsIdentifiers {
         RSA, DSA, ECDSA
     }
     
+    enum SymmetricCipherType {
+	AES, DES, EDE
+    }
+
     final String OID_CIPHER_RSA         = "1.2.840.113549.1.1.1";
     final String OID_PKCS_RSA_MD5       = "1.2.840.113549.1.1.4";
     final String OID_PKCS_RSA_SHA1      = "1.2.840.113549.1.1.5";

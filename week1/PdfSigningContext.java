@@ -63,11 +63,16 @@ import org.bouncycastle.cert.X509CertificateHolder;
  */
 public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
+    public enum PdfSignatureType {
+	PKCS1, PKCS7_DETACHED
+    }
+
     //////////// Global context ////////////////
     private ASN1Sequence contentSequence;
     private ContentInfo contentInfo;
     private SignedData signedData;
     private SignerInfo singerInfo;
+    private PdfSignatureType signatureType;
 
     private static final byte[] copyBytes(byte[] src) {
 	byte[] octets = new byte[src.length];
@@ -191,6 +196,9 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     @Override
     public AsymmetricCipherType getDerivedCipherType() {
+        if (signatureType == PdfSignatureType.PKCS1) {
+            return AsymmetricCipherType.RSA;
+	}
 	if (OID_CIPHER_RSA.equals(mdSigningAlgorithmId) ||
 	    OID_PKCS_RSA_SHA256.equals(mdSigningAlgorithmId) ||
 	    OID_PKCS_RSA_SHA384.equals(mdSigningAlgorithmId) ||
@@ -231,7 +239,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	}
 	return null;
     }
-    
+
     @Override
     public void addSigningContext(String id, SigningContext signingContext) {
         if (id != null && id.length() > 0 && signingContext != null) {
@@ -251,21 +259,40 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
         }
     }
 
+    public void setSignatureType(PdfSignatureType type) {
+        signatureType = type;
+    }
+
+    public PdfSignatureType getSignatureType() {
+        return signatureType;
+    }
+
     // SignedData encapsulated in an encoded byte array.
-    public PdfSigningContext(byte[] pkcs7bytes) throws Pkcs7ParseException {
+    public PdfSigningContext(PdfSignatureType signatureType,
+			     byte[] signatureBytes) throws Pkcs7ParseException {
+	initContext();
+        setSignatureType(signatureType);
 	try {
-	    parseSignedData(pkcs7bytes);
+	    switch (signatureType) {
+	    case PKCS1:
+		final X509CertificateHolder certHolder = new X509CertificateHolder(signatureBytes);
+		addCertificate(certHolder.toASN1Structure());
+		setSignerId(certHolder.getSerialNumber());
+		break;
+	    case PKCS7_DETACHED:
+		parseSignedData(signatureBytes);
+		break;
+	    }
 	} catch (IOException e) {
 	    throw new Pkcs7ParseException("Invalid pkcs7 bytes: " + e.getMessage());
 	}
-	initContext();
     }
 
     // SignedData encapsulated in an attribute.
     public PdfSigningContext(ASN1TaggedObject obj) throws Pkcs7ParseException {
 	contentInfo = null;
-	signedData = SignedData.getInstance(obj.getBaseObject());
 	initContext();
+	signedData = SignedData.getInstance(obj.getBaseObject());
     }
     
     private void parseSignedData(byte[] pkcs7bytes)

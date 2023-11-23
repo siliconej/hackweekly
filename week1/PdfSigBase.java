@@ -97,13 +97,9 @@ import org.bouncycastle.crypto.util.DigestFactory;
 
 public abstract class PdfSigBase implements PkcsIdentifiers {
 
-    protected enum PdfSignatureType {
-	PKCS1, PKCS7_DETACHED
-    }
-    
     private static class DecryptHelper {
 
-	private CipherType _cipherType;
+	private SymmetricCipherType _cipherType;
 	private ModeType _modeType;
 	private int _keySize;
 	private BufferedBlockCipher _bufferedCipher;
@@ -118,14 +114,14 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    return helper;
 	}
 	
-	public DecryptHelper(CipherType cipherType, ModeType modeType, int keySize) {
+	public DecryptHelper(SymmetricCipherType cipherType, ModeType modeType, int keySize) {
 	    _cipherType = cipherType;
 	    _modeType = modeType;
 	    _keySize = keySize;
 	}
 
-        private BlockCipher newEngine() {
-	    switch (_cipherType) {
+        private BlockCipher newEngine(SymmetricCipherType cipherType) {
+	    switch (cipherType) {
 	    case AES:
 		return AESEngine.newInstance();
 	    case DES:
@@ -137,7 +133,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	}
 
 	public void newCipher(CipherParameters params) {
-	    BlockCipher engine = newEngine();
+	    BlockCipher engine = newEngine(_cipherType);
 	    BlockCipher mode = null;
 	    switch (_modeType) {
 	    case CBC:
@@ -230,25 +226,25 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	Map<String, DecryptHelper> $ =
 	    _SymmetricCipherIdMap = new HashMap<String, DecryptHelper>(20);
 	// AES128
-	$.put(OID_AES + ".2", new DecryptHelper(CipherType.AES, ModeType.CBC, 128));
-	$.put(OID_AES + ".3", new DecryptHelper(CipherType.AES, ModeType.OFB, 128));
-	$.put(OID_AES + ".4", new DecryptHelper(CipherType.AES, ModeType.CFB, 128));
-	$.put(OID_AES + ".6", new DecryptHelper(CipherType.AES, ModeType.GCM, 128));
-	$.put(OID_AES + ".7", new DecryptHelper(CipherType.AES, ModeType.CCM, 128));
+	$.put(OID_AES + ".2", new DecryptHelper(SymmetricCipherType.AES, ModeType.CBC, 128));
+	$.put(OID_AES + ".3", new DecryptHelper(SymmetricCipherType.AES, ModeType.OFB, 128));
+	$.put(OID_AES + ".4", new DecryptHelper(SymmetricCipherType.AES, ModeType.CFB, 128));
+	$.put(OID_AES + ".6", new DecryptHelper(SymmetricCipherType.AES, ModeType.GCM, 128));
+	$.put(OID_AES + ".7", new DecryptHelper(SymmetricCipherType.AES, ModeType.CCM, 128));
 	// AES192
-	$.put(OID_AES + ".22", new DecryptHelper(CipherType.AES, ModeType.CBC, 192));
-	$.put(OID_AES + ".23", new DecryptHelper(CipherType.AES, ModeType.OFB, 192));
-	$.put(OID_AES + ".24", new DecryptHelper(CipherType.AES, ModeType.CFB, 192));
-	$.put(OID_AES + ".26", new DecryptHelper(CipherType.AES, ModeType.GCM, 192));
-	$.put(OID_AES + ".27", new DecryptHelper(CipherType.AES, ModeType.CCM, 192));
+	$.put(OID_AES + ".22", new DecryptHelper(SymmetricCipherType.AES, ModeType.CBC, 192));
+	$.put(OID_AES + ".23", new DecryptHelper(SymmetricCipherType.AES, ModeType.OFB, 192));
+	$.put(OID_AES + ".24", new DecryptHelper(SymmetricCipherType.AES, ModeType.CFB, 192));
+	$.put(OID_AES + ".26", new DecryptHelper(SymmetricCipherType.AES, ModeType.GCM, 192));
+	$.put(OID_AES + ".27", new DecryptHelper(SymmetricCipherType.AES, ModeType.CCM, 192));
 	// AES256
-	$.put(OID_AES + ".42", new DecryptHelper(CipherType.AES, ModeType.CBC, 256));
-	$.put(OID_AES + ".43", new DecryptHelper(CipherType.AES, ModeType.OFB, 256));
-	$.put(OID_AES + ".44", new DecryptHelper(CipherType.AES, ModeType.CFB, 256));
-	$.put(OID_AES + ".46", new DecryptHelper(CipherType.AES, ModeType.GCM, 256));
+	$.put(OID_AES + ".42", new DecryptHelper(SymmetricCipherType.AES, ModeType.CBC, 256));
+	$.put(OID_AES + ".43", new DecryptHelper(SymmetricCipherType.AES, ModeType.OFB, 256));
+	$.put(OID_AES + ".44", new DecryptHelper(SymmetricCipherType.AES, ModeType.CFB, 256));
+	$.put(OID_AES + ".46", new DecryptHelper(SymmetricCipherType.AES, ModeType.GCM, 256));
 	// 3DES
-	$.put("1.2.840.113549.1.12.1.3", new DecryptHelper(CipherType.EDE, ModeType.CBC, 192));
-	$.put("1.2.840.113549.1.12.1.4", new DecryptHelper(CipherType.EDE, ModeType.CBC, 128));
+	$.put("1.2.840.113549.1.12.1.3", new DecryptHelper(SymmetricCipherType.EDE, ModeType.CBC, 192));
+	$.put("1.2.840.113549.1.12.1.4", new DecryptHelper(SymmetricCipherType.EDE, ModeType.CBC, 128));
     }
 
     private static final String OID_PBKDF2 = "1.2.840.113549.1.5.12";

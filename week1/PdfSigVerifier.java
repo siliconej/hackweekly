@@ -108,7 +108,8 @@ public final class PdfSigVerifier extends PdfSigBase {
      *  </pre>
      */
     private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
-	final PdfSigningContext globalSigningContext = new PdfSigningContext(pkcs7Bytes);
+	final PdfSigningContext globalSigningContext =
+	    new PdfSigningContext(PdfSigningContext.PdfSignatureType.PKCS7_DETACHED, pkcs7Bytes);
 	
 	try {
 	    final SignedData signedData = globalSigningContext.getSignedData();
@@ -218,10 +219,6 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    final ASN1ObjectIdentifier encDigestAlgoOid = (ASN1ObjectIdentifier)
 		((ASN1Sequence) signerInfoSeq.getObjectAt(encDigestAlgoIndex)).getObjectAt(0);
 	    globalSigningContext.setMdSigningAlgorithm(encDigestAlgoOid.getId());
-	    final AsymmetricCipherType cipherType = globalSigningContext.getDerivedCipherType();
-	    if (cipherType == null) {
-		throw new IllegalArgumentException("Unsupported cipher: " + encDigestAlgoOid.getId());
-	    }
 
 	    // TODO(siliconej): Following two lines achieve the same goal, keep them for now for debugging purpose.
 	    final byte[] encDigestBytes = signerInfo.getEncryptedDigest().getOctets();
@@ -243,9 +240,9 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    }
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
-	    return verifySignature(PdfSignatureType.PKCS7_DETACHED,
-				   cipherType,
-				   certHolder, cert.getTBSCertificate(),
+	    return verifySignature(globalSigningContext,
+				   certHolder,
+				   cert.getTBSCertificate(),
 				   encDigestBytes,
 				   globalSigningContext.calculateMessageDigest(sigAttrBytes));
 	} catch (IOException e) {
@@ -260,18 +257,30 @@ public final class PdfSigVerifier extends PdfSigBase {
 
     private boolean verifyPKCS1Signature(byte[] certBytes, byte[] digestASN1, byte[] plainDigest) {
 	try {
-	    X509CertificateHolder certHolder = new X509CertificateHolder(certBytes);
-	    return verifySignature(PdfSignatureType.PKCS1,
-				   AsymmetricCipherType.RSA,
-				   certHolder,
-				   certHolder.toASN1Structure().getTBSCertificate(),
-				   digestASN1, plainDigest);
+	    PdfSigningContext signingContext =
+		new PdfSigningContext(PdfSigningContext.PdfSignatureType.PKCS1, certBytes);
+	    //X509CertificateHolder certHolder = new X509CertificateHolder(certBytes);
+	    return verifySignature(signingContext, digestASN1, plainDigest);
 	} catch (IOException e) {
 	    LogUtil.F("I/O failure during PKCS1 verification", e);
 	} catch (InvalidCipherTextException e) {
 	    LogUtil.F("Cipher failure during PKCS7 verification", e);
 	} catch (IllegalArgumentException e) {
 	    LogUtil.F("Errors in the PKCS7 signature", e);
+	}
+	return false;
+    }
+
+    private boolean verifySignature(PdfSigningContext signingContext,
+				    byte[] digestSrc, byte[] plainDigest)
+	throws IOException, InvalidCipherTextException {
+	Certificate cert = signingContext.getSigningCertificate();
+	if (cert != null) {
+	    return verifySignature(signingContext,
+				   new X509CertificateHolder(cert),
+				   cert.getTBSCertificate(),
+				   digestSrc,
+				   plainDigest);
 	}
 	return false;
     }
@@ -287,16 +296,17 @@ public final class PdfSigVerifier extends PdfSigBase {
      * @param plainDigest the plain digest to be verified
      * @param digestInASN1 true if the encrypted digest data is in ASN.1 encoding
      */
-    private boolean verifySignature(PdfSignatureType signatureType,
-				    AsymmetricCipherType cipherType,
+    private boolean verifySignature(PdfSigningContext signingContext,
 				    X509CertificateHolder certHolder,
 				    TBSCertificate tbsCert,
 				    byte[] digestSrc,
 				    byte[] plainDigest)
 	throws IOException, InvalidCipherTextException {
+	final PdfSigningContext.PdfSignatureType signatureType = signingContext.getSignatureType();
+	final AsymmetricCipherType cipherType = signingContext.getDerivedCipherType();
 	final boolean digestInASN1 =
-	    (signatureType == PdfSignatureType.PKCS1) ||
-	    (signatureType == PdfSignatureType.PKCS7_DETACHED &&
+	    (signatureType == PdfSigningContext.PdfSignatureType.PKCS1) ||
+	    (signatureType == PdfSigningContext.PdfSignatureType.PKCS7_DETACHED &&
 	     (cipherType == AsymmetricCipherType.DSA || cipherType == AsymmetricCipherType.ECDSA));
 
 	byte[] digest = null;
