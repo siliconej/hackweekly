@@ -499,14 +499,12 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    final SignedData signedData = timestampSigningContext.getSignedData();
 	    final ASN1Sequence tsObj  = (ASN1Sequence) ASN1Primitive.fromByteArray
 		(((ASN1OctetString) signedData.getEncapContentInfo().getContent()).getOctets());
-	    LogUtil.V("TS Time: " + ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime());
 
 	    final ASN1Set certificates = signedData.getCertificates();
             for (int i = 0; i < certificates.size(); ++i) {
                 timestampSigningContext.addCertificate
                     (Certificate.getInstance(certificates.getObjectAt(i)));
             }
-	    //timestampSigningContext.setSignerId(tsSignerInfo.getSID().getId());
 
 	    final SignerInfo tsSignerInfo = timestampSigningContext.getSignerInfo();
 	    final ASN1Sequence signerIdSeq = (ASN1Sequence) tsSignerInfo.getSID().getId();
@@ -519,7 +517,8 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
 	    }
 	    try {
-		LogUtil.V("TS Signature: " +
+		LogUtil.R("TS Signature",
+			  ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime(),
 			  PdfSigBase.verifySignature((PdfSigningContext) timestampSigningContext,
 						     new X509CertificateHolder(cert),
 						     cert.getTBSCertificate()));

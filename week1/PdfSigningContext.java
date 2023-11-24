@@ -43,6 +43,7 @@ import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 
 /**
@@ -245,6 +246,24 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     public Certificate getSigningCertificate() {
 	if (!signerId.equals(BigInteger.ZERO)) {
 	    return certificates.get(signerId);
+	}
+	return null;
+    }
+
+    @Override
+    public X509CertificateHolder resolveCertificate(X500Name name) {
+	// We don't allow self-sign resoluution here.
+	if (certificates.isEmpty()) {
+	    return null;
+	}
+	X500Name signingName = getSigningCertificate().getSubject();
+	for (Certificate cert : certificates.values()) {
+	    if (cert.getSubject().equals(signingName)) {
+		continue;
+	    }
+	    if (cert.getSubject().equals(name)) {
+		return new X509CertificateHolder(cert);
+	    } 
 	}
 	return null;
     }

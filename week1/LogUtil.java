@@ -53,4 +53,9 @@ public final class LogUtil {
           null);  // no exception.
     }
 
+    public static final void R(String header, String objectNum, boolean verifyStatus) {
+        System.out.println(header + " Subject #" + objectNum + ": " +
+                           "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
+    }
+
 }

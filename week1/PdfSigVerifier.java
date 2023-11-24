@@ -260,16 +260,16 @@ public final class PdfSigVerifier extends PdfSigBase {
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
 	if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
             "ETSI.CAdES.detached".equals(signerAlgorithm)) {
-	    showReport("◸" + _pdfFile.getName() + "◿ PKCS7", cosObject.getObjectNumber(),
-		       verifyDetachedPKCS7Signature(((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
-						    (COSArray) dict.getItem(COSName.BYTERANGE)));
+	    LogUtil.R("◸" + _pdfFile.getName() + "◿ PKCS7", String.valueOf(cosObject.getObjectNumber()),
+		      verifyDetachedPKCS7Signature(((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
+						   (COSArray) dict.getItem(COSName.BYTERANGE)));
 	} else if ("adbe.x509.rsa_sha1".equals(signerAlgorithm)) {
-	    showReport("◸" + _pdfFile.getName() + "◿ PKCS1", cosObject.getObjectNumber(),
-		       verifyPKCS1Signature(((COSString) dict.getItem(COSName.CERT)).getBytes(),
-					    ((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
-					    PdfSigningContext.calculateMessageDigest
-					    (getCOSBytesInRange((COSArray) dict.getItem(COSName.BYTERANGE)),
-					     "SHA-1")));
+	    LogUtil.R("◸" + _pdfFile.getName() + "◿ PKCS1", String.valueOf(cosObject.getObjectNumber()),
+		      verifyPKCS1Signature(((COSString) dict.getItem(COSName.CERT)).getBytes(),
+					   ((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
+					   PdfSigningContext.calculateMessageDigest
+					   (getCOSBytesInRange((COSArray) dict.getItem(COSName.BYTERANGE)),
+					    "SHA-1")));
 	} else {
 	    System.out.println("Unsupported signer algorithm: " + signerAlgorithm);
 	}

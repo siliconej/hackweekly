@@ -18,6 +18,10 @@
  */
 package io.reddart.pkcs;
 
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+
 public interface PkcsIdentifiers {
 
     enum ModeType {

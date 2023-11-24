@@ -306,26 +306,24 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	_pdfFile = new File(pdfFileName);
     }
 
-    protected static final <T extends ASN1Encodable> T castObjectAt
-	    (ASN1Sequence obj, int index, Class<T> dataType) {
+    protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Sequence obj, int index, Class<T> dataType) {
         try {
 	    if (obj.size() >= index) {
 		return dataType.cast(obj.getObjectAt(index));
 	    }
 	} catch (ClassCastException e) {
-	    LogUtil.F("Fail to retrive #" + index + " in seq:" + obj);
+	    LogUtil.F("Fail to retrieve #" + index + " in seq:" + obj, e);
 	}
 	return null;
     }
 
-    protected static final <T extends ASN1Encodable> T castObjectAt
-            (ASN1Set obj, int index, Class<T> dataType) {
+    protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Set obj, int index, Class<T> dataType) {
         try {
             if (obj.size() >= index) {
                 return dataType.cast(obj.getObjectAt(index));
             }
         } catch (ClassCastException e) {
-            LogUtil.F("Fail to retrive #" + index + " in set:" + obj);
+            LogUtil.F("Fail to retrieve #" + index + " in set:" + obj, e);
         }
         return null;
     }
@@ -333,11 +331,6 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
 	LogUtil.V(getDebugByteArrayString(header, buffer,
 				     false));  // in for hex string?
-    }
-
-    protected static final void showReport(String header, long objectNum, boolean verifyStatus) {
-	System.out.println(header + " Object #" + objectNum + ": " +
-			   "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
 
     protected static final String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
@@ -493,9 +486,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return null;
     }
 
-    protected static boolean verifyCertChain(X500Name parentIssuer,
-					     byte[] startCertSignature,
-					     byte[] startSigDigestBytes)
+    public static boolean verifyCertChain(PdfSigningContext signingContext,
+					  X500Name parentIssuer,
+					  byte[] startCertSignature,
+					  byte[] startSigDigestBytes)
 	throws InvalidCipherTextException, IOException {
 	if (_certBags == null) {
 	    return false;
@@ -506,7 +500,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	byte[] sigDigestBytes = startSigDigestBytes;
 	AsymmetricBlockCipher cipher = new RSAEngine();
 	do {
-	    final X509CertificateHolder root = _certBags.get(issuer);
+	    X509CertificateHolder root = signingContext.resolveCertificate(issuer);
+	    if (root == null) {
+		root = _certBags.get(issuer);
+	    }
 	    if (root == null) {
 		return false;
 	    }
@@ -530,6 +527,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		(root.toASN1Structure().getTBSCertificate().getEncoded(),
 		 IdUtil.getSignatureDigestId(root.getSignatureAlgorithm().getAlgorithm()));
 	} while ((--maxDepth) > 0);
+	LogUtil.W("Deepest chain depth reached: " + issuer);
 	return false;
     }
 
@@ -674,7 +672,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 			LogUtil.W("Invalid self-signed cert.");
 		    }
 		} else {
-		    if (verifyCertChain(certHolder.getIssuer(),
+		    if (verifyCertChain(signingContext,
+					certHolder.getIssuer(),
 					certHolder.getSignature(),
 					sigDigestBytes)) {
 			LogUtil.V("Cert issuer verified: " + certHolder.getIssuer());
