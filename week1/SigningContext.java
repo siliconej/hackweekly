@@ -31,6 +31,10 @@ import org.bouncycastle.asn1.x509.Certificate;
  */
 public interface SigningContext extends PkcsIdentifiers {
 
+    public enum SignatureType {
+        PKCS1, PKCS7_DETACHED, TIMESTAMP
+    }
+
     // Data Model Accessors.
     public void setMessageDigest(byte[] md);
     public void setContentType(String type);

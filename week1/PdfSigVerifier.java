@@ -87,7 +87,7 @@ public final class PdfSigVerifier extends PdfSigBase {
     private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
 	final PdfSigningContext globalSigningContext =
 	    new PdfSigningContext(PdfSigningContext.SignatureType.PKCS7_DETACHED, pkcs7Bytes);
-	
+
 	try {
 	    final SignedData signedData = globalSigningContext.getSignedData();
 
@@ -96,9 +96,9 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    final ASN1Set digestAlgorithms = signedData.getDigestAlgorithms();
 	    // only the very first algo is supported.
 	    if (digestAlgorithms.size() == 1) {
-		final ASN1Sequence algoSequence = (ASN1Sequence) digestAlgorithms.getObjectAt(0);
+		final ASN1Sequence algoSequence = castObjectAt(digestAlgorithms, 0, ASN1Sequence.class);
 		globalSigningContext.setMdAlgorithm
-		    (((ASN1ObjectIdentifier) algoSequence.getObjectAt(0)).getId());
+		    (castObjectAt(algoSequence, 0, ASN1ObjectIdentifier.class).getId());
 		LogUtil.V("PDF digest algorithm found: " + globalSigningContext.getDerivedMdName());
 	    } else {
 		throw new IllegalArgumentException("Invalid algorithm size");
@@ -111,10 +111,9 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    if (signerInfos.size() != 1) {
 		throw new IllegalArgumentException("Only one signer info supported in pkcs7");
 	    }
-	    final ASN1Sequence signerInfoSeq = (ASN1Sequence) signerInfos.getObjectAt(0);
+	    final ASN1Sequence signerInfoSeq = castObjectAt(signerInfos, 0, ASN1Sequence.class);
 	    globalSigningContext.setSignerId
-		(((ASN1Integer) (((ASN1Sequence) signerInfoSeq.getObjectAt(1)).
-				 getObjectAt(1))).getValue());
+		(castObjectAt(castObjectAt(signerInfoSeq, 1, ASN1Sequence.class), 1, ASN1Integer.class).getValue());
 	    LogUtil.V("Signer serial number: " + globalSigningContext.getSignerId());
 
 	    final ASN1Set certificates = signedData.getCertificates();
@@ -152,7 +151,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    if (signerInfoSeq.getObjectAt(3) instanceof ASN1TaggedObject) {
 		// The signatureAttribute needs to take the explicit DER encoding format.
 		ASN1Set sigAttr = signerInfo.getAuthenticatedAttributes();
-		
+
 		for (int i = 0; i < sigAttr.size(); ++i) {
 		    LogUtil.V("▹auth attr: " +
 			 Pkcs9Attr.getAndVisitInstance(sigAttr.getObjectAt(i), globalSigningContext));
@@ -184,14 +183,15 @@ public final class PdfSigVerifier extends PdfSigBase {
 			 Pkcs9Attr.getAndVisitInstance(unauthSet.getObjectAt(i), globalSigningContext));
 		}
 	    }
-		    
+		   
 	    // ======= Step 7 ========
 	    // prepare and perform the signature verficiation
 	    // Roughly, Assert( (MD(SignAttribute)? or PlainDigest) == RSA_Decrypt(Signed Digest) )
 	    // Now we start to verify the signature.
 	    // Seq #3 or #4 is the algorithm ID of the MD.
-	    final ASN1ObjectIdentifier encDigestAlgoOid = (ASN1ObjectIdentifier)
-		((ASN1Sequence) signerInfoSeq.getObjectAt(encDigestAlgoIndex)).getObjectAt(0);
+	    final ASN1ObjectIdentifier encDigestAlgoOid =
+		castObjectAt(castObjectAt(signerInfoSeq, encDigestAlgoIndex, ASN1Sequence.class),
+			     0, ASN1ObjectIdentifier.class);
 	    globalSigningContext.setMdSigningAlgorithm(encDigestAlgoOid.getId());
 
 	    // TODO(siliconej): CRLs are not supported yet.
@@ -245,8 +245,8 @@ public final class PdfSigVerifier extends PdfSigBase {
 	if (!(base instanceof COSDictionary)) {
 	    return;
 	}
-	
-	final COSDictionary dict = (COSDictionary) base;	
+
+	final COSDictionary dict = (COSDictionary) base;
 	final COSBase type = dict.getItem(COSName.TYPE);
 	if (!(type != null && type instanceof COSName &&
 	      "Sig".equals(((COSName) type).getName()))) {
@@ -256,15 +256,15 @@ public final class PdfSigVerifier extends PdfSigBase {
 	if (!"Adobe.PPKLite".equals(((COSName) dict.getItem(COSName.FILTER)).getName())) {
 	    LogUtil.F("Unsupported signature object: " + dict.getItem(COSName.FILTER));
 	}
-	
+
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
 	if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
             "ETSI.CAdES.detached".equals(signerAlgorithm)) {
-	    showReport("▹" + _pdfFile.getName() + "◃ PKCS7", cosObject.getObjectNumber(), 
+	    showReport("◸" + _pdfFile.getName() + "◿ PKCS7", cosObject.getObjectNumber(),
 		       verifyDetachedPKCS7Signature(((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
 						    (COSArray) dict.getItem(COSName.BYTERANGE)));
 	} else if ("adbe.x509.rsa_sha1".equals(signerAlgorithm)) {
-	    showReport("▹" + _pdfFile.getName() + "◃ PKCS1", cosObject.getObjectNumber(),
+	    showReport("◸" + _pdfFile.getName() + "◿ PKCS1", cosObject.getObjectNumber(),
 		       verifyPKCS1Signature(((COSString) dict.getItem(COSName.CERT)).getBytes(),
 					    ((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
 					    PdfSigningContext.calculateMessageDigest
@@ -276,7 +276,7 @@ public final class PdfSigVerifier extends PdfSigBase {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void verify() {
 	try {

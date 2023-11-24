@@ -518,9 +518,6 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 		LogUtil.V("▹unauth attribute: " +
 			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
 	    }
-	    LogUtil.V("TS Signing cert: " + cert);
-	    LogUtil.V("TS Signer encrypted digest: " + tsSignerInfo.getEncryptedDigest().getOctets().length);
-	    LogUtil.V("TS Digest Enc algorithm: " + tsSignerInfo.getDigestEncryptionAlgorithm().getAlgorithm());
 	    try {
 		LogUtil.V("TS Signature: " +
 			  PdfSigBase.verifySignature((PdfSigningContext) timestampSigningContext,

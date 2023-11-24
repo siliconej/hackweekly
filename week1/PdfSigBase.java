@@ -53,6 +53,7 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEROctetString;
@@ -125,7 +126,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    }
 	    return helper;
 	}
-	
+
 	public DecryptHelper(SymmetricCipherType cipherType, ModeType modeType, int keySize) {
 	    _cipherType = cipherType;
 	    _modeType = modeType;
@@ -220,7 +221,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
     protected static boolean verifyKeyUsage(ASN1Sequence usageSeq) {
 	for (int i = 0; i < usageSeq.size(); ++i) {
-	    String oid = ((ASN1ObjectIdentifier) usageSeq.getObjectAt(i)).getId();
+	    String oid = castObjectAt(usageSeq, i, ASN1ObjectIdentifier.class).getId();
 	    if (OID_USE_EMAIL_PROTECT.equals(oid) ||
 		OID_EXT_KEY_USE_ANY.equals(oid) ||
 		OID_USE_CODE_SIGN.equals(oid) ||
@@ -305,6 +306,30 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	_pdfFile = new File(pdfFileName);
     }
 
+    protected static final <T extends ASN1Encodable> T castObjectAt
+	    (ASN1Sequence obj, int index, Class<T> dataType) {
+        try {
+	    if (obj.size() >= index) {
+		return dataType.cast(obj.getObjectAt(index));
+	    }
+	} catch (ClassCastException e) {
+	    LogUtil.F("Fail to retrive #" + index + " in seq:" + obj);
+	}
+	return null;
+    }
+
+    protected static final <T extends ASN1Encodable> T castObjectAt
+            (ASN1Set obj, int index, Class<T> dataType) {
+        try {
+            if (obj.size() >= index) {
+                return dataType.cast(obj.getObjectAt(index));
+            }
+        } catch (ClassCastException e) {
+            LogUtil.F("Fail to retrive #" + index + " in set:" + obj);
+        }
+        return null;
+    }
+    
     protected static final void debugByteArrayString(final String header, final byte[] buffer) {
 	LogUtil.V(getDebugByteArrayString(header, buffer,
 				     false));  // in for hex string?
@@ -517,15 +542,15 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         final ASN1Sequence decryptedSeq =
             ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
         return (0 == Arrays.compare
-                (((ASN1OctetString) decryptedSeq.getObjectAt(1)).getOctets(), clearBytes));
+                (castObjectAt(decryptedSeq, 1, ASN1OctetString.class).getOctets(), clearBytes));
     }
 
     protected static final boolean verify(DSA cipher, CipherParameters params,
 					  ASN1Sequence encDigestSequence, byte[] plainDigest) {
         cipher.init(false,  // for signing?
 		    params);
-        final BigInteger r = ((ASN1Integer) encDigestSequence.getObjectAt(0)).getValue();
-        final BigInteger s = ((ASN1Integer) encDigestSequence.getObjectAt(1)).getValue();
+        final BigInteger r = castObjectAt(encDigestSequence, 0, ASN1Integer.class).getValue();
+        final BigInteger s = castObjectAt(encDigestSequence, 1, ASN1Integer.class).getValue();
 	LogUtil.V("Extracted DSA digest r = " + r.toString(16));
 	LogUtil.V("Extracted DSA digest s = " + s.toString(16));
         return cipher.verifySignature(plainDigest, r, s);
@@ -548,9 +573,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    return false;
 	}
 	final byte[] password = PBEParametersGenerator.PKCS12PasswordToBytes(pass.toCharArray());
-	final byte[] salt = ((ASN1OctetString) macSeq.getObjectAt(1)).getOctets();
-	final int iterationCount = ((BigInteger) ((ASN1Integer) macSeq.getObjectAt(2)).
-				    getValue()).intValue();
+	final byte[] salt = castObjectAt(macSeq, 1, ASN1OctetString.class).getOctets();
+	final int iterationCount = castObjectAt(macSeq, 2, ASN1Integer.class).getValue().intValue();
 	final PBEParametersGenerator generator = digestHelper.getGenerator();
 	generator.init(password,  salt, iterationCount);
 	final CipherParameters hmacParams = generator.generateDerivedMacParameters(digestHelper.getKeySize());
@@ -633,7 +657,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 					 getAlgorithm()));
 	final boolean sameSubject = certHolder.getSubject().equals(certHolder.getIssuer());
 	CipherParameters pubKeyParams = null;
-	
+
 	switch (cipherType) {
 	case RSA:
 	    final RSAPublicKey rsaPubKey = RSAPublicKey.getInstance(pubKeyEncoded);
@@ -661,7 +685,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    } catch (InvalidCipherTextException e) {
 		// this could happen when the cert is not self-signed.
 		// we silently ignore.
-	    }		
+	    }
 	    return verify(cipher, pubKeyParams, digest, clearDigest);			     
 	    
 	case DSA:
@@ -677,28 +701,26 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		dsaSigner = new DSASigner();	    
 		pubKeyParams = new DSAPublicKeyParameters
 		    (((ASN1Integer) pubKeyEncoded).getValue(),  // Y
-		     new DSAParameters(((ASN1Integer) dsaParams.getObjectAt(0)).getValue(),  // P
-				       ((ASN1Integer) dsaParams.getObjectAt(1)).getValue(),  // Q
-				       ((ASN1Integer) dsaParams.getObjectAt(2)).getValue()));  // G
+		     new DSAParameters(castObjectAt(dsaParams, 0, ASN1Integer.class).getValue(),  // P
+				       castObjectAt(dsaParams, 1, ASN1Integer.class).getValue(),  // Q
+				       castObjectAt(dsaParams, 2, ASN1Integer.class).getValue()));  // G
 	    } else if (cipherType == AsymmetricCipherType.ECDSA) {
-		final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;	
+		final ASN1Sequence ecdsaPubKeySeq = (ASN1Sequence) pubKeyEncoded;
 		if (ecdsaPubKeySeq.size() != 2 ||
-		    !OID_CIPHER_ECDSA.equals(((AlgorithmIdentifier)
-					      ecdsaPubKeySeq.getObjectAt(0)).getAlgorithm().getId())) {
+		    !OID_CIPHER_ECDSA.equals(castObjectAt(ecdsaPubKeySeq, 0, AlgorithmIdentifier.class).
+					     getAlgorithm().getId())) {
 		    throw new IllegalArgumentException("Invalid public key algorithm identifier");
 		}
-		final X9ECParameters ecParams =
-		    ECNamedCurveTable.getByOID((ASN1ObjectIdentifier)
-					       ((AlgorithmIdentifier) ecdsaPubKeySeq.getObjectAt(0)).
-					       getParameters());
+		final X9ECParameters ecParams = ECNamedCurveTable.getByOID
+		    ((ASN1ObjectIdentifier) castObjectAt(ecdsaPubKeySeq, 0, AlgorithmIdentifier.class).
+		     getParameters());
 		if (ecParams == null) {
 		    throw new IllegalArgumentException("Unsupported EC curve");
 		}
 		dsaSigner = new ECDSASigner();
 		pubKeyParams = new ECPublicKeyParameters
 		    (ecParams.getCurve().
-		     decodePoint(((DERBitString) ecdsaPubKeySeq.getObjectAt(1)).
-				 getBytes()),
+		     decodePoint(castObjectAt(ecdsaPubKeySeq, 1, DERBitString.class).getBytes()),
 		     new ECDomainParameters(ecParams.getCurve(),
 					    ecParams.getG(),
 					    ecParams.getN(),
@@ -748,17 +770,18 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	throws NoSuchAlgorithmException, InvalidCipherTextException, IOException {
 
 	/////// parse wrappers ///////
-	final ASN1Sequence pkcs5Seq = (ASN1Sequence) ((ASN1Sequence) rootPrim).getObjectAt(0);
+	final ASN1Sequence pkcs5Seq = castObjectAt((ASN1Sequence) rootPrim, 0, ASN1Sequence.class);
 	if (!verifySequenceOid(OID_CTYPE_ENC_DATA, pkcs5Seq.getObjectAt(0))) {
 	    throw new IllegalArgumentException("Invalid PKCS5");
 	}
-	final ASN1Sequence pkcs5DataSeq = (ASN1Sequence)
-	    ((ASN1Sequence) ((ASN1TaggedObject) pkcs5Seq.getObjectAt(1)).getBaseObject()).getObjectAt(1);
+	final ASN1Sequence pkcs5DataSeq = castObjectAt
+	    ((ASN1Sequence)castObjectAt(pkcs5Seq, 1, ASN1TaggedObject.class).getBaseObject(), 1,
+	     ASN1Sequence.class);
 
 	if (!verifySequenceOid(OID_CTYPE_PKCS7, pkcs5DataSeq.getObjectAt(0))) {
 	    throw new IllegalArgumentException("Invalid embedded data");
 	}
-	final ASN1Sequence pkcs5PbeSeq = (ASN1Sequence) pkcs5DataSeq.getObjectAt(1);
+	final ASN1Sequence pkcs5PbeSeq = castObjectAt(pkcs5DataSeq, 1, ASN1Sequence.class);
 
 	// Check PKCS12 vanilla or PKCS12 wrapping PKCS5.
 	final EncryptedContentInfo contentInfo = EncryptedContentInfo.getInstance(pkcs5DataSeq);
@@ -768,7 +791,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	DecryptHelper decryptHelper = null;
 	CipherParameters cipherParams = null;
-	
+
 	if (verifySequenceOid(OID_PBE_SHA_3DES, algo.getAlgorithm()) ||
 	    verifySequenceOid(OID_PBE_SHA_EDE, algo.getAlgorithm())) {
 	    // PKCS12 vanilla
@@ -785,9 +808,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    decryptHelper = DecryptHelper.newInstance(algo.getAlgorithm().getId());
 
 	    LogUtil.V("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize() +
-		 getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
-		 "; iteration: " + pkcs12PbeParams.getIterations() +
-		 "; decryptHelper: " + decryptHelper + ")");
+		      getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
+		      "; iteration: " + pkcs12PbeParams.getIterations() +
+		      "; decryptHelper: " + decryptHelper + ")");
 
 	} else if (verifySequenceOid(OID_PBES2, algo.getAlgorithm())) {
 	    // PKCS12 wrapping PKCS5
@@ -806,10 +829,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    if (generator == null || keySize == 0) {
 		throw new IllegalArgumentException("Unsupported PBES2 HMAC algorithm");
 	    }
-	    final byte[] iv = ((DEROctetString)
-			       (((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(1))).getOctets();
+	    final byte[] iv = castObjectAt(castObjectAt(algoSeq, 1, ASN1Sequence.class),
+					   1, DEROctetString.class).getOctets();
 	    decryptHelper = DecryptHelper.newInstance
-		(((ASN1ObjectIdentifier) ((ASN1Sequence) algoSeq.getObjectAt(1)).getObjectAt(0)).getId());
+		(castObjectAt(castObjectAt(algoSeq, 1, ASN1Sequence.class), 0, ASN1ObjectIdentifier.class).getId());
 	    /////// 2. Decrypt and extract certs ///////
 	    generator.init(PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password.toCharArray()),
 			   pbkdf2Params.getSalt(),
@@ -817,9 +840,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    cipherParams = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
 	    
 	    LogUtil.V("PBKDF2 (keyLength: " + keySize +
-		 "; iteration: " + pbkdf2Params.getIterationCount() +
-		 getDebugByteArrayString("; IV:", iv, true) +
-		 "; decryptHelper: " + decryptHelper + ")");
+		      "; iteration: " + pbkdf2Params.getIterationCount() +
+		      getDebugByteArrayString("; IV:", iv, true) +
+		      "; decryptHelper: " + decryptHelper + ")");
 	    
 	} else {
 	    throw new IllegalArgumentException("Invalid PKCS5-PBE sequence: " +
@@ -837,7 +860,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         for (int i = 0; i < certsSeq.size(); ++i) {
             final CertBag certBag = CertBag.getInstance(certsSeq.getObjectAt(i));
             final ASN1TaggedObject certObj =
-		(ASN1TaggedObject) ((ASN1Sequence) certBag.getCertValue()).getObjectAt(1);
+		castObjectAt((ASN1Sequence) certBag.getCertValue(), 1, ASN1TaggedObject.class);
             final X509CertificateHolder holder =
 		new X509CertificateHolder(((DEROctetString) certObj.getBaseObject()).getOctets());
 	    _certBags.put(holder.getSubject(), holder);
@@ -851,28 +874,25 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    final ASN1Sequence asn1prim = (ASN1Sequence) asnIS.readObject();
 	    asnIS.close();
             //System.out.println("asn1prim: " + asn1prim.getObjectAt(2)
-	    final ASN1Sequence certBagSeq = (ASN1Sequence) asn1prim.getObjectAt(1);
-
-	    final ASN1Sequence macSeq = (ASN1Sequence) asn1prim.getObjectAt(2);
-	    final AlgorithmIdentifier digestAlgoObj =
-		AlgorithmIdentifier.getInstance(((ASN1Sequence) macSeq.getObjectAt(0)).getObjectAt(0));
+	    final ASN1Sequence certBagSeq = castObjectAt(asn1prim, 1, ASN1Sequence.class);
+	    final ASN1Sequence macSeq = castObjectAt(asn1prim, 2, ASN1Sequence.class);
+	    final AlgorithmIdentifier digestAlgoObj = AlgorithmIdentifier.getInstance
+		(castObjectAt(macSeq, 0, ASN1Sequence.class).getObjectAt(0));
+	    
 	    if (!verifySequenceOid(OID_CTYPE_PKCS7, certBagSeq.getObjectAt(0))) {
 		LogUtil.W("unsupported cert bag: " + certBagSeq.getObjectAt(0));
 	    }
 	    // PKCS7 bag
-	    final byte[] cmsBytes =
-		DEROctetString.getInstance(((ASN1TaggedObject) certBagSeq.getObjectAt(1)).
-					   getBaseObject().getEncoded()).getOctets();
+	    final byte[] cmsBytes = DEROctetString.getInstance
+		(castObjectAt(certBagSeq, 1, ASN1TaggedObject.class).getBaseObject().getEncoded()).getOctets();
 	    final ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
 	    if (_certBags == null) {
 		_certBags = new HashMap<X500Name, X509CertificateHolder>();
 	    }
 	    try {
 		if (verifyMac(digestAlgoObj, cmsBytes,
-			      ((ASN1OctetString)
-			       ((ASN1Sequence)
-				((ASN1Sequence)
-				 macSeq.getObjectAt(0))).getObjectAt(1)).getOctets(),  // MD
+			      castObjectAt(castObjectAt(macSeq, 0, ASN1Sequence.class),
+					   1, ASN1OctetString.class).getOctets(),  // MD
 			      password, macSeq)) {
 		    LogUtil.V("MAC verified successfully.");
 		} else {

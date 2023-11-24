@@ -65,10 +65,6 @@ import org.bouncycastle.cert.X509CertificateHolder;
  */
 public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
-    public enum SignatureType {
-	PKCS1, PKCS7_DETACHED, TIMESTAMP
-    }
-
     //////////// Global context ////////////////
     private ASN1Sequence contentSequence;
     private ContentInfo contentInfo;
@@ -374,14 +370,6 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
         signerId = BigInteger.ZERO;
     }
 
-    public ContentInfo asContentInfo() {
-	return contentInfo;
-    }
-
-    public ASN1Sequence asSequence() {
-	return contentSequence;
-    }
-
     @Override
     public SignedData getSignedData() {
 	return signedData;
@@ -422,6 +410,14 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 		signingTime.getTime() < signingCert.getEndDate().getDate().getTime());
     }
     
+    public ContentInfo asContentInfo() {
+	return contentInfo;
+    }
+
+    public ASN1Sequence asSequence() {
+	return contentSequence;
+    }
+
     public static byte[] calculateMessageDigest(byte[] buffer, String mdName) {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance(mdName);
