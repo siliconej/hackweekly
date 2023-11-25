@@ -44,6 +44,7 @@ import io.reddart.util.IdUtil;
 import io.reddart.util.LogUtil;
 
 import org.apache.pdfbox.cos.COSArray;
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -68,6 +69,7 @@ import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
@@ -219,7 +221,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return false;
     }
 
-    protected static boolean verifyKeyUsage(ASN1Sequence usageSeq) {
+    protected static boolean verifyExKeyUsage(ASN1Sequence usageSeq) {
 	for (int i = 0; i < usageSeq.size(); ++i) {
 	    String oid = castObjectAt(usageSeq, i, ASN1ObjectIdentifier.class).getId();
 	    if (OID_USE_EMAIL_PROTECT.equals(oid) ||
@@ -231,6 +233,27 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * KeyUsage ::= BIT STRING {
+     *	digitalSignature(0),
+     *	nonRepudiation(1),
+     *	keyEncipherment(2),
+     *	dataEncipherment(3),
+     *	keyAgreement(4),
+     *	keyCertSign(5),
+     *	cRLSign(6)
+     */
+    protected static boolean verifyKeyUsageForSigning(DERBitString keyUsage) {
+	if (keyUsage == null) {
+	    return false;
+	}
+	final byte[] bits = keyUsage.getBytes();
+	if (bits.length < 1) {
+	    return false;
+	}
+	return (((bits[0] >> keyUsage.getPadBits()) & 0x03) == 0x3);
     }
 
     private static final String OID_AES = "2.16.840.1.101.3.4.1";
@@ -328,30 +351,6 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         return null;
     }
     
-    protected static final void debugByteArrayString(final String header, final byte[] buffer) {
-	LogUtil.V(getDebugByteArrayString(header, buffer,
-				     false));  // in for hex string?
-    }
-
-    protected static final String getDebugByteArrayString(final String header, final byte[] buffer, final boolean full) {
-	final StringBuffer sb = new StringBuffer(128);
-        final int len = buffer.length;
-	sb.append(header).append(" (len=").append(len).append(")[\u001B[34m");
-	if (full && len > 1) {
-	    for (int i = 0; i < len - 1; ++i) {
-		sb.append(String.format("%02x", buffer[i] & 0xff)).append(":");
-	    }
-            sb.append(String.format("%02x", buffer[len - 1] & 0xff));
-	} else {
-	    sb.append(String.format("%02x", buffer[0] & 0xff));
-            if (len > 1) {
-                sb.append(" .. ");
-                sb.append(String.format("%02x", buffer[len - 1] & 0xff));
-            }
-        }
-	return sb.append("\u001B[0m]").toString();
-    }
-
     private static class PBEParamsHelper {
 	private int _keySize;
 	private int _ivSize;
@@ -506,6 +505,12 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    }
 	    if (root == null) {
 		return false;
+	    }
+	    // Verify if the certificate is OK for cert signing.
+	    if (!verifyKeyUsageForSigning((DERBitString)
+					  root.getExtension(Extension.keyUsage)
+					  .getParsedValue())) {
+		LogUtil.W("Signing key has invalid Key Usage: " + root.getSubject());
 	    }
 	    final RSAPublicKey rsaPubKey =
 		RSAPublicKey.getInstance(root.getSubjectPublicKeyInfo().parsePublicKey());
@@ -807,7 +812,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    decryptHelper = DecryptHelper.newInstance(algo.getAlgorithm().getId());
 
 	    LogUtil.V("PKCS12 (keyLength: " + pbeParamsHelper.getKeySize() +
-		      getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
+		      LogUtil.getDebugByteArrayString("; salt:", pkcs12PbeParams.getIV(), true) +
 		      "; iteration: " + pkcs12PbeParams.getIterations() +
 		      "; decryptHelper: " + decryptHelper + ")");
 
@@ -840,7 +845,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    
 	    LogUtil.V("PBKDF2 (keyLength: " + keySize +
 		      "; iteration: " + pbkdf2Params.getIterationCount() +
-		      getDebugByteArrayString("; IV:", iv, true) +
+		      LogUtil.getDebugByteArrayString("; IV:", iv, true) +
 		      "; decryptHelper: " + decryptHelper + ")");
 	    
 	} else {
@@ -850,8 +855,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	decryptHelper.newCipher(cipherParams);
 	final byte[] decryptedBytes = decryptHelper.decrypt(encryptedBytes);
-	debugByteArrayString("encryptedBytes", encryptedBytes);
-	debugByteArrayString("decryptedBytes", decryptedBytes);
+	LogUtil.debugByteArrayString("encryptedBytes", encryptedBytes);
+	LogUtil.debugByteArrayString("decryptedBytes", decryptedBytes);
 
 	// Load certs from the decryptedBytes, use stream so that we can ignore some extra bytes.
 	final ASN1InputStream decryptedIS = new ASN1InputStream(new ByteArrayInputStream(decryptedBytes));

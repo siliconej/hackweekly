@@ -141,7 +141,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    final String sigAlgoId = IdUtil.getSignatureAlgorithmId(cert.getSignatureAlgorithm().getAlgorithm());
 	    final byte[] signatureBytes = certHolder.getSignature();
 	    LogUtil.V("Certificate signature algorithm recognized: " + sigAlgoId);
-	    debugByteArrayString("Signature of cert found", signatureBytes);
+	    LogUtil.debugByteArrayString("Signature of cert found", signatureBytes);
 
 	    // ======= Step 5 =======
 	    // Parse the authenticated attributes
@@ -201,8 +201,8 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    final Extension exKeyUsageObj = certHolder.getExtension(Extension.extendedKeyUsage);
 	    if (exKeyUsageObj != null) {
 		final ASN1Sequence keyUsageSeq = ASN1Sequence.getInstance
-		    (certHolder.getExtension(Extension.extendedKeyUsage).getExtnValue().getOctets());
-		if (!verifyKeyUsage(keyUsageSeq)) {
+		    (exKeyUsageObj.getExtnValue().getOctets());
+		if (!verifyExKeyUsage(keyUsageSeq)) {
 		    LogUtil.W("Key usage doesn't cover PDF signing");
 		}
 	    } else {

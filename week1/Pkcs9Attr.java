@@ -82,11 +82,9 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
         @Override
         public String toString() {
-            return super.toString() + ": [" +
-                String.format("%02x", payload[0] & 0xff) + " .. " +
-                String.format("%02x", payload[payload.length - 1] & 0xff) +
-                "]";
-        }
+            return LogUtil.getDebugByteArrayString(super.toString(), payload,
+                                                   false);  // full byte array
+	}
     }
 
     private String friendlyAttrName;

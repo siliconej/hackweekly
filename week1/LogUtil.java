@@ -58,4 +58,29 @@ public final class LogUtil {
                            "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
 
+    public static final void debugByteArrayString(final String header, final byte[] buffer) {
+        V(getDebugByteArrayString(header, buffer, false));  // in for hex string?
+    }
+
+    public static final String getDebugByteArrayString(final String header,
+						       final byte[] buffer,
+						       final boolean full) {
+        final StringBuffer sb = new StringBuffer(128);
+        final int len = buffer.length;
+        sb.append(header).append(" (len=").append(len).append(")[\u001B[34m");
+        if (full && len > 1) {
+            for (int i = 0; i < len - 1; ++i) {
+                sb.append(String.format("%02x", buffer[i] & 0xff)).append(":");
+            }
+            sb.append(String.format("%02x", buffer[len - 1] & 0xff));
+        } else {
+            sb.append(String.format("%02x", buffer[0] & 0xff));
+            if (len > 1) {
+                sb.append(" .. ");
+                sb.append(String.format("%02x", buffer[len - 1] & 0xff));
+            }
+        }
+        return sb.append("\u001B[0m]").toString();
+    }
+
 }
