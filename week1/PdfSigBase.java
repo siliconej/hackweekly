@@ -40,6 +40,7 @@ import java.security.Security;
 import java.security.cert.CertificateException;
 
 import io.reddart.pkcs.PkcsIdentifiers;
+import io.reddart.pkcs.SigningContext;
 import io.reddart.util.IdUtil;
 import io.reddart.util.LogUtil;
 
@@ -485,7 +486,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return null;
     }
 
-    public static boolean verifyCertChain(PdfSigningContext signingContext,
+    public static boolean verifyCertChain(SigningContext signingContext,
 					  X500Name parentIssuer,
 					  byte[] startCertSignature,
 					  byte[] startSigDigestBytes)

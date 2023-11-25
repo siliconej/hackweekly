@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import io.reddart.pdf.PdfSigBase;
 import io.reddart.pdf.PdfSigningContext;
+import io.reddart.util.IdUtil;
 import io.reddart.util.LogUtil;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -714,7 +715,10 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 
         @Override
         public String toString() {
-            return super.toString() + ": " + mdAlgorithm + "/" + mdSigningAlgorithm;
+            final String mdAlgorithmId = IdUtil.getDigestAlgorithmId(mdAlgorithm);
+	    final String mdSigningAlgorithmId = IdUtil.getSignatureAlgorithmId(mdSigningAlgorithm);
+            return super.toString() + ": " + mdAlgorithmId + "/" +
+		    ((mdSigningAlgorithmId != null) ? mdSigningAlgorithmId : mdSigningAlgorithm);
         }
     }
 

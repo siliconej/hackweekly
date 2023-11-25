@@ -54,8 +54,8 @@ public final class LogUtil {
     }
 
     public static final void R(String header, String objectNum, boolean verifyStatus) {
-        System.out.println(header + " Subject #" + objectNum + ": " +
-                           "\u001B[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
+        System.out.println(header + " Subject \u001b[48;5;236m\u001b[38;5;251m ⁕ " + objectNum + " " +
+                           "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
 
     public static final void debugByteArrayString(final String header, final byte[] buffer) {
