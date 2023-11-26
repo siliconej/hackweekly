@@ -31,8 +31,16 @@ public final class LogUtil {
     }
 
     public static final void V(String log) {
+	V(log, 0);
+    }
+    public static final void V(String log, int indent) {
+	StringBuffer sb = new StringBuffer(indent);
+	while (indent-- > 0) {
+	    sb.append(' ');
+	}
+	sb.append(log);
         if (_VERBOSE) {
-            System.out.println(log);
+            System.out.println(sb.toString());
         }
     }
     public static final void W(String log) {
@@ -54,8 +62,8 @@ public final class LogUtil {
     }
 
     public static final void R(String header, String objectNum, boolean verifyStatus) {
-        System.out.println(header + " Signature \u001b[48;5;236m\u001b[38;5;251m ⁕ " + objectNum + " " +
-                           "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
+        System.out.println("\u001b[4m" + header + " Signature\u001b[0m \u001b[48;5;236m\u001b[38;5;251m ⁕ " +
+                           objectNum + " " + "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001b[0m");
     }
 
     public static final void debugByteArrayString(final String header, final byte[] buffer) {

@@ -80,7 +80,7 @@ test_cert: classes/${PDF_PACKAGE}/PdfSigVerifier.class
 		testcases/reddart_homepage_signed.pdf
 
 test_tsa: classes/${PDF_PACKAGE}/PdfSigVerifier.class
-	@java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier \
+	java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier \
 		--verbose --pkcs12 actalis_digicert.p12 --password Test123# \
 		testcases/pdf_test2_unc_signed.pdf
 

@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.security.KeyStore;
@@ -499,6 +500,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	byte[] certSignature = startCertSignature;
 	byte[] sigDigestBytes = startSigDigestBytes;
 	AsymmetricBlockCipher cipher = new RSAEngine();
+	final Stack<String> certChain = new Stack<String>();
 	do {
 	    X509CertificateHolder root = signingContext.resolveCertificate(issuer);
 	    if (root == null) {
@@ -522,8 +524,14 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 			certSignature, sigDigestBytes)) {
 		return false;
 	    }
+	    certChain.push(String.valueOf(root.getSubject()));
 	    if (root.getSubject().equals(root.getIssuer())) {
 		// reached the self-sign root.
+		int indent = 0;
+		while (!certChain.isEmpty()) {
+		    LogUtil.V((indent > 0 ? "⌙" : "") + certChain.pop(), indent);
+		    indent += 2;
+		}
 		return true;
 	    }
 	    issuer = root.getIssuer();
