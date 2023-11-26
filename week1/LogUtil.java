@@ -54,7 +54,7 @@ public final class LogUtil {
     }
 
     public static final void R(String header, String objectNum, boolean verifyStatus) {
-        System.out.println(header + " Subject \u001b[48;5;236m\u001b[38;5;251m ⁕ " + objectNum + " " +
+        System.out.println(header + " Signature \u001b[48;5;236m\u001b[38;5;251m ⁕ " + objectNum + " " +
                            "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001B[0m");
     }
 

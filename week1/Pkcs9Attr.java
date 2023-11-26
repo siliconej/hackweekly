@@ -516,7 +516,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
 	    }
 	    try {
-		LogUtil.R("TS Signature",
+		LogUtil.R("Timestamp",
 			  ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime(),
 			  PdfSigBase.verifySignature((PdfSigningContext) timestampSigningContext,
 						     new X509CertificateHolder(cert),

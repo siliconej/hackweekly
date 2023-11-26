@@ -494,7 +494,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	if (_certBags == null) {
 	    return false;
 	}
-	int maxDepth = 2;
+	int maxDepth = 3;
 	X500Name issuer = parentIssuer;
 	byte[] certSignature = startCertSignature;
 	byte[] sigDigestBytes = startSigDigestBytes;
