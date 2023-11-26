@@ -4,7 +4,7 @@ UTIL_PACKAGE=io/reddart/util
 JARFILE=libs/pdfbox-app-3.0.0.jar:classes
 JAVAC_FLAGS=-Xlint:deprecation -Xlint:unchecked
 
-all: test test_cert
+all: test test_cert test_tsa
 
 ####### Building #######
 
@@ -78,6 +78,11 @@ test_cert: classes/${PDF_PACKAGE}/PdfSigVerifier.class
 	@java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier \
 		--verbose --pkcs12 actalis_weakpassword_aes.p12 --password reddart123# \
 		testcases/reddart_homepage_signed.pdf
+
+test_tsa: classes/${PDF_PACKAGE}/PdfSigVerifier.class
+	@java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier \
+		--verbose --pkcs12 actalis_digicert.p12 --password Test123# \
+		testcases/pdf_test2_unc_signed.pdf
 
 clean:
 	rm -rf classes/*
