@@ -63,7 +63,7 @@ classes/${PKCS_PACKAGE}/PkcsIdentifiers.class: PkcsIdentifiers.java
 ####### Testing #######
 
 test: classes/${PDF_PACKAGE}/PdfSigVerifier.class
-	@java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier \
+	@java -cp ${JARFILE}:classes io.reddart.pdf.PdfSigVerifier --nowarning \
 		testcases/dsasigner_dsa_signed.pdf \
 		testcases/exported_file_1936.pdf \
 		testcases/sample01.pdf \

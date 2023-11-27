@@ -529,7 +529,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		// reached the self-sign root.
 		int indent = 0;
 		while (!certChain.isEmpty()) {
-		    LogUtil.V((indent > 0 ? "⌙" : "") + certChain.pop(), indent);
+		    LogUtil.V((indent > 0 ? "↳" : "") + certChain.pop(), indent);
 		    indent += 2;
 		}
 		return true;
