@@ -1,6 +1,0 @@
-##### Parse Result #####
-((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,new expr) {[] ((*)) AST(variant,reference var) {{[97]}}()}}
-########################
-##### Parse Result #####
-((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,call expr) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(expression,new expr) {[] ((*)) AST(variant,reference var) {{[97]}}(((*)) AST(variant,numeric var) {{(I)1}} <,> ((*)) AST(variant,numeric var) {{(I)2}} <,> ((*)) AST(variant,numeric var) {{(I)3}})} <.> ((*)) AST(variant,reference var) {{[104][101][108][108][111]}}}()}}
-########################

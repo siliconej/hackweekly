@@ -1,6 +1,0 @@
-##### Parse Result #####
-((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,assignment expr) {[] ((*)) AST(variant,reference var) {{[99][108][111][110][101]}}{ASSIGN_EQUAL(=)} {((*)) AST(expression,conditional expr) {[] ((*)) AST(expression,binary expr) {[] (null)(PREC=2) ((*)) AST(variant,reference var) {{[115][114][99]}} {BOOL_AND(&&)} ((*)) AST(expression,call expr) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(variant,reference var) {{[65][114][114][97][121]}} <.> ((*)) AST(variant,reference var) {{[105][115][65][114][114][97][121]}}}(((*)) AST(variant,reference var) {{[115][114][99]}})}} <?> ((*)) AST(variant,reference var) {{[115][114][99]}} <:> ((*)) AST(collection) {[]}}}}}
-########################
-##### Parse Result #####
-((@)) AST(statement,expr stmt) {[] ((*)) AST(collection) {[((*)) AST(variant,numeric var) {{(I)1}} <,> ((*)) AST(variant,numeric var) {{(I)2}} <,> ((*)) AST(expression,binary expr) {[] (null)(PREC=9) ((*)) AST(variant,numeric var) {{(I)3}} {PLUS(+)} ((*)) AST(variant,numeric var) {{(I)4}}} <,> ((*)) AST(variant,numeric var) {{(I)5}} <,> ((*)) AST(expression,binary expr) {[] (null)(PREC=9) ((*)) AST(variant,numeric var) {{(I)7}} {PLUS(+)} ((*)) AST(variant,reference var) {{[97]}}}]}}
-########################

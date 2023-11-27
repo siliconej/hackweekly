@@ -1,0 +1,9 @@
+./ac_js_compiler expr10.js | tail -3
+./ac_js_compiler expr11.js | tail -3
+./ac_js_compiler expr13.js | tail -3
+./ac_js_compiler expr14.js | tail -3
+./ac_js_compiler expr15.js | tail -3
+./ac_js_compiler expr16.js | tail -3
+./ac_js_compiler expr17.js | tail -3
+./ac_js_compiler expr18.js | tail -3
+./ac_js_compiler expr19.js | tail -3

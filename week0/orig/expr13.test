@@ -1,3 +1,0 @@
-##### Parse Result #####
-((*)) AST(function,function) {function((*)) AST(variant,reference var) {{[97]}}(((*)) AST(function,id param) {{((*)) AST(variant,reference var) {{[98]}}}} <,> ((*)) AST(function,id param) {{((*)) AST(variant,reference var) {{[99]}}}})((*)) AST(block) {>>>>>> 0 >>>>>> (#16)((@)) AST(statement,empty stmt) {*;*} (#16) <<<<<<<<<<< >>>>>> 1 >>>>>> (#16)((@)) AST(statement,while stmt) {*WHILE* (((*)) AST(variant,bool var) {{true}})((@)) AST(statement,empty stmt) {*;*}}(#16) <<<<<<<<<<< >>>>>> 2 >>>>>> (#16)((@)) AST(statement,do-while stmt) {*DO*((*)) AST(block) {>>>>>> 0 >>>>>> (#44)((@)) AST(statement,empty stmt) {*;*} (#44) <<<<<<<<<<< }*WHILE* (((*)) AST(variant,bool var) {{false}})}(#16) <<<<<<<<<<< }}
-########################

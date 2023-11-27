@@ -1,1 +1,0 @@
-./jsvariant_test
