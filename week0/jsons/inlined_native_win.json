@@ -1,0 +1,76 @@
+{
+  "qdata": "x",
+  "ad_networks": [
+    {
+      "response_type": "banner",
+      "adapters": [
+        "com.google.ads.mediation.customevent.CustomEventAdapter"
+      ],
+      "allocation_id": "5644659878789254",
+      "id": "https://googleads.g.doubleclick.net/aclk?sa=L&ai=CNInrL09PV5DPNs-mpgOX8Z6oDPnJ2qYF0a-FupIBABAIIOSHkS1gye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9D3Ai8YiF9AyeQbuyXuIzmm9VUV3dse2H8rzwyvWT7ABguAB4H4qTCYBwE&num=1&cid=CAASBORo7r4&sig=AOD64_1r9cm3XdVYsQh2ZFqxL0XrDeC9rw&adurl=http://example.com",
+      "data": {
+        "label": "Non Existing Custom Event",
+        "class_name": "com.nonexistingcompany.nonexistingcustomevent"
+      }
+    },
+    {
+      "id": "0",
+      "response_type": "native",
+      "adapters": [
+        "com.google.ads.mediation.admob.AdMobAdapter"
+      ],
+      "ad": {
+        "ad_json": {
+          "ads": [
+            {
+              "headline": "Lowest mortgage rates",
+              "body": "Your home sweet Queens home - cheaper and sooner than you think!",
+              "call_to_action": "Get a quote",
+              "advertiser": "NY Mortgage Inc.",
+              "image": {
+                "url": "https://tpc.googlesyndication.com/pagead/imgad?id=CICAgKCT6p-7ehABGAEyCCf7Gg6HXqby"
+              },
+              "secondary_image": {
+                "url": "https://tpc.googlesyndication.com/pagead/imgad?id=CICAgKCT6p-zfRABGAEyCAf5V54m7to1"
+              },
+              "tracking_urls_and_actions": {
+                "click_actions": [
+                  {
+                    "type": 2,
+                    "url": "http://www.google.com"
+                  }
+                ],
+                "impression_tracking_urls": [
+                  "https://pubads.g.doubleclick.net/pagead/adview?ai=B_X_T0XUkVuyEPNjT-QOR87jABYLj8fwGAAAAEAEgmsCpGDgAWJrHwNqMAWDJnvmGyKOgGbIBSzAuYW5kcm9pZC5jb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5pbnRlcm5hbC5hZG1vYnNkay5tZWRpdW10ZXN0Lm5hdGl2ZWFkcy5hZLoBCWdmcF9pbWFnZcgBCdoBaWh0dHA6Ly8wLmFuZHJvaWQuY29tLmdvb2dsZS5hbmRyb2lkLmFwcHMuaW50ZXJuYWwuYWRtb2JzZGsubWVkaXVtdGVzdC5uYXRpdmVhZHMuYWRzZW5zZWZvcm1vYmlsZWFwcHMuY29tL8ACAuACAOoCFC82NDk5L2V4YW1wbGUvbmF0aXZl-AL80R6AAwGQA6wCmAPgA6gDAeAEAZAGAaAGH9gGAtgHAA&sigh=U2pyRTWlQho&cid=5GhrGdZlH_eYc2XK0LQWOpI9RY12xPk8Ei0Qf8YRa5tNWUFsdK0ErJzbFnEWgYUNN-K2DPRupj4YcF7DYOd9UfwiQbkl_qJXgA&template_id=10004520",
+                  ""
+                ],
+                "google_click_tracking_url": "http://adclick.g.doubleclick.net/aclk?sa=L&ai=B_X_T0XUkVuyEPNjU-QOR87jABYLj8fwGAAAAEAEgmsCpGDgAWJrHwNqMAWDJnvmGyKOgGbIBSzAuYW5kcm9pZC5jb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5pbnRlcm5hbC5hZG1vYnNkay5tZWRpdW10ZXN0Lm5hdGl2ZWFkcy5hZLoBCWdmcF9pbWFnZcgBCdoBaWh0dHA6Ly8wLmFuZHJvaWQuY29tLmdvb2dsZS5hbmRyb2lkLmFwcHMuaW50ZXJuYWwuYWRtb2JzZGsubWVkaXVtdGVzdC5uYXRpdmVhZHMuYWRzZW5zZWZvcm1vYmlsZWFwcHMuY29tL8ACAuACAOoCFC82NDk5L2V4YW1wbGUvbmF0aXZl-AL80R6AAwGQA6wCmAPgA6gDAeAEAZAGAaAGH9gGAtgHAA&num=0&cid=5GhrGdZlH_eYc2XK0LQWOpI9RY12xPk8Ei0Qf8YRa5tNWUFsdK0ErJzbFnEWgYUNN-K2DPRupj4YcF7DYOd9UfwiQbkl_qJXgA&sig=AOD64_1iMxyYb6XIBFmXs9k-FotePZx8BQ&client=ca-pub-7502991030721097&adurl=http://www.google.com",
+                "base_url": "https://googleads.g.doubleclick.net/mads/static/mad/sdk/native/native_ads.html"
+              },
+              "type": "native",
+              "template_id": "1",
+              "images": [
+                {
+                  "url": "https://tpc.googlesyndication.com/pagead/imgad?id=CICAgKCT6p-7ehABGAEyCCf7Gg6HXqby"
+                }
+              ]
+            }
+          ]
+        },
+        "ad_base_url": "http:\/\/adx.g.doubleclick.net"
+      },
+      "data": {
+        "pubid": ""
+      },
+      "imp_urls": [
+      ]
+    }
+  ],
+  "settings": {
+    "click_urls": [
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+    ]
+  }
+}

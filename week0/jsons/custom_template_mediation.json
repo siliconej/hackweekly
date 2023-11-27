@@ -1,0 +1,65 @@
+{
+  "ad_networks": [
+    {
+      "ad": {
+        "ad_base_url": "https://googleads.g.doubleclick.net",
+        "ad_json": {
+          "ads": [
+            {
+              "custom_assets": [
+                {
+                  "name": "string",
+                  "string_value": "THIS IS THE STRING VALUE!",
+                  "type": "string"
+                },
+                {
+                  "image_value": {
+                    "url": "http://google.com/image.png"
+                  },
+                  "name": "image",
+                  "type": "image"
+                }
+              ],
+              "custom_template_id": 1234,
+              "template_id": "3",
+              "tracking_urls_and_actions": {
+                "click_actions": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "impression_tracking_urls": [
+                  "http://google.com/impression"
+                ],
+                "third_party_click_tracking_urls": [
+                  "http://google.com/third-party-click-tracking"
+                ]
+              },
+              "type": "native"
+            }
+          ]
+        }
+      },
+      "adapters": [
+        "com.google.ads.mediation.admob.AdMobAdapter"
+      ],
+      "allocation_id": "4167952028896414",
+      "data": {
+        "gwhirl_share_location": "1",
+        "pubid": "ca-app-pub-1301877944886160/9675576330"
+      },
+      "id": ""
+    }
+  ],
+  "ad_type": "banner",
+  "qdata": "x",
+  "settings": {
+    "click_urls": [
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [],
+    "nofill_urls": [
+      "http://google.com/no-fill"
+    ]
+  }
+}

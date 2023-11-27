@@ -1,0 +1,207 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "ewogICJhZF90eXBlIjogImJhbm5lciIsCiAgInFkYXRhIjogIngiLAogICJhZF9uZXR3b3JrcyI6IFsKICAgIHsKICAgICAgImFkYXB0ZXJzIjogWwogICAgICAgICJjb20ubW9wdWIubW9iaWxlYWRzLmRmcC5hZGFwdGVycy5Nb1B1YkFkYXB0ZXIiCiAgICAgIF0sCiAgICAgICJhbGxvY2F0aW9uX2lkIjogIjE3Njk3NTU2OTYzODE1MDEiLAogICAgICAiaWQiOiAiaHR0cHM6XC9cL2dvb2dsZWFkcy5nLmRvdWJsZWNsaWNrLm5ldFwvYWNsaz9zYT1MXHUwMDI2YWk9Q2JUSEpuaUcwVnAtWE5KR3VCY1Q0Z3BnTi1jbmFwZ1hSNzRXNmtnRUFFQWdnMmZYc0oyREo1djZHeUtPZ0dha0NBQUFBQUlDRUxrR29Bd0dxQkNCUDBQOGp3RGV6TnVHblB6amMxOVJHdVZCeXhkVk9IOGRqcWl3bWJ3TktFc0FHQzRBSGdmaXBNSmdIQVFcdTAwMjZudW09MVx1MDAyNmNpZD01R2l1V2dcdTAwMjZzaWc9QU9ENjRfMXQ1Y2g5bVlOaDlhczhkZ0s3ZTZnYkRfMWFxd1x1MDAyNmFkdXJsPWh0dHA6XC9cL2V4YW1wbGUuY29tIiwKICAgICAgImRhdGEiOiB7CiAgICAgICAgImFkVW5pdElkIjogIjlkZmEyYzRlODQxYzRhNjZiZGViMGNjNWYwYzk3MTU2IgogICAgICB9LAogICAgICAiaW1wX3VybHMiOiBbCiAgICAgICAgImh0dHBzOlwvXC9wYWdlYWQyLmdvb2dsZWFkc2VydmljZXMuY29tXC9wYWdlYWRcL2Fkdmlldz9haT1DYlRISm5pRzBWcC1YTkpHdUJjVDRncGdOLWNuYXBnWFI3NFc2a2dFQUVBZ2cyZlhzSjJESjV2Nkd5S09nR2FrQ0FBQUFBSUNFTGtHb0F3R3FCQ0JQMFA4andEZXpOdUduUHpqYzE5Ukd1VkJ5eGRWT0g4ZGpxaXdtYndOS0VzQUdDNEFIZ2ZpcE1KZ0hBUVx1MDAyNnNpZ2g9QUJrdlJpSUN3Z1lcdTAwMjZjaWQ9NUdpdVdnXHUwMDI2Z3ZyPTEiCiAgICAgIF0sCiAgICAgICJmaWxsX3VybHMiOiBbCiAgICAgICAgImh0dHBzOlwvXC9nb29nbGVhZHMuZy5kb3VibGVjbGljay5uZXRcL3BhZ2VhZFwvY29udmVyc2lvblwvP2FpPUNiVEhKbmlHMFZwLVhOSkd1QmNUNGdwZ04tY25hcGdYUjc0VzZrZ0VBRUFnZzJmWHNKMkRKNXY2R3lLT2dHYWtDQUFBQUFJQ0VMa0dvQXdHcUJDQlAwUDhqd0Rlek51R25QempjMTlSR3VWQnl4ZFZPSDhkanFpd21id05LRXNBR0M0QUhnZmlwTUpnSEFRXHUwMDI2c2lnaD05ZEFSdnZpTV9Hd1x1MDAyNmxhYmVsPWFkbW9iX21lZGlhdGlvbl9yZXF1ZXN0X2ZpbGxfcmVzdWx0XHUwMDI2bWVkaWF0aW9uX2ZpbGxfc3RhdHVzPUBnd19hZG5ldHN0YXR1c0AiCiAgICAgIF0sCiAgICAgICJ2aWRlb19zdGFydF91cmxzIjogWwogICAgICAgICJodHRwczpcL1wvZ29vZ2xlYWRzLmcuZG91YmxlY2xpY2submV0XC9wYWdlYWRcL2NvbnZlcnNpb25cLz9haT1DYlRISm5pRzBWcC1YTkpHdUJjVDRncGdOLWNuYXBnWFI3NFc2a2dFQUVBZ2cyZlhzSjJESjV2Nkd5S09nR2FrQ0FBQUFBSUNFTGtHb0F3R3FCQ0JQMFA4andEZXpOdUduUHpqYzE5Ukd1VkJ5eGRWT0g4ZGpxaXdtYndOS0VzQUdDNEFIZ2ZpcE1KZ0hBUVx1MDAyNnNpZ2g9OWRBUnZ2aU1fR3dcdTAwMjZsYWJlbD1hZG1vYl9tZWRpYXRpb25fcmV3YXJkX3ZpZGVvX3N0YXJ0IgogICAgICBdLAogICAgICAidmlkZW9fY29tcGxldGVfdXJscyI6IFsKICAgICAgICAiaHR0cHM6XC9cL2dvb2dsZWFkcy5nLmRvdWJsZWNsaWNrLm5ldFwvcGFnZWFkXC9jb252ZXJzaW9uXC8/YWk9Q2JUSEpuaUcwVnAtWE5KR3VCY1Q0Z3BnTi1jbmFwZ1hSNzRXNmtnRUFFQWdnMmZYc0oyREo1djZHeUtPZ0dha0NBQUFBQUlDRUxrR29Bd0dxQkNCUDBQOGp3RGV6TnVHblB6amMxOVJHdVZCeXhkVk9IOGRqcWl3bWJ3TktFc0FHQzRBSGdmaXBNSmdIQVFcdTAwMjZzaWdoPTlkQVJ2dmlNX0d3XHUwMDI2bGFiZWw9YWRtb2JfbWVkaWF0aW9uX3Jld2FyZF92aWRlb19jb21wbGV0ZSIKICAgICAgXQogICAgfQogIF0sCiAgInNldHRpbmdzIjogewogICAgImNsaWNrX3VybHMiOiBbCiAgICAgICJAZ3dfYWRuZXRpZEAiCiAgICBdLAogICAgImltcF91cmxzIjogWwogICAgXSwKICAgICJub2ZpbGxfdXJscyI6IFsKICAgICAgImh0dHBzOlwvXC9wYWdlYWQyLmdvb2dsZWFkc2VydmljZXMuY29tXC9wYWdlYWRcL2Fkdmlldz9haT1DaER2Tm5pRzBWcC1YTkpHdUJjVDRncGdOLWNuYXBnWFI3NFc2a2dFQUVBZ2cyZlhzSjJESjV2Nkd5S09nR2FrQ0FBQUFBSUNFTGtHb0F3R3FCQmxQMFA4andEZXpOdUduUHpqYzE5Ukd1VkJ5eGRWT0Q4ZmZ3QVlMZ0FlQi1La3dtQWNCXHUwMDI2c2lnaD00TS1FSEpTQUlRa1x1MDAyNmNpZD01R2l1V2dcdTAwMjZndnI9MSIsCiAgICAgICJodHRwczpcL1wvZ29vZ2xlYWRzLmcuZG91YmxlY2xpY2submV0XC9wYWdlYWRcL2NvbnZlcnNpb25cLz9haT1DaER2Tm5pRzBWcC1YTkpHdUJjVDRncGdOLWNuYXBnWFI3NFc2a2dFQUVBZ2cyZlhzSjJESjV2Nkd5S09nR2FrQ0FBQUFBSUNFTGtHb0F3R3FCQmxQMFA4andEZXpOdUduUHpqYzE5Ukd1VkJ5eGRWT0Q4ZmZ3QVlMZ0FlQi1La3dtQWNCXHUwMDI2c2lnaD1fRnIxUDNnWldSQVx1MDAyNmxhYmVsPWFkbW9iX21lZGlhdGlvbl9yZXF1ZXN0X2ZpbGxfcmVzdWx0XHUwMDI2bWVkaWF0aW9uX2ZpbGxfc3RhdHVzPUBnd19hZG5ldHN0YXR1c0AiCiAgICBdLAogICAgInJlZnJlc2giOiAiNjAiCiAgfQp9Cg==",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Content-Type": "application/json",
+      "Expires": "0",
+      "X-Afma-Mediation": "true",
+      "X-Charles-Map-Local": "/tmp/proxy/MoPub.json"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/m/ad"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "IDwhRE9DVFlQRSBodG1sPiA8aHRtbD4gPGhlYWQ+ICA8IS0tIEFkZ3JvdXAgaXMgYjkxZWQyNWE4MWRlNDVhZTg0YmI3ZjJmN2Q4MDAwYzMgLS0+ICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCwgdXNlci1zY2FsYWJsZT1ubyI+ICA8c3R5bGUgdHlwZT0ndGV4dC9jc3MnPiAubXBfY2VudGVyIHsgcG9zaXRpb246IGZpeGVkOyB0b3A6IDUwJTsgbGVmdDogNTAlOyBtYXJnaW4tbGVmdDogLTE2MHB4ICFpbXBvcnRhbnQ7IG1hcmdpbi10b3A6IC0yNXB4ICFpbXBvcnRhbnQ7IH0gPC9zdHlsZT4gIDxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij4gZnVuY3Rpb24gbW9wdWJGaW5pc2hMb2FkKCl7IHNldFRpbWVvdXQoIGZ1bmN0aW9uKCkgeyB3aW5kb3cubG9jYXRpb24gPSAnbW9wdWI6Ly9maW5pc2hMb2FkJyB9LCAwICk7IH0gPC9zY3JpcHQ+IDxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij4gaWYgKHRyYWNrSW1wcmVzc2lvbkhlbHBlciA9PSBudWxsIHx8IHR5cGVvZih0cmFja0ltcHJlc3Npb25IZWxwZXIpICE9ICJmdW5jdGlvbiIpIHsgZnVuY3Rpb24gdHJhY2tJbXByZXNzaW9uSGVscGVyKCkgeyB2YXIgdXJscyA9IG5ldyBBcnJheSgpOyB2YXIgaSA9IDA7ICB1cmxzW2krK109Imh0dHA6Ly9hZHMubW9wdWIuY29tL20vaW1wP2FwcGlkPSZjaWQ9YTNlMGMxODA1MDFkNDc2MWFlNGRjNjY2ZDhmY2UyY2UmY2l0eT1Nb3VudGFpbiUyMFZpZXcmY2t2PTImY291bnRyeV9jb2RlPVVTJmNwcGNrPTZEMEQ4JmRldj1OZXh1cyUyMDUmaWQ9OWRmYTJjNGU4NDFjNGE2NmJkZWIwY2M1ZjBjOTcxNTYmaXNfbXJhaWQ9MCZvcz1BbmRyb2lkJm9zdj00LjQuNCZyZXE9OWZmZjY3Mzk2NTVhNDAzOGE4ZDYxYTg1ZmJmMjFlNzYmcmVxdD0xNDU2Mjc1OTc2LjAmcmV2PTAuMDAwMDEwJnVkaWQ9aWZhJTNBYzU4NGI3NDEtMTYzYy00NWJlLThmNDQtMzJhNzY4Mzg2YzE0JnZpZGVvX3R5cGU9IjsgIHZhciBoaWRkZW5TcGFuID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOyBoaWRkZW5TcGFuLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7IHZhciBpID0gMDsgZm9yICh2YXIgaT0wO2k8dXJscy5sZW5ndGg7aSsrKSB7IHZhciBpbWcgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdpbWcnKTsgaW1nLnNyYyA9IHVybHNbaV07IGhpZGRlblNwYW4uYXBwZW5kQ2hpbGQoaW1nKTsgfSB2YXIgYm9keSA9IGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdib2R5JylbMF07IGJvZHkuYXBwZW5kQ2hpbGQoaGlkZGVuU3Bhbik7IH0gfSA8L3NjcmlwdD4gIDxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij4gZnVuY3Rpb24gd2Vidmlld0RpZENsb3NlKCl7IGlmICh0eXBlb2Ygd2Vidmlld0RpZENsb3NlSGVscGVyID09ICdmdW5jdGlvbicpIHsgd2Vidmlld0RpZENsb3NlSGVscGVyKCk7IH0gfSBmdW5jdGlvbiB3ZWJ2aWV3RGlkQXBwZWFyKCl7ICBpZih0eXBlb2Ygd2Vidmlld0RpZEFwcGVhckhlbHBlciA9PSAnZnVuY3Rpb24nKSB7IHdlYnZpZXdEaWRBcHBlYXJIZWxwZXIoKTsgfSB9IHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCJsb2FkIiwgZnVuY3Rpb24oKSB7IHZhciBsaW5rcyA9IGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdhJyk7IGZvcih2YXIgaT0wOyBpIDwgbGlua3MubGVuZ3RoOyBpKyspIHsgbGlua3NbaV0uc2V0QXR0cmlidXRlKCd0YXJnZXQnLCdfYmxhbmsnKTsgfSB9LCBmYWxzZSk7ICA8L3NjcmlwdD4gIDwvaGVhZD4gPGJvZHkgc3R5bGU9Im1hcmdpbjowO3BhZGRpbmc6MDsiPiAgPGRpdiBjbGFzcz0iIj4KICAgICAgICA8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgogICAgICAgIGJvZHkgewogICAgICAgICAgZm9udC1zaXplOiAxMnB4OwogICAgICAgICAgZm9udC1mYW1pbHk6IGhlbHZldGljYSxhcmlhbCxzYW5zLXNlcmlmOwogICAgICAgICAgbWFyZ2luOjA7CiAgICAgICAgICBwYWRkaW5nOjA7CiAgICAgICAgICB0ZXh0LWFsaWduOmNlbnRlcjsKICAgICAgICAgIGJhY2tncm91bmQ6d2hpdGUKICAgICAgICB9CiAgICAgICAgLmNyZWF0aXZlX2hlYWRsaW5lIHsKICAgICAgICAgIGZvbnQtc2l6ZTogMThweDsKICAgICAgICB9CiAgICAgICAgLmNyZWF0aXZlX3Byb21vIHsKICAgICAgICAgIGNvbG9yOiBncmVlbjsKICAgICAgICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTsKICAgICAgICB9CiAgICAgICAgPC9zdHlsZT4KICAgICAgICA8ZGl2IGNsYXNzPSJjcmVhdGl2ZV9oZWFkbGluZSI+CiAgICAgICAgICBNZWRpdW0gVGVzdCBjcmVhdGl2ZTEhCiAgICAgICAgPC9kaXY+PC9kaXY+IDxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij4gaWYgKHR5cGVvZiBodG1sV2lsbENhbGxGaW5pc2hMb2FkID09ICJ1bmRlZmluZWQiIHx8ICFodG1sV2lsbENhbGxGaW5pc2hMb2FkKSB7IGlmKHR5cGVvZiBtb3B1YkZpbmlzaExvYWQgPT0gJ2Z1bmN0aW9uJykgeyB3aW5kb3cub25sb2FkID0gbW9wdWJGaW5pc2hMb2FkOyB9IH0gIGlmKHR5cGVvZiB0cmFja0ltcHJlc3Npb25IZWxwZXIgPT0gJ2Z1bmN0aW9uJykgeyB0cmFja0ltcHJlc3Npb25IZWxwZXIoKTsgfSAgPC9zY3JpcHQ+ICA8L2JvZHk+IDwvaHRtbD4g",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "text/html; charset=UTF-8",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-adtype": "html",
+      "x-clickthrough": "http://ads.mopub.com/m/aclk?appid=&cid=a3e0c180501d4761ae4dc666d8fce2ce&city=Mountain%20View&ckv=2&country_code=US&cppck=577E1&dev=Nexus%205&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&is_mraid=0&os=Android&osv=4.4.4&req=9fff6739655a4038a8d61a85fbf21e76&reqt=1456275976.0&rev=0&udid=ifa%3Ac584b741-163c-45be-8f44-32a768386c14&video_type=",
+      "x-connection-hash": "9f9f2d8115741d3a68624ad1b06c8b7b",
+      "x-creativeid": "a3e0c180501d4761ae4dc666d8fce2ce",
+      "x-failurl": "http://ads.mopub.com/m/ad?v=6&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&nv=3.13.0&dn=LGE%2CNexus%205%2Chammerhead&bundle=com.google.android.gms.mediation&q=tp%3Ddfp_custom_1.0%2Cm_age%3A46%2Cm_birthday%3AWed%20Dec%2031%2023%3A59%3A59%20GMT%2B00%3A00%201969%2Cm_gender%3AUNKNOWN&z=%2B0000&o=p&w=1080&h=1920&sc_a=3.0&ct=2&udid=ifa%3Ac584b741-163c-45be-8f44-32a768386c14&dnt=0&mr=1&android_perms_ext_storage=0&exclude=b91ed25a81de45ae84bb7f2f7d8000c3&request_id=9fff6739655a4038a8d61a85fbf21e76&fail=1",
+      "x-height": "50",
+      "x-imptracker": "http://ads.mopub.com/m/imp?appid=&cid=a3e0c180501d4761ae4dc666d8fce2ce&city=Mountain%20View&ckv=2&country_code=US&cppck=6D0D8&dev=Nexus%205&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&is_mraid=0&os=Android&osv=4.4.4&req=9fff6739655a4038a8d61a85fbf21e76&reqt=1456275976.0&rev=0.000010&udid=ifa%3Ac584b741-163c-45be-8f44-32a768386c14&video_type=",
+      "x-refreshtime": "30",
+      "x-response-time": "13",
+      "x-width": "320",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/m/imp"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "VGhhbmtzIQo=",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "text/html; charset=ISO-8859-1",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-connection-hash": "a0ca1ea5710d4f8b79dd21404fb298e6",
+      "x-response-time": "10",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/favicon.ico"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wz///8f////H////x////8Y////B////wD///8A////AP///wD///8A////AP///wD///8A////A////yj7789g9tV+ofbVfqH21X6h+N+eifz03lf///8o////A////wD///8A////AP///wD///8A////APr37g/PsGCftogQ7r2JAP/bnwD/7qwA/+6sAP/urAD/9Mtftv357z////8D////AP///wD///8A////AP///wD///8A////AP///w/57c5a88VQwu6sAP/urAD/7qwA/+6sAP/xvDDb/fnvP////wD///8A////AP///wD///8A////AP///wDz5L5X7bgv2+6sAP/urAD/7qwA/+6sAP/urAD/7qwA//G8MNv///8Y////AP///wD///8A////AP///wD///8M9NN+n+6wD/PurAD/7qwA/+6sAP/urAD/7qwA/+6sAP/urAD/9Nyegf///wD///8A////AP///wD///8A+O3PVu6wD/PurAD/7qwA/+6sAP/urAD/7qwA/+6sAP/urAD/7qwA//G8MNv///8A////AP///wD///8A////ANasQMXurAD/7qwA/+qpAP/YnAD/1JkA/+6sAP/urAD/7qwA/+6sAP/urAD/////FP///wD///8A////AP///wDz255+7qwA/9icAP+6ixDuz7Bgn9m8b5TurAD/7qwA/+6sAP/urAD/7qwA//jkr3j///8M////AP///wD///8A47Y/ysmRAP/PsGCf+vfuD////wDw584w46QA/+6sAP/urAD/7qwA/9+hAP/orA/z9OrPQv///wD///8A////AMypT7Hhz55g////AP///wD///8A////AMOaL9DMlAD/0JYA/8mRAP/FoEC/vpIf4OPQnmL///8A////AP///wD69+4P////AP///wD///8A////AP///wD69+4P3ceOcNi/foHhz55g////APr37g/69+4P////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD//wAA8P8AAMA/AAD4HwAA8A8AAOAHAADgBwAAwAcAAOAHAADHAwAA3wMAAP/fAAD//wAA//8AAA==",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "image/x-icon",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-connection-hash": "a0ca1ea5710d4f8b79dd21404fb298e6",
+      "x-response-time": "3"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "pagead2.googleadservices.com",
+        "request_path": "/pagead/adview"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Alt-Svc": "quic=\":443\"; ma=2592000; v=\"30,29,28,27,26,25\"",
+      "Alternate-Protocol": "443:quic,p=1",
+      "Cache-Control": "no-cache",
+      "Content-Type": "text/html; charset=UTF-8",
+      "Date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "Expires": "0",
+      "P3P": "policyref=\"https://www.googleadservices.com/pagead/p3p.xml\", CP=\"NOI DEV PSA PSD IVA IVD OTP OUR OTR IND OTC\"",
+      "Server": "cafe",
+      "X-Content-Type-Options": "nosniff",
+      "X-Google-Backends": "/bns/pc/borg/pc/bns/content-ads-owners/cat2.eventfe.cafe/200,acey12:443",
+      "X-Google-DOS-Service-Trace": "main:pagead-event",
+      "X-Google-GFE-Request-Trace": "acey12:443,/bns/pc/borg/pc/bns/content-ads-owners/cat2.eventfe.cafe/200,acey12:443",
+      "X-Google-GFE-Response-Code-Details-Trace": "response_code_set_by_backend",
+      "X-Google-GFE-Service-Trace": "pagead-event",
+      "X-Google-Netmon-Label": "/bns/pc/borg/pc/bns/content-ads-owners/cat2.eventfe.cafe/200",
+      "X-Google-Service": "pagead-event",
+      "X-Google-Shellfish-Status": "CIgCQDI",
+      "X-XSS-Protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/m/imp"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "VGhhbmtzIQo=",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "text/html; charset=ISO-8859-1",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-connection-hash": "9f9f2d8115741d3a68624ad1b06c8b7b",
+      "x-response-time": "117",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/m/imp"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "VGhhbmtzIQo=",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "text/html; charset=ISO-8859-1",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-connection-hash": "bdb80921af0a9b6322d9eed250c422ee",
+      "x-response-time": "11",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/favicon.ico"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wz///8f////H////x////8Y////B////wD///8A////AP///wD///8A////AP///wD///8A////A////yj7789g9tV+ofbVfqH21X6h+N+eifz03lf///8o////A////wD///8A////AP///wD///8A////APr37g/PsGCftogQ7r2JAP/bnwD/7qwA/+6sAP/urAD/9Mtftv357z////8D////AP///wD///8A////AP///wD///8A////AP///w/57c5a88VQwu6sAP/urAD/7qwA/+6sAP/xvDDb/fnvP////wD///8A////AP///wD///8A////AP///wDz5L5X7bgv2+6sAP/urAD/7qwA/+6sAP/urAD/7qwA//G8MNv///8Y////AP///wD///8A////AP///wD///8M9NN+n+6wD/PurAD/7qwA/+6sAP/urAD/7qwA/+6sAP/urAD/9Nyegf///wD///8A////AP///wD///8A+O3PVu6wD/PurAD/7qwA/+6sAP/urAD/7qwA/+6sAP/urAD/7qwA//G8MNv///8A////AP///wD///8A////ANasQMXurAD/7qwA/+qpAP/YnAD/1JkA/+6sAP/urAD/7qwA/+6sAP/urAD/////FP///wD///8A////AP///wDz255+7qwA/9icAP+6ixDuz7Bgn9m8b5TurAD/7qwA/+6sAP/urAD/7qwA//jkr3j///8M////AP///wD///8A47Y/ysmRAP/PsGCf+vfuD////wDw584w46QA/+6sAP/urAD/7qwA/9+hAP/orA/z9OrPQv///wD///8A////AMypT7Hhz55g////AP///wD///8A////AMOaL9DMlAD/0JYA/8mRAP/FoEC/vpIf4OPQnmL///8A////AP///wD69+4P////AP///wD///8A////AP///wD69+4P3ceOcNi/foHhz55g////APr37g/69+4P////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD//wAA8P8AAMA/AAD4HwAA8A8AAOAHAADgBwAAwAcAAOAHAADHAwAA3wMAAP/fAAD//wAA//8AAA==",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Cache-Control": "no-cache",
+      "Expires": "0",
+      "content-type": "image/x-icon",
+      "date": "Wed, 24 Feb 2016 01:06:16 GMT",
+      "server": "tsa_b",
+      "x-connection-hash": "bdb80921af0a9b6322d9eed250c422ee",
+      "x-response-time": "3"
+    }
+  }
+]

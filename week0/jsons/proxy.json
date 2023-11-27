@@ -1,0 +1,61 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/getconfig/pubsetting"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/bannerimpoptimization/files/cld_response.json",
+        "content_type": "javascript"
+      }
+    }
+  },
+
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/test_path_1"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/bannerimpoptimization/files/banner_ad_1.html",
+        "content_type": "html"
+      }
+    }
+  },
+
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/test_path_2"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/bannerimpoptimization/files/banner_ad_2.html",
+        "content_type": "html"
+      }
+    }
+  },
+
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/test_path_3"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/bannerimpoptimization/files/banner_ad_3.html",
+        "content_type": "html"
+      }
+    }
+  }
+]

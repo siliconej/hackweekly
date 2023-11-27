@@ -1,0 +1,85 @@
+[
+  // A minimal JS driver for the video player.
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/ad.html"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/exoplayer/exoplayer3/demuxed/precache.html",
+        "content_type": "text/html"
+      }
+    }
+  },
+  // The standalone video player JS bindings.
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/static/afma_messaging_helper.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/afma_messaging_helper.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  // A canned get_video JSON response for a demuxed video.
+  {
+    // This was the most-viewed ad on June 29, 2015.
+    // Ripped itag 18 from https://www.youtube.com/watch?v=z1dO-tt6Kt8.
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/stream"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/exoplayer/exoplayer3/demuxed/get_video.json",
+        "content_type": "application/json"
+      }
+    }
+  },
+  // The resolved video stream.
+  {
+    "extra_response_headers": {
+      "content-length": "1247787"
+    },
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/video"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/exoplayer/exoplayer3/demuxed/960604a00ab4778c_243.webm",
+        "content_type": "video/webm"
+      }
+    }
+  },
+  // The resolved audio stream.
+  {
+    "extra_response_headers": {
+      "content-length": "185270"
+    },
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/audio"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/exoplayer/exoplayer3/demuxed/960604a00ab4778c_249.webm",
+        "content_type": "audio/webm"
+      }
+    }
+  }
+]

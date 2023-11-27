@@ -1,0 +1,1303 @@
+{
+    "fifo.Group": {
+        "modifiers": [
+            {
+                "hawkman.URLRegexFilter": {
+                    "regex": "pubads.g.doubleclick.net/gampad/.*",
+                    "modifier": {
+                        "fifo.Group": {
+                            "modifiers": [
+                                {
+                                    "url.Modifier": {
+                                        "host": "pubads.g.doubleclick.net",
+                                        "path": "/gampad/ads",
+                                        "query": "?submodel=Android%20SDK%20built%20for%20x86&android_app_volume=1&disable_ml=false&format=320x50_mb&is_nonagon=true&android_app_muted=false&am=0&dv=300&gl=US&hl=en&js=afma-sdk-a-v13060005.13060000.2&ma=false&ms=CpgECoACKMo2idfwFX5VieZAEPY1GXHHhYykfb63uEdJqKvYQJF5o4TDeSOvVa1B-FGGltYt1vrCOrENOTj0DCwOMuRzWXusEDt0sngvlflzFgPoi0i_lS-j7x27D_ijeMjeU5dIMoyZasX2pO6VlxQGbkE7xdXrMALujzPFRqB0dGVkE_He0-rOAqlSRx6PnAtOpwEOkrDeJ3b-RioAZj7OU5VLupLz79Abx8JjJl4SOMe8Hw-AGaNLby4H6LWajieXXhXzxcCL-2-orXxLruFnu41ShBNFvqy-U6URiLNe2ZLFFtXVIRYHxGT_TaZ2qNFIitvlkO5aKk5P8-aKVqCayvTSfgqAAlQuFj3kjwgmI--GxJdjQh3JReBAoFTupB-PvUepeLJfMRqDsweISurFEU3GlOwcM_-twmRhJ-VSo6FddCh4kBJ2i2vlXRxCen3IK8mRVqqNUUw-CqHa5yTE7V7UYePbnmP5uZAzD38Ay7tYon_DYiK-baFEBpTP50UZ-VNFcRM6gSZ295VeTquVmmKypqw4Al2z_qAGzinRkJi7gUQG86VAJ58hXRw1WFSWZ8z_MWvS-mCvjeAqSuPyAe-THwDHL9-jDUHyqcOLKNTRj4ztdSOfhsISa-J-AlGEa3gSCw8AOP5BgI3gvErLjC5Jz_7_pObCUU-3tbgRNuWq5yVc4coSEHHIplSte4zAGqdG4oxipIoSlQIKgALhIY-AMthLfXOg-vMu4A4WjkAseVoxfJve9YnJb1HTZvtGocS3E3f9hZeKcKyYMhp04GMbPQ5I04M8_ZgMP_Sha-0Br9CfEEqWzFXhMOurV2GVXy53GDs_bYKEpbCnT_-FtEJi2MvmVE0jPI2TK7h8r0q8-Z5A6V6yzFRE1clKG4Q3eSwpeIrsmdDX-QZ52WwUkxm36ld78roepSEEilax8Yh9dZ1nfbe02izWXrMGsCtbEWIRwsQoc6JZAVj3Y2B8v7g9hi4nyEuOzgDSJtqvaLDndha0brSZvK8eltjYQnwHgbQnm-29TDloVJ8tzvd2ml6pmtg2Giz1gkDxdsFVEhB32Cczw_v_qrg8CjiQs1MR&rm=2&sp=false&cnt=0&coh=true&gnt=13&muv=11&riv=5&u_sd=1.5&render_in_browser=false&target_api=24&carrier=310260&android_permissions=android.permission.READ_EXTERNAL_STORAGE%2Candroid.permission.INTERNET%2Candroid.permission.ACCESS_NETWORK_STATE%2Candroid.permission.WRITE_EXTERNAL_STORAGE%2Candroid.permission.READ_LOGS%2Candroid.permission.WAKE_LOCK%2Candroid.permission.CAMERA&is_sidewinder=false&fbs_aeid=-3435336184936984609&seq_num=1&adtest=on&_c_csdk_npa=unknown_js&_c_csdk_npa_o=false&_c_csdk_tfua=unknown_js&u_w=320&u_h=534&msid=com.google.android.apps.internal.admobsdk.mediumtest.genericapp&_package_name=com.google.android.apps.internal.admobsdk.mediumtest.genericapp&an=0.android.com.google.android.apps.internal.admobsdk.mediumtest.genericapp&net=ed&u_audio=4&u_so=p&basets=216570&currts=216570&preqs_in_session=0&pclick=0&support_transparent_background=true&pimp=0&preqs=0&time_in_session=0&output=html&region=mobile_app&u_tz=-420&url=0.android.com.google.android.apps.internal.admobsdk.mediumtest.genericapp.adsenseformobileapps.com&gdfp_req=1&markup=html&m_ast=afmajs&impl=ifr&iu=%2F6499%2Fexample%2Fbanner&sz=320x50&correlator=3269062532347742&gsb=4g&lite=false&caps=inlineVideo_interactiveVideo_mraid1_mraid2_sdkVideo_th_autoplay_mediation_av_transparentBackground_sdkAdmobApiForAds_di_sfv_dinm_dim_nav_navc_dinmo_ipdof_xSeconds&bisch=true&blev=1&swdr=false&cans=5&canm=true&mv=1801.com.android.vending&pscfas=false&heap_free=0&heap_max=67108864&heap_total=12492096&wv_count=0&sai=0&blockAutoClicks=true&debug_experiment_id=203977030&_emulatorLiveAds=true&cust_params=_emulatorLiveAds%3Dtrue%26excl_cat&forceHttps=true&includeDoritos=true&content_infol=-1&blob=content_info&et=0&tcar=8&jsv=4-production-latest&urll=3072"
+                                    }
+                                },
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "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",
+                                        "contentType": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Auto-Collect-Location",
+                                        "value": "true"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Ad-Size",
+                                        "value": "320x50"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "gfp-be"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:gfp-be"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Pragma",
+                                        "value": "no-cache"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Content-Vertical-Opted-Out",
+                                        "value": "true"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "cafe"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "jpi21-v6:443,/bns/jb/borg/jb/bns/ads-bow/shared.bow.dfp/365,jpi21-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Google-Mediationtag-Id",
+                                        "value": "-2"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Gws-Query-Id",
+                                        "value": "j_gNW-qKI9eqBsbitZAH"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Debug-Dialog",
+                                        "value": "AppID=com.google.android.apps.internal.admobsdk.mediumtest.genericapp&Creatives=37296052050&Lineitems=84977490"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/jb/borg/jb/bns/ads-bow/shared.bow.dfp/365:envelopemon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "[2002:a01:8207::]:9828,/bns/jb/borg/jb/bns/ads-bow/shared.bow.dfp/365,jpi21-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "P3p",
+                                        "value": "policyref=\"https://googleads.g.doubleclick.net/pagead/gcn_p3p_.xml\", CP=\"CURa ADMa DEVa TAIo PSAo PSDo OUR IND UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Use-Https",
+                                        "value": "false"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Fri, 01 Jan 1990 00:00:00 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Max-Ad-Content-Rating",
+                                        "value": "MA"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Wed, 30 May 2018 01:04:15 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "gfp-be"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Auto-Protection-Configuration",
+                                        "value": "{\"enable_protection\":false,\"reporting_urls\":[\"https://pagead2.googlesyndication.com/pagead/gen_204?id=gmob-apps\\u0026event=auto-protection\\u0026type=prevented-creative-action\\u0026qid=CKKL9O-erNsCFQeCAQodh40Ljg\\u0026creatives=crid0:37296052050,agcid0:0,ctype0:20,ctid0:0,cuid0:0,lp0:https://googleads.g.doubleclick.net/pcs/click%3Fxai%3DAKAOjssgCoVHqbnzBO4bFkgi7DWO9jGEQAwGvMN8UlhvgtRnwtu0hiJi0bDXuheCE7n7-IpogVse3I9z2SuMEC7_aOObRbk90CljdC1S7oj5J1AI2ZkXmNNjBgWFca3yroYT9veseE7Nbfxvs3sYRr2gMs7Vyv1KOEy8nRM7ahr9krAzBita6GYPzmeoZQQSfrnhWfCywTObRTPYNkHCuTjAPXR8Ir5IH0zlT8kjh5Lu1hdLebMfO7W0HJ-whIY61qDC974Lqy6QMxrIcUoSV_HKCw3ZvTvH_sgfvMY9gzZrlNcUN5jLWIEjVGX2LMiexwQTdAwBy96ev6Ss3nyeujV2c_yR-iAl3xZ9pwdFpueOL20%26sai%3DAMfl-YQNTjhlsm07QE6F0m5TmLL8gaT803wwEThKKf3GTZs4Zc9mEA-9-oxWvFKLVMQ8VI7Iwm9DeTjzYBi4neMm-poy9xjaaR0SuayvrPHj3ORbpAiLtXblrKDrjVw-rwCaghIu-7ZrhFWHZalYPH1HCr1Szu-YCHLQ%26sig%3DCg0ArKJSzHKVYSZaWhl_%26adurl%3Dhttps://developers.google.com/mobile-ads-sdk,loginfo0:BA0ZWj_gNW-KHJIeEBoebrvAI2ufi7AgAAAAQASCawKkYOABY0q6S-IoBYMnu7YaAgKAZiAEBsgFLMC5hbmRyb2lkLmNvbS5nb29nbGUuYW5kcm9pZC5hcHBzLmludGVybmFsLmFkbW9ic2RrLm1lZGl1bXRlc3QuZ2VuZXJpY2FwcC5hugEJZ2ZwX2ltYWdlyAEC2gFqaHR0cDovLzAuYW5kcm9pZC5jb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5pbnRlcm5hbC5hZG1vYnNkay5tZWRpdW10ZXN0LmdlbmVyaWNhcHAuYWRzZW5zZWZvcm1vYmlsZWFwcHMuY29tL8ACAuACAOoCFC82NDk5L2V4YW1wbGUvYmFubmVy-AL90R6AAwGQA6wCmAPgA6gDAcgDmQTgBAHSBQUQ0s7CKJAGAaAGFNgGAqgHmM4b2AcB4AcL0ggHCIBhEAEYAw\\u0026creatives_pb=CuUDCBQQ0q6S-IoBGAAgACgAMtMDQkEwWldqX2dOVy1LSEpJZUVCb2VicnZBSTJ1Zmk3QWdBQUFBUUFTQ2F3S2tZT0FCWTBxNlMtSW9CWU1udTdZYUFnS0FaaUFFQnNnRkxNQzVoYm1SeWIybGtMbU52YlM1bmIyOW5iR1V1WVc1a2NtOXBaQzVoY0hCekxtbHVkR1Z5Ym1Gc0xtRmtiVzlpYzJSckxtMWxaR2wxYlhSbGMzUXVaMlZ1WlhKcFkyRndjQzVodWdFSloyWndYMmx0WVdkbHlBRUMyZ0ZxYUhSMGNEb3ZMekF1WVc1a2NtOXBaQzVqYjIwdVoyOXZaMnhsTG1GdVpISnZhV1F1WVhCd2N5NXBiblJsY201aGJDNWhaRzF2WW5Oa2F5NXRaV1JwZFcxMFpYTjBMbWRsYm1WeWFXTmhjSEF1WVdSelpXNXpaV1p2Y20xdlltbHNaV0Z3Y0hNdVkyOXRMOEFDQXVBQ0FPb0NGQzgyTkRrNUwyVjRZVzF3YkdVdlltRnVibVZ5LUFMOTBSNkFBd0dRQTZ3Q21BUGdBNmdEQWNnRG1RVGdCQUhTQlFVUTBzN0NLSkFHQWFBR0ZOZ0dBcWdIbU00YjJBY0I0QWNMMGdnSENJQmhFQUVZQXc\\u0026debugDialog=AppID%3Dcom.google.android.apps.internal.admobsdk.mediumtest.genericapp%26Creatives%3D37296052050%26Lineitems%3D84977490\\u0026navigationURL={NAVIGATION_URL}\"],\"reporting_url\":\"https://pagead2.googlesyndication.com/pagead/gen_204?id=gmob-apps\\u0026event=auto-protection\\u0026type=prevented-creative-action\\u0026qid=CKKL9O-erNsCFQeCAQodh40Ljg\\u0026creatives=crid0:37296052050,agcid0:0,ctype0:20,ctid0:0,cuid0:0,lp0:https://googleads.g.doubleclick.net/pcs/click%3Fxai%3DAKAOjssgCoVHqbnzBO4bFkgi7DWO9jGEQAwGvMN8UlhvgtRnwtu0hiJi0bDXuheCE7n7-IpogVse3I9z2SuMEC7_aOObRbk90CljdC1S7oj5J1AI2ZkXmNNjBgWFca3yroYT9veseE7Nbfxvs3sYRr2gMs7Vyv1KOEy8nRM7ahr9krAzBita6GYPzmeoZQQSfrnhWfCywTObRTPYNkHCuTjAPXR8Ir5IH0zlT8kjh5Lu1hdLebMfO7W0HJ-whIY61qDC974Lqy6QMxrIcUoSV_HKCw3ZvTvH_sgfvMY9gzZrlNcUN5jLWIEjVGX2LMiexwQTdAwBy96ev6Ss3nyeujV2c_yR-iAl3xZ9pwdFpueOL20%26sai%3DAMfl-YQNTjhlsm07QE6F0m5TmLL8gaT803wwEThKKf3GTZs4Zc9mEA-9-oxWvFKLVMQ8VI7Iwm9DeTjzYBi4neMm-poy9xjaaR0SuayvrPHj3ORbpAiLtXblrKDrjVw-rwCaghIu-7ZrhFWHZalYPH1HCr1Szu-YCHLQ%26sig%3DCg0ArKJSzHKVYSZaWhl_%26adurl%3Dhttps://developers.google.com/mobile-ads-sdk,loginfo0:BA0ZWj_gNW-KHJIeEBoebrvAI2ufi7AgAAAAQASCawKkYOABY0q6S-IoBYMnu7YaAgKAZiAEBsgFLMC5hbmRyb2lkLmNvbS5nb29nbGUuYW5kcm9pZC5hcHBzLmludGVybmFsLmFkbW9ic2RrLm1lZGl1bXRlc3QuZ2VuZXJpY2FwcC5hugEJZ2ZwX2ltYWdlyAEC2gFqaHR0cDovLzAuYW5kcm9pZC5jb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5pbnRlcm5hbC5hZG1vYnNkay5tZWRpdW10ZXN0LmdlbmVyaWNhcHAuYWRzZW5zZWZvcm1vYmlsZWFwcHMuY29tL8ACAuACAOoCFC82NDk5L2V4YW1wbGUvYmFubmVy-AL90R6AAwGQA6wCmAPgA6gDAcgDmQTgBAHSBQUQ0s7CKJAGAaAGFNgGAqgHmM4b2AcB4AcL0ggHCIBhEAEYAw\\u0026creatives_pb=CuUDCBQQ0q6S-IoBGAAgACgAMtMDQkEwWldqX2dOVy1LSEpJZUVCb2VicnZBSTJ1Zmk3QWdBQUFBUUFTQ2F3S2tZT0FCWTBxNlMtSW9CWU1udTdZYUFnS0FaaUFFQnNnRkxNQzVoYm1SeWIybGtMbU52YlM1bmIyOW5iR1V1WVc1a2NtOXBaQzVoY0hCekxtbHVkR1Z5Ym1Gc0xtRmtiVzlpYzJSckxtMWxaR2wxYlhSbGMzUXVaMlZ1WlhKcFkyRndjQzVodWdFSloyWndYMmx0WVdkbHlBRUMyZ0ZxYUhSMGNEb3ZMekF1WVc1a2NtOXBaQzVqYjIwdVoyOXZaMnhsTG1GdVpISnZhV1F1WVhCd2N5NXBiblJsY201aGJDNWhaRzF2WW5Oa2F5NXRaV1JwZFcxMFpYTjBMbWRsYm1WeWFXTmhjSEF1WVdSelpXNXpaV1p2Y20xdlltbHNaV0Z3Y0hNdVkyOXRMOEFDQXVBQ0FPb0NGQzgyTkRrNUwyVjRZVzF3YkdVdlltRnVibVZ5LUFMOTBSNkFBd0dRQTZ3Q21BUGdBNmdEQWNnRG1RVGdCQUhTQlFVUTBzN0NLSkFHQWFBR0ZOZ0dBcWdIbU00YjJBY0I0QWNMMGdnSENJQmhFQUVZQXc\\u0026debugDialog=AppID%3Dcom.google.android.apps.internal.admobsdk.mediumtest.genericapp%26Creatives%3D37296052050%26Lineitems%3D84977490\\u0026navigationURL={NAVIGATION_URL}\"}"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Bow-Testrequest",
+                                        "value": "true"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Debug-Signals",
+                                        "value": "{\"backend_query_id\":\"j_gNW-KHJIeEBoebrvAI\",\"yield_group_ids\":[]}"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Tracking-Urls",
+                                        "value": "https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsss8foJ7XDZ5VmcshHRCw3TPa4MnSTYeI66RLTALh1g5jR5GnDIgI9-XIVg3jZunBhuzRaeoWr8ZAAXnPw6kDAldXCdcmgpNTkROAPOIY_HcQQwi87gb1TmiMuRAxcEh4-pZNSZiEMrvYJUjywKVU8YkBQDXuDHfVU8df-Gl3hzrasNrZu32tNaLix7GFpbGqjNVGbdZOaZyNFygEyE0qfq80zKNTfFSND5bONyRZJpMzS5Z98zvvnPAq-ivmu5qnr3cfx0v4d2mUGXvfPE2hw2XYAiqGsV_dukAulGOnmSCXiBVMkkTtgcHyq5yyFkPndVDFLQsnwO8FCcYnkMN_955fTV9z2maocl0IhjDqbT5X9n&sai=AMfl-YSvG6GYfaC6cxaYcpXAJUyK5-b46oWLBTzkD3WpYNs59fXgNSD8rJ_FAo2jD0No16MzGLqrfyu8mnQ326GOWQkife7L_FiXevV3dNI0CBphDNmXaKwRzDlTQsebql64N3svSilPvrekqqtq5_sHcTTFF1tbzzu3&sig=Cg0ArKJSzLQakuhS12Q7EAE&adurl="
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Safe-Browsing",
+                                        "value": "{\"click_string\":\"BA0ZWj_gNW-KHJIeEBoebrvAI2ufi7AgAAAAQASCawKkYOABY0q6S-IoBYMnu7YaAgKAZiAEBsgFLMC5hbmRyb2lkLmNvbS5nb29nbGUuYW5kcm9pZC5hcHBzLmludGVybmFsLmFkbW9ic2RrLm1lZGl1bXRlc3QuZ2VuZXJpY2FwcC5hugEJZ2ZwX2ltYWdlyAEC2gFqaHR0cDovLzAuYW5kcm9pZC5jb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5pbnRlcm5hbC5hZG1vYnNkay5tZWRpdW10ZXN0LmdlbmVyaWNhcHAuYWRzZW5zZWZvcm1vYmlsZWFwcHMuY29tL8ACAuACAOoCFC82NDk5L2V4YW1wbGUvYmFubmVy-AL90R6AAwGQA6wCmAPgA6gDAcgDmQTgBAHSBQUQ0s7CKJAGAaAGFNgGAqgHmM4b2AcB4AcL0ggHCIBhEAEYAw\",\"report_url\":\"https://sb-ssl.google.com/safebrowsing/clientreport/malware\",\"screenshot_enabled\":false,\"non_malicious_reporting_enabled\":false,\"rendered_ad_enabled\":false,\"header_to_scrub\":[\"cookie\"],\"protection_enabled\":false,\"malicious_reporting_enabled\":true,\"allowed_headers\":[\"referer\"],\"webview_permissions\":[]}"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Privacy-Modifiers",
+                                        "value": "DISABLE_GAIA_DATA_COLLECTION,DISABLE_FOOTPRINTS,DISABLE_XDEVICE_NEGATIVE_AD_SELECTION"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Timing-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "hq=\":443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\":443\"; ma=2592000; v=\"43,42,41,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Length",
+                                        "value": "3408"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "no-cache, must-revalidate"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Encoding",
+                                        "value": "gzip"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Content-Url-Opted-Out",
+                                        "value": "true"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Activeview",
+                                        "value": "{\"click_string\":\"BXXK2j_gNW-KHJIeEBoebrvAIAAAAABABOAGIAQHIAQLAAgLgAgDIA5kE4AQBoAYU0ggFCIBhEAE\",\"is_active_view_immediate_enabled\":true,\"activeview_cpm_urls\":[],\"active_experiment_ids\":\"\",\"activeview_cid\":\"CAASEuRok_yEpn69F2LNyLopnti98w\",\"active_view_url_prefix\":\"https://pagead2.googlesyndication.com/pcs/activeview?xai=AKAOjsvj3_01HWfx7Zw_8Kd6TIHJpwJXR-kovTIgwf1_dGWaoT7qPFwyzigHgkAIsNDjOW60NEt1xOKfjW4r_o451NMWFiralBKaGO4\\u0026sig=Cg0ArKJSzIoOs5Lp7fiwEAE\"}"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Ad-Slot-Size",
+                                        "value": "320x50"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Google-Mediationgroup-Id",
+                                        "value": "-2"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "googleads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "securepubads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "securepubads.g.doubleclick.net",
+                    "path": "/pcs/view",
+                    "query": "?xai=AKAOjsss8foJ7XDZ5VmcshHRCw3TPa4MnSTYeI66RLTALh1g5jR5GnDIgI9-XIVg3jZunBhuzRaeoWr8ZAAXnPw6kDAldXCdcmgpNTkROAPOIY_HcQQwi87gb1TmiMuRAxcEh4-pZNSZiEMrvYJUjywKVU8YkBQDXuDHfVU8df-Gl3hzrasNrZu32tNaLix7GFpbGqjNVGbdZOaZyNFygEyE0qfq80zKNTfFSND5bONyRZJpMzS5Z98zvvnPAq-ivmu5qnr3cfx0v4d2mUGXvfPE2hw2XYAiqGsV_dukAulGOnmSCXiBVMkkTtgcHyq5yyFkPndVDFLQsnwO8FCcYnkMN_955fTV9z2maocl0IhjDqbT5X9n&sai=AMfl-YSvG6GYfaC6cxaYcpXAJUyK5-b46oWLBTzkD3WpYNs59fXgNSD8rJ_FAo2jD0No16MzGLqrfyu8mnQ326GOWQkife7L_FiXevV3dNI0CBphDNmXaKwRzDlTQsebql64N3svSilPvrekqqtq5_sHcTTFF1tbzzu3&sig=Cg0ArKJSzLQakuhS12Q7EAE&adurl=",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "contentType": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Timing-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:platform_click_server"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "pagead-event"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "hq=\":443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\":443\"; ma=2592000; v=\"43,42,41,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "pagead-event"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Set-Cookie",
+                                        "value": "test_cookie=CheckForPermission; expires=Wed, 30-May-2018 01:19:16 GMT; path=/; domain=.doubleclick.net"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/iq/borg/iq/bns/ads-bow/shared.eventfe/83,izbp11-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "izbp11-v6:443,/bns/iq/borg/iq/bns/ads-bow/shared.eventfe/83,izbp11-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/iq/borg/iq/bns/ads-bow/shared.eventfe/83:envelopemon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Wed, 30 May 2018 01:04:16 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Wed, 30 May 2018 01:04:16 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Length",
+                                        "value": "0"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "P3p",
+                                        "value": "policyref=\"https://googleads.g.doubleclick.net/pagead/gcn_p3p_.xml\", CP=\"CURa ADMa DEVa TAIo PSAo PSDo OUR IND UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "cafe"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "pagead2.googlesyndication.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "pagead2.googlesyndication.com",
+                    "path": "/pagead/gen_204",
+                    "query": "?zx=q4hjoz58o29t&id=gmob-apps-activeview&event=scrollable-view-baseline&v=4-production-latest&is_tos=false",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "contentType": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 204
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Pragma",
+                                        "value": "no-cache"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Wed, 30 May 2018 01:04:16 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:ads-event-monitoring"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Timing-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "hq=\"googleads.g.doubleclick.net:443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\"googleads.g.doubleclick.net:443\"; ma=2592000; v=\"43,42,41,39,35\",hq=\":443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\":443\"; ma=2592000; v=\"43,42,41,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "ads-event-monitoring"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "P3p",
+                                        "value": "policyref=\"https://www.googleadservices.com/pagead/p3p.xml\", CP=\"NOI DEV PSA PSD IVA IVD OTP OUR OTR IND OTC\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Length",
+                                        "value": "0"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "no-cache, must-revalidate"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "acsfoa14:443,/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/111,acsfoa14:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "ads-event-monitoring"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Fri, 01 Jan 1990 00:00:00 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/111,acsfoa14:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "cafe"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/111:envelopemon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/html; charset=UTF-8"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "hawkman.URLRegexFilter": {
+                    "regex": "pagead2.googlesyndication.com/pcs/.*",
+                    "modifier": {
+                        "fifo.Group": {
+                            "modifiers": [
+                                {
+                                    "url.Modifier": {
+                                        "host": "pagead2.googlesyndication.com",
+                                        "path": "/pcs/activeview",
+                                        "query": "?xai=AKAOjsvj3_01HWfx7Zw_8Kd6TIHJpwJXR-kovTIgwf1_dGWaoT7qPFwyzigHgkAIsNDjOW60NEt1xOKfjW4r_o451NMWFiralBKaGO4&sig=Cg0ArKJSzIoOs5Lp7fiwEAE&id=gmob&mtos=1232%2C1232%2C1232%2C1232%2C1232&tos=1232%2C0%2C0%2C0%2C0&p=122%2C0%2C172%2C320&mcvt=1232&rs=8&ht=0&tfs=217185&tls=218417&mc=1&lte=-1&bas=0&bac=0&avms=gma&tt=1350&v=4-production-latest&adk=1&r=v&bs=320%2C533&sdk=afma-sdk-a-v13060005.13060000.2&mesm=0&vbsc=0%2C0%2C10&absc=0%2C2%2C8&saw=0&adtc=1&cid=CAASEuRok_yEpn69F2LNyLopnti98w&exp_ids&flusht=3600000&fbs_aeid=5883938181421727744"
+                                    }
+                                },
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+                                        "contentType": "image/gif"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "no-cache, must-revalidate"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/146:envelopemon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Timing-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/146,acsfoa14:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "pagead-event"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "cafe"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Fri, 01 Jan 1990 00:00:00 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "hq=\"googleads.g.doubleclick.net:443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\"googleads.g.doubleclick.net:443\"; ma=2592000; v=\"43,42,41,39,35\",hq=\":443\"; ma=2592000; quic=51303433; quic=51303432; quic=51303431; quic=51303339; quic=51303335,quic=\":443\"; ma=2592000; v=\"43,42,41,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Access-Control-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:platform_click_server"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "image/gif"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "acsfoa14:443,/bns/pf/borg/pf/bns/ads-bow/shared.eventfe/146,acsfoa14:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Wed, 30 May 2018 01:04:17 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Pragma",
+                                        "value": "no-cache"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "pagead-event"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Length",
+                                        "value": "42"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "P3p",
+                                        "value": "policyref=\"https://www.googleadservices.com/pagead/p3p.xml\", CP=\"NOI DEV PSA PSD IVA IVD OTP OUR OTR IND OTC\""
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "www.google.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

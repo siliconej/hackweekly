@@ -1,0 +1,34 @@
+{"proxyconfs": [
+
+    // TrueView ad response snapshot from https://www.youtube.com/watch?v=HF1o0zQNOpI.
+    {
+        "body_ref": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/lysol.html",
+        "filter": {
+            "host": "googleads.g.doubleclick.net",
+            "path": "/ad.html"
+        }
+    },
+    // TrueView format JS.
+    {
+        "body_ref": "javascript/ads/mobile/formats/compiled_video_interstitial_with_css.js",
+        "filter": {
+            "host": "imasdk.googleapis.com",
+            "path": "/admob/sdkloader/production/video_en.js"
+        },
+        "headers": {
+            "content-type": "text/javascript"
+        }
+    },
+    // TrueView get_video stream from the snapshotted ad.
+    {
+        "body_ref": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/lysol.mp4",
+        "filter": {
+            "host": null,
+            "path": "/get_video"
+        },
+        "headers": {
+            "content-type": "video/mp4",
+            "content-length": "1354386"
+        }
+    }
+]}

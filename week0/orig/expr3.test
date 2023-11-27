@@ -1,0 +1,6 @@
+##### Parse Result #####
+((@)) AST(statement,expr stmt) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(variant,reference var) {{[97]}} <.> ((*)) AST(variant,reference var) {{[98]}}} <.> ((*)) AST(variant,reference var) {{[99]}}}}
+########################
+##### Parse Result #####
+((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,binary expr) {[] (null)(PREC=9) ((*)) AST(member ref,runtime member) {[] ((*)) AST(variant,reference var) {{[97]}}[((*)) AST(variant,string var) {{[104][101][108][108][111]}}]} {PLUS(+)} ((*)) AST(member ref,static member) {[] ((*)) AST(member ref,runtime member) {[] ((*)) AST(variant,reference var) {{[98]}}[((*)) AST(variant,string var) {{[119][111][114][108][100]}}]} <.> ((*)) AST(variant,reference var) {{[97][98][99]}}}}}
+########################

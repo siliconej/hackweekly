@@ -1,0 +1,63 @@
+{
+   "qdata":"x",
+   "ad_networks":[
+      {
+         "response_type":"banner",
+         "adapters":[
+            "com.google.ads.mediation.customevent.CustomEventAdapter"
+         ],
+         "id":"https:\/\/googleads.g.doubleclick.net\/aclk?sa=L\u0026ai=C8vCsajMYVqrHLpOWpgPe5a-IBvnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CCtxgUmeQ-9f9mGXFmclFZrddMIAG4NYXZkldDbRXABguAB4H4qTCYBwE\u0026num=1\u0026cid=5GjzmQ\u0026sig=AOD64_3K5gGI1DJ_H5TUyY04Y7eW0_cDXg\u0026adurl=http:\/\/example.com",
+         "data":{
+            "gwhirl_share_location":"1",
+            "class_name":"com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner.CustomEventBannerImpl",
+            "label":"Custom Event Banner"
+         },
+         "imp_urls":[
+            "https:\/\/pagead2.googleadservices.com\/pagead\/adview?ai=CNInrL09PV5DPNs-mpgOX8Z6oDPnJ2qYF0e-FupIBABAIIOSHkS1gye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9D3Ai8YiF9AyeQbuyXuIzmm9VUV3dse2H8rzwyvWT7ABguAB4H4qTCYBwE\u0026sigh=ttdif5rnl4g\u0026cid=CAASBORo7r4\u0026gvr=1"
+         ]
+      },
+      {
+         "response_type":"banner",
+         "slot_sizes":[
+            "320x50"
+         ],
+         "adapters":[
+            "com.google.ads.mediation.admob.AdMobAdapter"
+         ],
+         "id":"",
+         "data":{
+            "pubid":""
+         },
+         "ad":{
+            "ad_html":"<html> <body><center><h1>This is ad</h1></center></body></html>",
+            "ad_size":"320x50",
+            "ad_base_url":"http://googleads.g.doubleclick.net",
+            "impression_urls":[
+               "http:\/\/www.google.com/?impression=test"
+            ],
+            "use_displayed_impression":true,
+            "active_view":{
+               "click_string":"some click string",
+               "is_active_view_immediate_enabled":true,
+               "activeview_cpm_urls":[
+
+               ],
+               "active_experiment_ids":""
+            },
+            "gws_query_id":"edOSVtHQF8WepgPsv7XQDw"
+         }
+      }
+   ],
+   "settings":{
+      "click_urls":[
+         "@gw_adnetid@"
+      ],
+      "imp_urls":[
+
+      ],
+      "nofill_urls":[
+         "https:\/\/pagead2.googleadservices.com\/pagead\/adview?ai=Cyl77ajMYVqrHLpOWpgPe5a-IBvnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQZT9CCtxgUmeQ-9f9mGXFmclFZrddMIBG4rcAGC4AHgfipMJgHAQ\u0026sigh=oAOsriCkaS8\u0026cid=5GjzmQ\u0026gvr=1"
+      ],
+      "refresh":"60"
+   }
+}

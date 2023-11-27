@@ -1,0 +1,34 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "www.google.com",
+        "request_path": "/dfp/inAppPreview"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/dfp_in_app_preview.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "www.google.com",
+        "request_path": "/dfp/debugSignals"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/dfp_debug_signals.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+    }
+  }
+]

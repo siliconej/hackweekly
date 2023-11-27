@@ -1,0 +1,46 @@
+{
+  "ad_type": "banner",
+  "qdata": "x",
+  "ad_networks": [
+    {
+      "adapters": [
+        "com.google.ads.mediation.customevent.CustomEventAdapter"
+      ],
+      "id": "https://googleads.g.doubleclick.net/aclk?sa=L&ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&num=1&cid=5GjxDA&sig=AOD64_2nAOfXdTXdIJHY3dRvKApvOG2aog&fbs_aeid=[gw_fbsaeid]&adurl=http://example.com",
+      "data": {
+        "gwhirl_share_location": "1",
+        "class_name": "com.google.android.apps.internal.admobsdk.mediumtest.genericapp.ThirdPartyCustomEvent",
+        "label": "Custom Event Banner"
+      },
+      "imp_urls": [
+        "https://example.com/pagead/adview?ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&sigh=sGjg8v09-Xw&cid=5GjxDA&gvr=1&fbs_aeid=[gw_fbsaeid]"
+      ],
+      "clickurl": [
+        "https://example.com/aclk?mediation_network_1&fbs_aeid=[gw_fbsaeid]",
+        "https://example.com/clk?mediation_network_2"
+      ],
+      "video_start_urls": [
+        "https://googleads.g.doubleclick.net/pagead/conversion/?ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&sigh=eY28xQ-5sXg&label=admob_mediation_reward_video_start"
+      ],
+      "video_complete_urls": [
+        "https://googleads.g.doubleclick.net/pagead/conversion/?ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&sigh=eY28xQ-5sXg&label=admob_mediation_reward_video_complete"
+      ]
+    }
+  ],
+  "settings": {
+    "click_urls": [
+      "https://example.com/aclk?server1&fbs_aeid=[gw_fbsaeid]",
+      "https://example.com/clk?server2",
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+      "https://example.com/adview/server1?fbs_aeid=[gw_fbsaeid]",
+      "https://example.com/imp/server2"
+    ],
+    "nofill_urls": [
+      "https://example.com/nofill1",
+      "https://example.com/nofill2"
+    ],
+    "refresh": "60"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "pubads.g.doubleclick.net",
+        "request_path": "/gampad/ads"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeplusbanner/files/delayedbanner/recursive_banner.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeplusbanner/files/delayedbanner/banner.html",
+        "content_type": "html"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Size": "320x50",
+      "X-Afma-Ad-Slot-Size": "320x50"
+    }
+  }
+]

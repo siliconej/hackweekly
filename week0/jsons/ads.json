@@ -1,0 +1,170 @@
+{
+  "videoctdwhitechristmasv4":
+  {
+    "htmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/whitechristmasv4_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/whitechristmasv4_ctp_sirius.html",
+    "jsName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_white_christmas_v4_compiled.js",
+    "cssName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_white_christmas_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength": "288994",
+    "afmaHeader": "portrait"
+  },
+  "videoctdwhitechristmasv4_videobreak":
+  {
+    "htmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/whitechristmasv4_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/whitechristmasv4_ctp_sirius.html",
+    "jsName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_white_christmas_v4_compiled.js",
+    "cssName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_white_christmas_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/empty_file",
+    "videoLength": "0",
+    "afmaHeader": "portrait"
+  },
+  "videoctdportrait": {
+    "htmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/portrait_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/portrait_ctp_sirius.html",
+    "jsName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4_compiled.js",
+    "cssName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/portrait_video.mp4",
+    "videoLength": "259531",
+    "afmaHeader": "portrait"
+  },
+ "videoctdportrait_videobreak": {
+    "htmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/portrait_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/portrait_ctp_sirius.html",
+    "jsName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4_compiled.js",
+    "cssName": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/empty_file",
+    "videoLength": "0",
+    "afmaHeader": "portrait"
+  },
+  "videoctdwonderlandslider": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/wonderlandslider_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/wonderlandslider_ctp_sirius.html",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_wonderland_slider_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_wonderland_slider.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "landscape"
+  },
+   "videoctdsquare": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/square_sirius.html",
+    "ctpHtmlName": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/square_ctp_sirius.html",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_square_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_square.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/square_video.mp4",
+    "videoLength":"263151",
+    "afmaHeader": "any"
+  },
+  "rewarded_landscaperequest": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/rewarded_videoctd_landscape_request.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "landscape"
+  },
+  "rewarded_portraitrequest": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/rewarded_videoctd_portrait_request.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "ios_rewarded_landscaperequest": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_rewarded_videoctd_landscape_request.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "landscape"
+  },
+  "ios_rewarded_portraitrequest": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_rewarded_videoctd_portrait_request.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "ios_videoctdportrait": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_portrait_sirius.html",
+    "ctpHtmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_portrait_ctp_sirius.html",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "ios_videoctdsquare": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_square_sirius.html",
+    "ctpHtmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/ios_square_ctp_sirius.html",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_square_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_square.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/square_video.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "videoctdcinderella": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/cinderella_sirius.html",
+    "ctpHtmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/cinderella_ctp_sirius.html",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_cinderella_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_cinderella.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "rewardedinlineinstall": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/rewarded_video_ctd_v5_ios.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/rewarded_video_ctd_v5.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "standardbanner": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/standard_banner.html",
+    "ctpHtmlName":"null",
+    "jsName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/gmob_video_ctd_standard_size_banner_v4_compiled.js",
+    "cssName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/gmob_video_ctd_standard_size_banner_v4.css",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+    "videoLength":"288994",
+    "afmaHeader": "portrait"
+  },
+  "locationinterstitial": {
+    "htmlName":"javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/location_interstitial.html",
+    "ctpHtmlName":"null",
+    "jsName":"",
+    "cssName":"",
+    "layoutEngineName":"javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+    "videoName":"",
+    "videoLength":"",
+    "afmaHeader": "portrait"
+  },
+  "sharedResources": {
+    "muteIcon": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/video_mute_icon.png",
+    "unmuteIcon": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/video_unmute_icon.png",
+    "starIcon": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/star_full_white.svg",
+    "storeIcon": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/apple_store_badge.svg"
+  }
+}

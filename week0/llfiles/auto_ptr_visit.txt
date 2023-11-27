@@ -1,0 +1,81 @@
+Value* AstLLVMCodegen::visitOld(const ACAstVariantNode* node) {
+  Value* value = nullptr;
+  Type* valueTy = nullptr;
+  Function* constructFunc = nullptr;
+  std::vector<Value*> gep_args;
+
+  LLVMContext& ctx = *(ctx_->context_);
+  Module& module = *(ctx_->module_);
+
+  switch (node->node_sub_type_) {
+    // -----==== LLVMify an auto_ptr<JsString*> ====-----
+    case ACAstBaseNode::AST_STRING_VARIANT:
+      valueTy = ctx_->getJsStringType();
+      constructFunc = ctx_->getOrCreateJsValueConstructorOf(
+          JS_STRING_CONSTRUCTOR, valueTy, Type::getInt32PtrTy(ctx));
+      // FIXME(ejiang): Dedup the string constants.
+      gep_args.push_back(ctx_->builder_->getInt32(0));
+      gep_args.push_back(ctx_->builder_->getInt32(0));
+      value = ctx_->createAutoPtrJsValueAndNewOf(
+          valueTy,
+          sizeof(ACJsString),
+          constructFunc,
+          ctx_->builder_->CreateInBoundsGEP(
+              createGlobalWStringVariable(module, ctx, node->string_value()),
+              gep_args)
+      );
+      break;
+
+    // -----==== LLVMify an auto_ptr<ACJsBoolean*> ====-----
+    case ACAstBaseNode::AST_BOOL_VARIANT:
+      valueTy = ctx_->getJsBooleanType();
+      constructFunc = ctx_->getOrCreateJsValueConstructorOf(
+          JS_BOOLEAN_CONSTRUCTOR, valueTy, Type::getInt1Ty(ctx),
+          /* zeroext = */ true);
+      value = ctx_->createAutoPtrJsValueAndNewOf(
+          valueTy,
+          sizeof(ACJsBoolean),
+          constructFunc,
+          ctx_->builder_->getInt1(node->bool_value()),
+          /* zeroext = */ true);
+      break;
+
+    // -----==== LLVMify an auto_ptr<ACJsNumber*> ====-----
+    case ACAstBaseNode::AST_NUMERIC_VARIANT:
+      valueTy = ctx_->getJsNumberType();
+      if (node->numeric_value().isInteger()) {
+        constructFunc = ctx_->getOrCreateJsValueConstructorOf(
+            JS_NUMBER_INT_CONSTRUCTOR, valueTy, Type::getInt64Ty(ctx));
+        value = ctx_->createAutoPtrJsValueAndNewOf(
+            valueTy,
+            sizeof(ACJsNumber),
+            constructFunc,
+            ctx_->builder_->getInt64(node->numeric_value().getInt()));
+      } else {
+        constructFunc = ctx_->getOrCreateJsValueConstructorOf(
+            JS_NUMBER_DOUBLE_CONSTRUCTOR, valueTy, Type::getDoubleTy(ctx));
+        value = ctx_->createAutoPtrJsValueAndNewOf(
+            valueTy,
+            sizeof(ACJsNumber),
+            constructFunc,
+            ConstantFP::get(Type::getDoubleTy(ctx),
+                node->numeric_value().getFloat()));
+      }
+      break;
+
+    case ACAstBaseNode::AST_REFERENCE_VARIANT:
+      break;  // not implemented.
+
+    case ACAstBaseNode::AST_SPECIAL_VARIANT:
+      break;  // not implemented.
+
+    case ACAstBaseNode::AST_REGEX_VARIANT:
+      break;  // not implemented.
+
+    default:
+      break;  // not implemented.
+  }
+  // value->dump();
+  return value;
+}
+

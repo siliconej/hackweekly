@@ -1,0 +1,36 @@
+{
+  "ads": [{
+    "type": "native",
+    "template_id": "3",
+
+    "custom_template_id":1234,
+    "custom_assets": [
+      {
+        "name": "string",
+        "type":"string",
+        "string_value":"THIS IS THE STRING VALUE!"
+      },
+      {
+        "name": "image",
+        "type":"image",
+        "image_value": {
+          "url": "http://google.com/image.png"
+        }
+      }
+    ],
+
+    "tracking_urls_and_actions": {
+      "click_actions": [
+        {
+          "type": 3
+        }
+      ],
+      "impression_tracking_urls": [
+        "http://google.com/impression"
+      ],
+      "third_party_click_tracking_urls": [
+        "http://google.com/third-party-click-tracking"
+      ]
+    }
+  }]
+}

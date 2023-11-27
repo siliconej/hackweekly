@@ -1,0 +1,6 @@
+##### Parse Result #####
+((@)) AST(statement,var decl list) {*VAR**((*)) AST(expression,var decl) {[] ((*)) AST(function,id param) {{((*)) AST(variant,reference var) {{[97]}}}} *=* ((*)) AST(variant,numeric var) {{(R)nan}}}*}
+########################
+##### Parse Result #####
+((@)) AST(statement,var decl list) {*VAR**((*)) AST(expression,var decl) {[] ((*)) AST(function,id param) {{((*)) AST(variant,reference var) {{[98]}}}} *=* ((*)) AST(variant,numeric var) {{(R)inf}}}*}
+########################

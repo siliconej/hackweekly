@@ -1,0 +1,22 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/mraid_unload_mediated.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Content-Url-Opted-Out": "true",
+      "X-Afma-Mediation": "true",
+      "X-Afma-Use-Https": "false",
+      "X-Afma-Auto-Collect-Location": "true"
+    }
+  }
+]

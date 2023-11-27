@@ -1,0 +1,39 @@
+/**
+ * =============================================================================
+ *                       Proxy settings for canned html ad.
+ *
+ * Proxy both DRX ads (because they are not whitelisted on forge) and Admob Ads.
+ * Proxying Admob Ads reduces flakyness because of nofill responses.
+ * =============================================================================
+ */
+
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "pubads.g.doubleclick.net",
+        "request_path": "/gampad/ads"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/canned_ad.html",
+        "content_type": "html"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/canned_ad.html",
+        "content_type": "html"
+      }
+    }
+  }
+]

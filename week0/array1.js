@@ -1,0 +1,1 @@
+myArray = ['January', 'February', 'March'];

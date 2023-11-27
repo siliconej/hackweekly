@@ -1,0 +1,71 @@
+{"proxyconfs": [
+
+    // VideoCTD ad response snapshot.
+    {
+        "body_ref": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/videoctd_ctp_sirius.html",
+        "filter": {
+            "host": "googleads.g.doubleclick.net",
+            "path": "/ad.html"
+        },
+        "headers": {
+            "content-type": "text/html; charset=utf-8",
+            "X-Afma-Orientation": "any"
+        }
+    },
+    // VideoCTD format JS.
+    {
+        "body_ref": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4_compiled.js",
+        "filter": {
+            "host": "imasdk.googleapis.com",
+            "path": "/admob/sdkloader/video_ctd_custom_layout_interstitial.js"
+        },
+        "headers": {
+            "content-type": "text/javascript"
+        }
+    },
+    // VideoCTD format CSS.
+    {
+        "body_ref": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout/video_ctd_v1/video_ctd_portrait_v4.css",
+        "filter": {
+            "host": "imasdk.googleapis.com",
+            "path": "/admob/sdkloader/video_ctd_custom_layout_interstitial.css"
+        },
+        "headers": {
+            "content-type": "text/css"
+        }
+    },
+    // Layout engine JS.
+    {
+        "body_ref": "javascript/ads/apps/displayads/creatives/suggestion/autolayout/layout_engine_bin.js",
+        "filter": {
+            "host": "googleads.g.doubleclick.net",
+            "path": "/pagead/gadgets/html5/head_layout_engine.js"
+        },
+        "headers": {
+            "content-type": "text/javascript"
+        }
+    },
+    // IMA library JS.
+    {
+        "body_ref": "javascript/ads/interactivemedia/innerbridge/bridge_en.html",
+        "filter": {
+            "host": "imasdk.googleapis.com",
+            "path": "/js/core/admob/bridge_en.html"
+        },
+        "headers": {
+            "content-type": "text/html"
+        }
+    },
+    // VideoCTD get_video stream from the snapshotted ad.
+    {
+        "body_ref": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/videoandformats/video/assets/solidblue.mp4",
+        "filter": {
+            "host": null,
+            "path": "/get_video"
+        },
+        "headers": {
+            "content-type": "video/mp4",
+            "content-length": "288994"
+        }
+    }
+]}

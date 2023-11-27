@@ -1,0 +1,123 @@
+{
+  "ad_type": "banner",
+  "qdata": "x",
+  "ad_networks": [
+    {
+      "response_type": "native",
+      "adapters": [
+        "com.google.ads.mediation.admob.AdMobAdapter"
+      ],
+      "allocation_id": "4167952028896414",
+      "id": "",
+      "data": {
+        "gwhirl_share_location": "1",
+        "pubid": "ca-app-pub-1301877944886160\/9675576330\/cak=no_cache\u0026cadc=iq\u0026caqid=L09PV8D5NdGMpgPAzrKwAg"
+      },
+      "ad": {
+        "ad_json": {
+          "ads": [
+            {
+              "type": "native",
+              "template_id": "3",
+              "custom_template_id": 10063170,
+              "custom_assets": [
+                {
+                  "name": "string",
+                  "type": "string",
+                  "string_value": "THIS IS THE STRING VALUE!"
+                }
+              ],
+              "tracking_urls_and_actions": {
+                "click_actions": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "impression_tracking_urls": [
+                  "http://google.com/impression"
+                ],
+                "third_party_click_tracking_urls": [
+                  "http://google.com/third-party-click-tracking"
+                ]
+              },
+              "video": {
+                "vast_xml": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cVAST xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"vast.xsd\" version=\"3.0\"\u003e\n \u003cAd id=\"85731543077\"\u003e\n  \u003cInLine\u003e\n   \u003cAdSystem\u003eAdSense\u003c/AdSystem\u003e\n   \u003cAdTitle\u003evideo\u003c/AdTitle\u003e\n   \u003cError\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=videoplayfailed[ERRORCODE]]]\u003e\u003c/Error\u003e\n   \u003cCreatives\u003e\n    \u003cCreative sequence=\"1\"\u003e\n     \u003cLinear\u003e\n      \u003cDuration\u003e00:00:25\u003c/Duration\u003e\n      \u003cTrackingEvents\u003e\n       \u003cTracking event=\"start\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=part2viewed]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"firstQuartile\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=videoplaytime25]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"midpoint\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=videoplaytime50]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"thirdQuartile\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=videoplaytime75]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"complete\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=videoplaytime100]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"pause\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=adpause]]\u003e\u003c/Tracking\u003e\n       \u003cTracking event=\"resume\"\u003e\u003c![CDATA[http://googleads.g.doubleclick.net/pagead/conversion/?ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026sigh=ohrt8U9cBzY\u0026cmd=ChtjYS1hcHAtcHViLTUzMTM0NDMwMTA3ODE0NjMQsQMYAQ\u0026label=adresume]]\u003e\u003c/Tracking\u003e\n      \u003c/TrackingEvents\u003e\n      \u003cVideoClicks/\u003e\n      \u003cMediaFiles\u003e\n       \u003cMediaFile delivery=\"progressive\" width=\"300\" height=\"400\" type=\"video/mp4\" bitrate=\"320\" scalable=\"true\" maintainAspectRatio=\"true\"\u003e\u003c![CDATA[http://www.youtube.com/get_video?video.mp4]]\u003e\u003c/MediaFile\u003e\n      \u003c/MediaFiles\u003e\n     \u003c/Linear\u003e\n    \u003c/Creative\u003e\n   \u003c/Creatives\u003e\n   \u003cExtensions\u003e\n    \u003cExtension type=\"InfoCards\"\u003e\u003ccard priority=\"5\" type=\"TYPE_APP\"\u003e\n \u003cversion major_version=\"1\"/\u003e\n \u003caction link_url=\"//googleads.g.doubleclick.net/aclk?sa=L\u0026amp;ai=CufqqLc00V-vjKtXYfIvCkaAJ_c_liQilkP6vvwIAEAEgxuWaH2DJ7u2GyKOgGYgBAaABs7qB2AOoAwHIAwiqBPABT9A1iSAw_mZYaU6UB7i44uxot2-FzvXMuDuaJ6jeW2nrjjYQWh5QU2XfKRCNNjubRulwshyy_btvmWxk8J3q2xwT5wsOTZ9bCqU8XKU_iwvgHtcFThEqXjLDixIwj7DFTEZKnsMRFYVNCKpWrqENqPJdODottBOcDD5T2-mJI1Mk0rRSiln-Sbt1C-QjZnkFQeNk3Qlv9HUBQv4mpV-MOJITGsbVEp0YWoiuUCddwcb8YdwhgrEpTKbl2iJSQURhjnxRXrteBJ0EqqY7Wwnn9FLGBwt7-e2Tkud9AfRafFI9cdkbOB2j5Q48Hkk_a14mkAYBoAYcsAYBgAe1xf4nmAcBqAemvhu4B7q9nv7VoPLNuwHAB4rVA8AH6NQD2AcB-gcYY29tLmxhYnBpeGllcy5jb2xvcmRyaXBzuBOxAw\u0026amp;num=1\u0026amp;cid=CAASEuRownPxoJhBypUt7V29Ynygsg\u0026amp;sig=AOD64_0elIpOq5j_Qa7DeX23OKlmopTv5w\u0026amp;adurl=http://play.google.com/store/apps/details%3Fid%3Dcom.labpixies.colordrips\" title=\"http://play.google.com/store/apps/details?id=com.labpixies.colordrips\" type=\"TYPE_HEADLINE\"/\u003e\n \u003caction link_url=\"http://www.google.com/ads/preferences/html/mobile-about.html\" title=\"AdChoices\" type=\"TYPE_ATTRIBUTION\"/\u003e\n \u003cad_card click_to_play=\"false\" video_id=\"cJTQGkODBhg\" is_youtube_hosted=\"true\" attribution_icon_url=\"http://googleads.g.doubleclick.net/pagead/images/adc-i-00aecd.png\" attribution_position=\"0\" skippable_seconds=\"0\" description=\"4 colorful fun skins\" headline=\"3 difficulty levels\"/\u003e\n \u003capp_card app_id=\"com.labpixies.colordrips\" app_name=\"Color Drips\" rating_image=\"http://googleads.g.doubleclick.net/pagead/images/gmob/4-stars_grey.png\" review_count=\"3884\" price=\"FREE\" get_button_text=\"GET\" button_text=\"INSTALL\" back_button_text=\"Back\" watch_video_text=\"Watch video\"\u003e\n  \u003cicon image_url=\"//lh3.googleusercontent.com/NrrIJrAiKaq9GSmvOqxgywLC5FZQ0DqUa2oBqo8E1O05ngrPU1IlsbZCKmedQetbwu-Gl5tPDdA\"/\u003e\n  \u003capp_store_logo image_url=\"http://googleads.g.doubleclick.net/pagead/images/gmob/google_play_icon_color.png\"/\u003e\n  \u003cscreenshots image_url=\"//lh3.googleusercontent.com/0uvuvB9n6KFN0Xb4nAl-voLsAIaOo0jFKhcGNjSYRCrDuEH8SwfAXjgVS7lOsjTvwcwdxD3TJ6Gx\" image_height=\"480\" image_width=\"320\"/\u003e\n  \u003cscreenshots image_url=\"//lh3.googleusercontent.com/h9nJT3W2N4jEPYsChaBiy3ROpIf46IUUu5vDZiDoRR3MTReyCOgd1xMltcJBnerkgS1AXcf3DMQ\" image_height=\"480\" image_width=\"320\"/\u003e\n  \u003ccover_photo image_url=\"//lh3.googleusercontent.com/meJxWU5GKsizIiXSZ3LHmTE9OBq9U6Uev3dfx33QQfZyYSkAmaiJi-YlVQADjhVHIMBLzk305g\" thumbnail_url=\"//lh3.googleusercontent.com/-w5Jy0X08o_4ooha5l4sFXfUr0ssu8kXYzp1sXMJ_CeZrnxnXT5SbQGOmTGxM-bJA1oKcGKBYw\" image_width=\"160\" image_height=\"90\"/\u003e\n \u003c/app_card\u003e\n\u003c/card\u003e\n\u003c/Extension\u003e\n   \u003c/Extensions\u003e\n  \u003c/InLine\u003e\n \u003c/Ad\u003e\n\u003c/VAST\u003e\n",
+                "thumbnails": [
+                  {
+                    "url": "https://lh3.googleusercontent.com/Oiyl1AscojJhdqgMUFGeKI0J6T8xVcMP3FXt91FeY8LxPxqcAUwtGv02csIO-ff5gUFl8ofQ_7A=l80-rj",
+                    "width": 1080,
+                    "height": 1920,
+                    "scale": 1
+                  },
+                  {
+                    "url": "https://lh3.googleusercontent.com/y1_YGPHnHv_OeR9JRDo4nHbMiB8QI2XF-XKkmhvSVFPbuNTZCsZLA1zhGKe575kGdfBw0YZhzFeF=l80-rj",
+                    "width": 1080,
+                    "height": 1920,
+                    "scale": 1
+                  },
+                  {
+                    "url": "https://lh3.googleusercontent.com/GzVnHoNbfjn97liCRXdI5kzQaqlVeXY4nypwxfmnPAJb4xReaT2Y7bQhg0K-EUQRXnnEgG9HlZHi=l80-rj",
+                    "width": 720,
+                    "height": 1280,
+                    "scale": 1
+                  }
+                ],
+                "flags": [
+                  {
+                    "key": "afma_video_player_type",
+                    "value": "2"
+                  },
+                  {
+                    "key": "delay_page_loaded_timeout",
+                    "value": "0"
+                  },
+                  {
+                    "key": "delay_page_loaded_timeout_action",
+                    "value": ""
+                  },
+                  {
+                    "key": "enable_preloading_in_ima",
+                    "value": "true"
+                  },
+                  {
+                    "key": "use_afma_video_player",
+                    "value": "true"
+                  },
+                  {
+                    "key": "video_aspect_ratio",
+                    "value": "1.333"
+                  },
+                  {
+                    "key": "video_client_side_flags",
+                    "value": ""
+                  }
+                ],
+                "language": "en"
+              }
+            }
+          ]
+        },
+        "ad_base_url": "https:\/\/googleads.g.doubleclick.net",
+        "debug_dialog": "AdGroup+Creative+ID+0=100563944103\u0026Click+URL+0=\/aclk%3Fsa%3DL%26ai%3DCaRnML09PV5DPNs-mpgOX8Z6oDPex4MNE5_ur6_cC5Kvp5bgBEAEg5IeRLWDJ7u2GyKOgGYgBAaABmZqrzQOpAgvC22k5pqk-qAMBqgSkAU_QV6kNOIinQ3AtKE-8Im6pxyWpn4pIKjCYgWvnJOkHXmyQMtT3Hg-AuFpPiQSMqrKMT3RZ07PAwM6FEhUbNlosW6Olaykq9mz35B5b-sle8Yj4BkrQVrHgVfk7iHeUkZKAFUlO0mCZvjulLpy3kkJbfpagK0U17pMKnhpOYzAGhIbk4rZjtt03eSx0FcG1V6E2p6ZCpIAAEOiHbxJJUHJgNJ1qkAYBoAYasAYBgAfP5dQymAcBqAemvhu4B5XBra2gudbgJMAH9NQD2AcB-gcRY29tLndpc2hhYmkuZmxpcHA%26num%3D1%26cid%3DCAASEuRo7kScLTT0cFfjqOgmFP7eZA%26sig%3DAOD64_09IAVdIppOZPuVuyOxFkSF8-GnHA%26adurl%3Dhttps:\/\/play.google.com\/store\/apps\/details%253Fid%253Dcom.wishabi.flipp%2526referrer%253Dutm_source%25253DGoogle%252526utm_medium%25253DAdMob%25252520US%252526utm_term%25253DAndroid%252526utm_content%25253DBroad%25252520%252526utm_campaign%25253DUS%25252520-%25252520AdMob%25252520-%25252520Android%25252520-%25252520Coupon",
+        "active_view": {
+          "click_string": "Bf4GsL09PV5DPNs-mpgOX8Z6oDADn-6vr9wIAABABOAGIAQGgBho",
+          "is_active_view_immediate_enabled": true,
+          "activeview_cpm_urls": [
+          ],
+          "active_experiment_ids": ""
+        },
+        "gws_query_id": "L09PV8D5NdGMpgPAzrKwAg"
+      }
+    }
+  ],
+  "settings": {
+    "click_urls": [
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+    ],
+    "nofill_urls": [
+      "https:\/\/pagead2.googleadservices.com\/pagead\/adview?ai=Ca3P_L09PV5DPNs-mpgOX8Z6oDPnJ2qYF0e-FupIBABAIIOSHkS1gye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQZT9D3Ai8YiF9AyeQbuyXuIzmm9VUV3cseX8AGC4AHgfipMJgHAQ\u0026sigh=7TvPGqBhjrM\u0026cid=CAASBORo7r4\u0026gvr=1"
+    ]
+  }
+}

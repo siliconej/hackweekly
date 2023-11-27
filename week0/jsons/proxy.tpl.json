@@ -1,0 +1,344 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+    "request_host_path": {
+      "request_host": "googleads.g.doubleclick.net",
+      "request_path": "/mads/gma/octagon_unified_custom_one_point_five"
+    }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/octagon_unified_custom_one_point_five.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/nonagon_unified_custom_one_point_five"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/nonagon_unified_custom_one_point_five.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_interstitial"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_interstitial.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_overlay"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_overlay.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_clickability_background"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_clickability_background.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_clickability_delay"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_clickability_delay.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_clickability_edge_click"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_clickability_edge_click.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_clickability_swipe"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_clickability_swipe.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_pub_rendered_adchoices"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_pub_rendered_adchoices.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_app_install_video"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_app_install_video.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_content"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_content.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/admob_content_video"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/admob_content_video.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/dfp_app_install"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/dfp_app_install.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/dfp_content"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/files/dfp_content.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Ad-Format": "native"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/native_ads.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/native_ads.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+    {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/native_video_ads.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/native_video_ads.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/native_video_ads.html"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/native_video_ads.html",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/admob/sdkloader/versioned/#ADMOB_VERSION#/native_video.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/native_video_ads.js",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/admob/core/#ADMOB_VERSION#/bridge_en.html"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/interactivemedia/innerbridge/bridge_en.html",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "www.youtube.com",
+        "request_path": "/get_video"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/nativeads/assets/video.mp4",
+        "content_type": "video/mp4"
+      }
+    },
+    "extra_response_headers": {
+      "content-length": "998768"
+    }
+  }
+]

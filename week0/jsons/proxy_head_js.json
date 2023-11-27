@@ -1,0 +1,86 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/sdk/native/gmsg-video-player.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/gmsg_video_player.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/canary/sdk-core-v40-impl.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/sdk-core-v40-impl.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/production/sdk-core-v40-impl.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/sdk-core-v40-impl.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/aclk"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "",
+        "content_type": ""
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/pagead/aclk"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "",
+        "content_type": ""
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "www.googleadservices.com",
+        "request_path": "/pagead/aclk"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "",
+        "content_type": ""
+      }
+    }
+  }
+]

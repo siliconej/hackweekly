@@ -1,0 +1,101 @@
+[ACJ](R)1.1
+[ACJ](I)16
+[ACJ](R)64.1652
+[ACJ](I)65536
+[ACJ](I)1
+[ACJ](I)2
+[ACJ](R)nan
+[ACJ](I)1
+[ACJ](I)11
+[ACJ](I)7
+[ACJ](I)1
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ]false, 1:[ACJ]true, 2:[ACJ]true, 3:[ACJ]true, 4:[ACJ]false, 5:[ACJ]false, 6:[ACJ]true, 7:[ACJ]true}
+{R} {nil} 
+[ACJ](I)500000500000
+[ACJ](I)13
+[ACJ](I)2
+[ACJ](I)121645100408832000
+[ACJ](I)121645100408832000
+[ACJ](I)121645100408832000
+[ACJ](I)121645100408832000
+[ACJ](I)0
+[ACJ](I)990
+[ACJ](I)3
+[ACJ](I)990000
+[ACJ](R)-1
+[ACJ](I)5050
+[ACJ](I)4950
+[ACJ](I)30
+[ACJ](I)1
+[ACJ](I)3
+[ACJ](I)3
+[ACJ]false
+[ACJ]false
+[ACJ]false
+[ACJ]true
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ]undefined, 2:[ACJ](I)3}
+{R} {nil} 
+[ACJ][]
+[ACJ](I)4
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2}
+{R} {nil} , 1:[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)3, 1:[ACJ](I)4}
+{R} {nil} }
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)6, 2:[ACJ](I)3}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)4, 1:[ACJ](I)5, 2:[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2, 2:[ACJ](I)3}
+{R} {nil} , 3:[ACJ](I)6}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2, 2:[ACJ]undefined, 3:[ACJ]undefined}
+{R} {nil} 
+[ACJ](R)5.5
+[ACJ](I)5
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)3, 1:[ACJ](I)4}
+{R} {nil} 
+[ACJ](I)9
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)10, 1:[ACJ](I)9, 2:[ACJ](I)8, 3:[ACJ](I)7, 4:[ACJ](I)6, 5:[ACJ](I)5, 6:[ACJ](I)4, 7:[ACJ](I)3, 8:[ACJ](I)2, 9:[ACJ](I)1}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)0, 1:[ACJ](I)1, 2:[ACJ](I)2, 3:[ACJ](I)3, 4:[ACJ](I)4, 5:[ACJ](I)5, 6:[ACJ](I)6, 7:[ACJ](I)7, 8:[ACJ](I)8, 9:[ACJ](I)9}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](R)nan, 1:[ACJ]null, 2:[ACJ](R)0, 3:[ACJ](I)1, 4:[ACJ](I)3, 5:[ACJ](R)5, 6:[ACJ](I)6, 7:[ACJ](I)8, 8:[ACJ](R)inf, 9:[ACJ]undefined}
+{R} {nil} 
+[ACJ]true
+[ACJ](I)10
+[ACJ](I)-4
+[ACJ](I)-2
+[ACJ](I)-4
+[ACJ](I)3628800
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](R)1, 1:[ACJ](R)4, 2:[ACJ](R)9, 3:[ACJ](R)16}
+{R} {nil} 
+[ACJ]true
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)2, 1:[ACJ](I)3, 2:[ACJ](I)4, 3:[ACJ](I)5, 4:[ACJ](I)7, 5:[ACJ](I)9}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)2, 1:[ACJ](I)3, 2:[ACJ](I)4, 3:[ACJ](I)5, 4:[ACJ](I)7, 5:[ACJ](I)9}
+{R} {nil} 
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)2, 1:[ACJ](I)2, 2:[ACJ](I)2, 3:[ACJ](I)3, 4:[ACJ](I)3, 5:[ACJ](I)3, 6:[ACJ](I)6, 7:[ACJ](I)6, 8:[ACJ](I)6, 9:[ACJ](I)7, 10:[ACJ](I)7, 11:[ACJ](I)8, 12:[ACJ](I)8, 13:[ACJ](I)8, 14:[ACJ](I)11, 15:[ACJ](I)11, 16:[ACJ](I)11, 17:[ACJ](I)14, 18:[ACJ](I)14, 19:[ACJ](I)14}
+{R} {nil} 
+[ACJ](I)-1
+[ACJ](I)2
+[ACJ](I)2
+[ACJ]func95...()
+[ACJ](I)-6
+[ACJ](I)1
+[ACJ](I)-20
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2, 2:[ACJ](I)3, Empty X 17}
+{R} {nil} 
+[ACJ](I)2
+[ACJ](I)200
+[ACJ](I)-450
+[ACJ](I)10
+[ACJ](I)4950
+[ACJ](I)15
+[ACJ](I)10
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)10, 1:[ACJ](I)20, Empty X 18}
+{R} {nil} 
+[ACJ](I)300
+[ACJ](I)100
+[ACJ](I)124750
+[ACJ]{L} {nil} {*BLACK*} {0:[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2, 2:[ACJ](I)3, 3:[ACJ](I)4}
+{R} {nil} , 1:[ACJ]{L} {nil} {*BLACK*} {0:[ACJ](I)1, 1:[ACJ](I)2, 2:[ACJ](I)3, 3:[ACJ](I)4}
+{R} {nil} }
+{R} {nil} 

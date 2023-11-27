@@ -1,0 +1,48 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "pubads.g.doubleclick.net",
+        "request_path": "/gampad/ads"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "PGh0bWw+PGJvZHkgbGVmdE1hcmdpbj0iMCIgdG9wTWFyZ2luPSIwIiBtYXJnaW53aWR0aD0iMCIgbWFyZ2luaGVpZ2h0PSIwIj48IURPQ1RZUEUgaHRtbCBQVUJMSUMgIi0vL1czQy8vRFREIFhIVE1MIDEuMCBUcmFuc2l0aW9uYWwvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvVFIveGh0bWwxL0RURC94aHRtbDEtdHJhbnNpdGlvbmFsLmR0ZCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04IiAvPg0KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9InVzZXItc2NhbGFibGU9bm8sIHdpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAsIG1heGltdW0tc2NhbGU9MS4wLCBtaW5pbXVtLXNjYWxlPTEuMCIvPg0KPC9oZWFkPg0KDQo8Ym9keT4NCjxhIGhyZWY9Imh0dHBzOi8vYWRjbGljay5nLmRvdWJsZWNsaWNrLm5ldC9wY3MvY2xpY2slMjUzRnhhaSUyNTNEQUtBT2pzdmNVWmJydUp2WmM3Qzl2MEV6a3EtZUJIUUV5U195SkRYdzF1V0Y4S0k5d2hCMWhSQ0MwY2w1NjlabDVSUndzVzk5M0t5NnNIV1RaWlpRMEVUMXkwUmdMNTNCS0R4OXVLVGo1eFA5aWxFS0hhUm82aWI5aU92dVBwNl9tdDBEaktsODNpWDY1NmVNSDU4S1gwSzM5Q0MycGRpLXZxSkExWV9wcFAwbFRaa1hqa0NJVmJ1MDZ2cmdwcjRYYnc5MHNVek9YMkM4NXVDTlRPOWdwYUFIb0JlN1FoYVktX3ZiR21obHhSOG1vVEhBN0FsZ0Z0UU50dXByMzJ5S2UzTml6d2dxSjFCdFoxcHQ4aVkzTHYtMHROMmNLY1hPcUJ0TU4zUXVnVE90TWJReHRDUEJNMHBjRnFBRS10SFM4WUdtSmNySnQxeFlYY2N5NGVfOWJqaWdPM09qVXhFdCUyNTI2c2FpJTI1M0RBTWZsLVlTZVMtMjY0aGFqR0JONlRsSGozM25qak1DMHZObHRiUVNjY3diUEF3TzVFVm9vZURSSHNtNV93LVJXaWhjJTI1MjZzaWclMjUzRENnMEFyS0pTekpIcHlIUEk5SkZMRUFFJTI1MjZ1cmxmaXglMjUzRDElMjUyNmFkdXJsJTI1M0RodHRwOi8vbS5nb29nbGUuY29tIj48aW1nIGJvcmRlcj0iMCIgc3JjPSJodHRwczovL3RwYy5nb29nbGVzeW5kaWNhdGlvbi5jb20vcGFnZWFkL2ltZ2FkP2lkPUNJQ0FnSUNRa2VMMGNCQUJHQUV5Q0Fua09MeWtYVTlYIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjUwIj48L2E+DQo8L2JvZHk+DQoNCjwvaHRtbD4NCjxkaXYgc3R5bGU9InRvcDowO2xlZnQ6MDt3aWR0aDozMjBweDtoZWlnaHQ6NTBweDtiYWNrZ3JvdW5kOmluaXRpYWwgIWltcG9ydGFudDtwb3NpdGlvbjphYnNvbHV0ZSAhaW1wb3J0YW50O21heC13aWR0aDoxMDAlICFpbXBvcnRhbnQ7bWF4LWhlaWdodDoxMDAlICFpbXBvcnRhbnQ7cG9pbnRlci1ldmVudHM6bm9uZSAhaW1wb3J0YW50O2ltYWdlLXJlbmRlcmluZzpwaXhlbGF0ZWQgIWltcG9ydGFudDt6LWluZGV4OjIxNDc0ODM2NDc7YmFja2dyb3VuZC1pbWFnZTp1cmwoJ2RhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQ3NBQUFBV0JBTUFBQUNybDNpQUFBQUFCbEJNVkVVQUFBRCtBY2lXbVp6V0FBQUFBblJTVGxNQUFwaWRyQlFBQUFCNlNVUkJWQmpUZFpBTERzQWdDRVByRFhyLzAyNUErWmtORXczeHRWYUE3enBSMEZJSDBHOXRKN3R6QW1ONVp6ZDhNZHVoazVNK2RXSjdCeTN2bnlSVlpycHlRNlNaVG0vbm1NbGRKaUlGQ0JqamEwRzdkQ0grR0RDVGNEM1JTWlZmcVMvamtQUVVNZ3p1Q1ZLeE9HaFJsU085S1VFbzVnU2JmUUF4MXdXY082eUduUUFBQUFCSlJVNUVya0pnZ2c9PScpICFpbXBvcnRhbnQiPjwvZGl2PjwvYm9keT48L2h0bWw+",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+        "X-Afma-Ad-Slot-Size": "412x50",
+        "X-Afma-Tracking-Urls":	"https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsuyg38NMcNSpzz5zPGQfunYKnmam_Pj4MmIBNDHed5adjuTwPyuFnNmStAmNZotFSC2t1lCs-vabTE3vYEQmsw_-8ootIpJEzfH02hmLT_xIuJ--UxHGZzL0dAJOUAUKNOMeHAwfpj1yxM77wDCV4ndIBnPAbxaRBiMZFVkNsGg7FvnFi59So5rJz35lOnl4XghcIKOSUXaS8zTwCuf1mWXyX6go6ic6gUcuk1nk6ntt2xftoHrelnnd4ObJwcbZMfdqvdQYkbKB6_8Xf9DJ8mT-cpT1T0CPefsZA-4a5f7b3op7hjsfKt1O7vFjPPnA_HcBpjZhTPTP7hCBrpTWghxLbRJUnruAMk_2g&sai=AMfl-YQ3_wTt5F2KoudFycKpHVBvbYfI1HJ-xRfXy7BibMA6YNo0gng2dJPodaI5PFo&sig=Cg0ArKJSzGHGsyll_YlvEAE&urlfix=1&adurl=",
+        "X-Afma-ActiveView": "{\"click_string\":\"B7zotymVYV7udDM2N-QLkn7DQCAAAAAAQATgBiAEByAECwAIC4AIAyAOZBOAEAaAGFA\",\"is_active_view_immediate_enabled\":true,\"activeview_cpm_urls\":[],\"active_experiment_ids\":\"\",\"activeview_cid\":\"CAASFORoLDtSXXCxwsAA7m5AJ8dKYu2D\"}",
+        "X-Afma-Ad-Size": "320x50",
+        "X-Google-Bow-TestRequest": "true",
+        "X-Afma-Use-Https": "false",
+        "Cache-Control": "no-cache, must-revalidate",
+        "Content-Type": "text/html; charset=UTF-8",
+        "Date": "Wed, 08 Jun 2016 18:36:58 GMT",
+        "Expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+        "P3P": "policyref=\"https://googleads.g.doubleclick.net/pagead/gcn_p3p_.xml\", CP=\"CURa ADMa DEVa TAIo PSAo PSDo OUR IND UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\"",
+        "Pragma": "no-cache",
+        "Server": "cafe",
+        "Transfer-Encoding": "chunked",
+        "X-Afma-Content-Url-Opted-Out": "true",
+        "X-Afma-Debug-Dialog": "AppID=com.google.native_test_app&Creatives=114092104960&Lineitems=145722280",
+        "X-Afma-Gws-Query-Id": "ymVYV7yeC86mpgO_5JfQAQ",
+        "X-Afma-Orientation": "any",
+        "X-Content-Type-Options": "nosniff",
+        "X-Google-Backends": "10.94.70.205:9826,/bns/iq/borg/iq/bns/gfp-be/gfp.cafe/352,jmc68:443",
+        "X-Google-DOS-Service-Trace": "main:gfp-be",
+        "X-Google-GFE-Request-Trace": "jmc68:443,/bns/iq/borg/iq/bns/gfp-be/gfp.cafe/352,jmc68:443",
+        "X-Google-GFE-Response-Body-Transformations": "chunked",
+        "X-Google-GFE-Response-Code-Details-Trace": "response_code_set_by_backend",
+        "X-Google-GFE-Service-Trace": "gfp-be",
+        "X-Google-Netmon-Label": "/bns/iq/borg/iq/bns/gfp-be/gfp.cafe/352",
+        "X-Google-Service": "gfp-be",
+        "X-Google-Shellfish-Status": "CIgCQEY",
+        "X-Google-Xfp-Impression-Cost": "0",
+        "X-XSS-Protection": "1; mode=block"
+    }
+  }
+]

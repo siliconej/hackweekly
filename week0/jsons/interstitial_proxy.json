@@ -1,0 +1,100 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/outstream/assets/outstreamInterstitialAd.txt",
+        "content_type": "text/html"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "www.youtube.com",
+        "request_path": "/get_video"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/outstream/assets/video.mp4",
+        "content_type": "video/mp4"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "img.youtube.com",
+        "request_path": "/vi/aTPTzDeH-qo/hqdefault.jpg"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/outstream/assets/thumb.jpeg",
+        "content_type": "image/jpeg"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/formats/outstream/prod/2/outstream.html"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/studio/innovation/layouts/lightbox/tetrislight/unversioned/outstream.html",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/formats/outstream/prod/2/outstream.min.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/studio/innovation/layouts/lightbox/tetrislight/unversioned/outstream.min.js",
+        "content_type": "text/javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/formats/outstream/prod/2/outstream.min.css"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/studio/innovation/layouts/lightbox/tetrislight/unversioned/outstream.min.css",
+        "content_type": "text/css"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "imasdk.googleapis.com",
+        "request_path": "/js/core/admob/bridge_en.html"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/interactivemedia/innerbridge/bridge_en.html",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    }
+  }
+]
