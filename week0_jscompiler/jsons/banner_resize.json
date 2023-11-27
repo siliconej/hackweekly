@@ -1,0 +1,49 @@
+{
+	"ad_type": "",
+	"qdata": "x",
+	"ad_networks": [{
+		"ad": {
+			"active_view": {
+				"active_experiment_ids": "",
+				"active_view_url_prefix": "https://pagead2.googlesyndication.com/pcs/activeview?xai=AKAOjstCHHWQA7L69Rvf3phxrwKpGJQt8W6Ofd0kZg4WiRdbYbmRcOABOdJST_57ca5AA3SJp-C9Ltd9IgaCI8FZxfDlQEobdnQOQBg\u0026sig=Cg0ArKJSzEuOU4kpxAKYEAE",
+				"activeview_cid": "CAASEuRoLg0ProOvd-Ql-qUo-Ir2aw",
+				"click_string": "BG3Xz9HheW4CuB8yapgOA8bfYAgAAAAAQATgBiAEByAEJwAIC4AIA4AQBoAYW0ggFCIBhEAE",
+				"is_active_view_immediate_enabled": true
+			},
+			"ad_base_url": "https://pubads.g.doubleclick.net",
+			"ad_html": "\u003chtml\u003e\u003cbody leftMargin=\"0\" topMargin=\"0\" marginwidth=\"0\" marginheight=\"0\"\u003e\t\t\u003cdiv style=\"background: url(https://adsui-mturk-pages.appspot.com/public/dcthang-fsa-artboard-290-360-triangular) no-repeat center center fixed; background-size: cover;\n\t\theight: 100vh\"\u003e\n\t\t\tFinal size:\n\t\t\t\u003cb id=\"size\" style=\"min-width: 10px; min-height: 10px\"\u003ewidth x height\u003c/b\u003e\n\t\t\t\u003chr /\u003e\n\t\t\tOriginal size: \u003ci\u003e1 x 1\u003c/i\u003e\n\t\t\u003c/div\u003e\n\n\t\t\u003cscript type=\"text/javascript\"\u003e\n\t\t\tsetInterval(function() {\n\t\t\t\tdocument.getElementById('size').innerHTML = window.innerWidth + 'x' + window.innerHeight; }, 1000);\n\t\t\u003c/script\u003e\u003cdiv style=\"bottom:0;right:0;width:100px;height:100px;background:initial !important;position:absolute !important;max-width:100% !important;max-height:100% !important;pointer-events:none !important;image-rendering:pixelated !important;z-index:2147483647;background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAWBAMAAACrl3iAAAAABlBMVEUAAAD+AciWmZzWAAAAAnRSTlMAApidrBQAAAB/SURBVBjTbZEBDoAwCAPLD/r/17oBLZgMzZR4dF0F3hVV53ne3QHMr7mS7pJAXXB3vzAp1kB3pjVj+qktJ2LbiavEl2+YhLUhF+y7NojmEgqNW/SSbJZ1NusBPbOMXLiOyeW0bYjSStjRysz6jwSpJH/ZxfggJufZZv6l0rn1Ae8hBV5miOyrAAAAAElFTkSuQmCC') !important\"\u003e\u003c/div\u003e\u003c/body\u003e\u003c/html\u003e",
+			"auto_protection_configuration": {
+				"enable_protection": false,
+				"reporting_url": "https://pagead2.googlesyndication.com/pagead/gen_204?id=gmob-apps\u0026event=auto-protection\u0026type=prevented-creative-action\u0026qid=CID468jkxdwCFUyNaQodgPgNKw\u0026creatives=crid0:138239934424,agcid0:0,ctype0:22,ctid0:0,cuid0:0,lp0:https://adclick.g.doubleclick.net/pcs/click%3Fxai%3DAKAOjssEHKtJe_CTD2TbBW2GMdJeZil4bfNSH5xeHfgNBmtaUMqklQpVTNW8HY6NLXKJICdaMLe4yX2DJfmcL0Hxqum9NUAy5RO7_DW8Ebv4Mi_dBhU7E4wGcAswTuBiARXDDp3gQaV2n5xQz6s6YJ5gKE_nl4htJrhvf_ASDleenWcKwtnegl2qiqi1Ndjnk5cUkOOAKhC1x9TdfsuJqMLlA80JBNkugEDny_P6ta3UGmHm74rc_jOYLuUWq-3_xsv4266vBhN9Fnre_wNqCdbv2umLw4_V2pJblfkhnsvkidmMwsqaQMETfRQG72t9KJ-Ig_GX2aCQMlpsm3Flhmv-oweKwtS3X3X3_Oc_2lIULROLWkc%26sai%3DAMfl-YTZ-Ghv6xSNNJEZ4mVkNKc4PAa9rr-aKyDsi1vl9g5M5h1qkXlJbnKp4KbaqMH43e3AY8X5q_sr_s-F7coturRrmwiFBnOG1_mW9rkGzZtbq2j1jM-p36T2G2wOnZbhm3iXgFfdzKdqVqY8x4CeDZmtmUeI3KkK%26sig%3DCg0ArKJSzIrIuobXr5SWEAE%26urlfix%3D1%26adurl%3D,loginfo0:B2skL9HheW4CuB8yapgOA8bfYArbukaVFAAAAEAEgmsCpGDgAWNj_9_2CBGDJnuuKtKTYD4gBAbIBSzEuYW5kcm9pZC5jb20uZ29vZ2xlLmV4YW1wbGUuZ21zLmN1c3RvbXJlbmRlcmluZ2V4YW1wbGUuYWRzZW5zZWZvcm1vYmlsZWFwcLoBCWdmcF9pbWFnZcgBCdoBWGh0dHA6Ly8xLmFuZHJvaWQuY29tLmdvb2dsZS5leGFtcGxlLmdtcy5jdXN0b21yZW5kZXJpbmdleGFtcGxlLmFkc2Vuc2Vmb3Jtb2JpbGVhcHBzLmNvbS_AAgLgAgDqAicvNjQ5OS9kY3RoYW5nLWZsaXBib2FyZC9kY3RoYW5nLWZzYS0xcHj4Av3RHoADAZAD4AOYA-ADqAMB4AQB0gUGEIXon9kRkAYBoAYW2AYCqAeYzhvYBwDgBwvSCAcIgGEQARgD\u0026creatives_pb=CuMDCBYQ2P_3_YIEGAAgACgAMtEDQjJza0w5SGhlVzRDdUI4eWFwZ09BOGJmWUFyYnVrYVZGQUFBQUVBRWdtc0NwR0RnQVdOal85XzJDQkdESm51dUt0S1RZRDRnQkFiSUJTekV1WVc1a2NtOXBaQzVqYjIwdVoyOXZaMnhsTG1WNFlXMXdiR1V1WjIxekxtTjFjM1J2YlhKbGJtUmxjbWx1WjJWNFlXMXdiR1V1WVdSelpXNXpaV1p2Y20xdlltbHNaV0Z3Y0xvQkNXZG1jRjlwYldGblpjZ0JDZG9CV0doMGRIQTZMeTh4TG1GdVpISnZhV1F1WTI5dExtZHZiMmRzWlM1bGVHRnRjR3hsTG1kdGN5NWpkWE4wYjIxeVpXNWtaWEpwYm1kbGVHRnRjR3hsTG1Ga2MyVnVjMlZtYjNKdGIySnBiR1ZoY0hCekxtTnZiU19BQWdMZ0FnRHFBaWN2TmpRNU9TOWtZM1JvWVc1bkxXWnNhWEJpYjJGeVpDOWtZM1JvWVc1bkxXWnpZUzB4Y0hqNEF2M1JIb0FEQVpBRDRBT1lBLUFEcUFNQjRBUUIwZ1VHRUlYb245a1JrQVlCb0FZVzJBWUNxQWVZemh2WUJ3RGdCd3ZTQ0FjSWdHRVFBUmdE\u0026debugDialog=AppID%3Dcom.google.example.gms.customrenderingexample%26Creatives%3D138239934424%26Lineitems%3D4750570501\u0026navigationURL={NAVIGATION_URL}",
+				"reporting_urls": ["https://pagead2.googlesyndication.com/pagead/gen_204?id=gmob-apps\u0026event=auto-protection\u0026type=prevented-creative-action\u0026qid=CID468jkxdwCFUyNaQodgPgNKw\u0026creatives=crid0:138239934424,agcid0:0,ctype0:22,ctid0:0,cuid0:0,lp0:https://adclick.g.doubleclick.net/pcs/click%3Fxai%3DAKAOjssEHKtJe_CTD2TbBW2GMdJeZil4bfNSH5xeHfgNBmtaUMqklQpVTNW8HY6NLXKJICdaMLe4yX2DJfmcL0Hxqum9NUAy5RO7_DW8Ebv4Mi_dBhU7E4wGcAswTuBiARXDDp3gQaV2n5xQz6s6YJ5gKE_nl4htJrhvf_ASDleenWcKwtnegl2qiqi1Ndjnk5cUkOOAKhC1x9TdfsuJqMLlA80JBNkugEDny_P6ta3UGmHm74rc_jOYLuUWq-3_xsv4266vBhN9Fnre_wNqCdbv2umLw4_V2pJblfkhnsvkidmMwsqaQMETfRQG72t9KJ-Ig_GX2aCQMlpsm3Flhmv-oweKwtS3X3X3_Oc_2lIULROLWkc%26sai%3DAMfl-YTZ-Ghv6xSNNJEZ4mVkNKc4PAa9rr-aKyDsi1vl9g5M5h1qkXlJbnKp4KbaqMH43e3AY8X5q_sr_s-F7coturRrmwiFBnOG1_mW9rkGzZtbq2j1jM-p36T2G2wOnZbhm3iXgFfdzKdqVqY8x4CeDZmtmUeI3KkK%26sig%3DCg0ArKJSzIrIuobXr5SWEAE%26urlfix%3D1%26adurl%3D,loginfo0:B2skL9HheW4CuB8yapgOA8bfYArbukaVFAAAAEAEgmsCpGDgAWNj_9_2CBGDJnuuKtKTYD4gBAbIBSzEuYW5kcm9pZC5jb20uZ29vZ2xlLmV4YW1wbGUuZ21zLmN1c3RvbXJlbmRlcmluZ2V4YW1wbGUuYWRzZW5zZWZvcm1vYmlsZWFwcLoBCWdmcF9pbWFnZcgBCdoBWGh0dHA6Ly8xLmFuZHJvaWQuY29tLmdvb2dsZS5leGFtcGxlLmdtcy5jdXN0b21yZW5kZXJpbmdleGFtcGxlLmFkc2Vuc2Vmb3Jtb2JpbGVhcHBzLmNvbS_AAgLgAgDqAicvNjQ5OS9kY3RoYW5nLWZsaXBib2FyZC9kY3RoYW5nLWZzYS0xcHj4Av3RHoADAZAD4AOYA-ADqAMB4AQB0gUGEIXon9kRkAYBoAYW2AYCqAeYzhvYBwDgBwvSCAcIgGEQARgD\u0026creatives_pb=CuMDCBYQ2P_3_YIEGAAgACgAMtEDQjJza0w5SGhlVzRDdUI4eWFwZ09BOGJmWUFyYnVrYVZGQUFBQUVBRWdtc0NwR0RnQVdOal85XzJDQkdESm51dUt0S1RZRDRnQkFiSUJTekV1WVc1a2NtOXBaQzVqYjIwdVoyOXZaMnhsTG1WNFlXMXdiR1V1WjIxekxtTjFjM1J2YlhKbGJtUmxjbWx1WjJWNFlXMXdiR1V1WVdSelpXNXpaV1p2Y20xdlltbHNaV0Z3Y0xvQkNXZG1jRjlwYldGblpjZ0JDZG9CV0doMGRIQTZMeTh4TG1GdVpISnZhV1F1WTI5dExtZHZiMmRzWlM1bGVHRnRjR3hsTG1kdGN5NWpkWE4wYjIxeVpXNWtaWEpwYm1kbGVHRnRjR3hsTG1Ga2MyVnVjMlZtYjNKdGIySnBiR1ZoY0hCekxtTnZiU19BQWdMZ0FnRHFBaWN2TmpRNU9TOWtZM1JvWVc1bkxXWnNhWEJpYjJGeVpDOWtZM1JvWVc1bkxXWnpZUzB4Y0hqNEF2M1JIb0FEQVpBRDRBT1lBLUFEcUFNQjRBUUIwZ1VHRUlYb245a1JrQVlCb0FZVzJBWUNxQWVZemh2WUJ3RGdCd3ZTQ0FjSWdHRVFBUmdE\u0026debugDialog=AppID%3Dcom.google.example.gms.customrenderingexample%26Creatives%3D138239934424%26Lineitems%3D4750570501\u0026navigationURL={NAVIGATION_URL}"]
+			},
+			"debug_dialog": "AppID=com.google.example.gms.customrenderingexample\u0026Creatives=138239934424\u0026Lineitems=4750570501",
+			"impression_urls": ["https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjstKRj9eDt-xz-HP5jh71KgCXpuWi6U-eJSkiJGVJeEjiVX65W5m8iP1bYMfEAwxkA3EFPmN7FvDalgci4eM4t15fxjOlYyByVCr3XREpcugJUt1I3XIajPHf6wOKyFOgOQVSIgztPYxte6q4Ils0OGlJpE2DcAc69Kq3wSe_hQcFr4Q0J0EAiX2PGnO5WbuazIfm4ZMruaPanXM9K4dFRkpSbvdf4luPsXi4xNQ5ESKOAUa7xqxFBZ4fHcxIQYn-afVPliC5mV-3ACNva_AV7bZUt9WN1ytD76BTnWnVTlIJuCSlWcvUOGYn21xy7l14GD8fdrxjtl1HruI4jRWcHj38FYIUFY2bVT9aQrHP5I0Rthm-Po\u0026sai=AMfl-YS3aZVUNvn1mHxr_2KbVUaUv14H2tE-HpKBJtdTAasd7Bf9yTHD_uM7w5Y03uc1UCmV1HOF_gcbAzaIk3XUb5UB1Fjd4IakBeCwF2FLNt1ockqVcNYtSIbhog8GdLlV_PcK-njYBAPZIojNpzx9Ov5fK8dMNdk-\u0026sig=Cg0ArKJSzJVqWJiEJLAdEAE\u0026urlfix=1\u0026adurl="],
+			"safe_browsing": {
+				"allowed_headers": ["referer"],
+				"click_string": "B2skL9HheW4CuB8yapgOA8bfYArbukaVFAAAAEAEgmsCpGDgAWNj_9_2CBGDJnuuKtKTYD4gBAbIBSzEuYW5kcm9pZC5jb20uZ29vZ2xlLmV4YW1wbGUuZ21zLmN1c3RvbXJlbmRlcmluZ2V4YW1wbGUuYWRzZW5zZWZvcm1vYmlsZWFwcLoBCWdmcF9pbWFnZcgBCdoBWGh0dHA6Ly8xLmFuZHJvaWQuY29tLmdvb2dsZS5leGFtcGxlLmdtcy5jdXN0b21yZW5kZXJpbmdleGFtcGxlLmFkc2Vuc2Vmb3Jtb2JpbGVhcHBzLmNvbS_AAgLgAgDqAicvNjQ5OS9kY3RoYW5nLWZsaXBib2FyZC9kY3RoYW5nLWZzYS0xcHj4Av3RHoADAZAD4AOYA-ADqAMB4AQB0gUGEIXon9kRkAYBoAYW2AYCqAeYzhvYBwDgBwvSCAcIgGEQARgD",
+				"header_to_scrub": ["cookie"],
+				"malicious_reporting_enabled": true,
+				"non_malicious_reporting_enabled": false,
+				"protection_enabled": false,
+				"rendered_ad_enabled": false,
+				"report_url": "https://sb-ssl.google.com/safebrowsing/clientreport/malware",
+				"screenshot_enabled": false
+			},
+			"use_displayed_impression": true
+		},
+		"adapters": ["com.google.ads.mediation.admob.AdMobAdapter"],
+		"data": {
+			"gwhirl_share_location": "1",
+			"pubid": "ca-pub-7502991030721097//6499/dcthang-flipboard/dcthang-fsa-1px/cak=no_cache\u0026cadc=iq\u0026caqid=9HheW_W2BtScpgPZnKPwAw"
+		},
+		"id": "",
+                "response_type": "banner"
+	}],
+	"settings": {
+		"click_urls": ["@gw_adnetid@"],
+		"imp_urls": [],
+		"nofill_urls": [],
+		"ad_network_timeout_millis": 60000
+	}
+}

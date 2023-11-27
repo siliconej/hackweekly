@@ -1,0 +1,47 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "response_body": {
+        "body": "PGh0bWw+CiAgPGJvZHkgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6IHdoaXRlOyB3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyI+CiAgICB0aGlzIGlzIGFuIGFkdmVydGlzZW1lbnQKICA8L2JvZHk+CjwvaHRtbD4K",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Pool": "{\"never_pool\": true}"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/canary/sdk-core-v40-impl.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/sdk-core-v40-impl.js",
+        "content_type": "javascript"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/static/mad/sdk/native/production/sdk-core-v40-impl.js"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javascript/ads/mobile/admob/sdk-core-v40-impl.js",
+        "content_type": "javascript"
+      }
+    }
+  }
+]

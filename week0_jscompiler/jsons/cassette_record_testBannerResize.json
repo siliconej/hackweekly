@@ -1,0 +1,2582 @@
+{
+    "fifo.Group": {
+        "modifiers": [
+            {
+                "url.Filter": {
+                    "host": "android.clients.google.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com",
+                    "path": "/log/batch",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/+I4sJJdypdLiIvP0c8lyN/TJd7J0dk7NECAgUuQi9fJMSTENSgyPjjEMSRYgIGLn4s72NcxKCQ+2DUErIaDiyUkyN9PgEFg+YuGjp27Vty5yKjEAAgAAP//ZncOKVUAAAA=",
+                                        "contentType": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Frame-Options",
+                                        "value": "SAMEORIGIN"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:40 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/4,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Session-Info",
+                                        "value": "GgQYAigLIAE"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lPV-W5GWLY-_yATY-7e4Aw"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "ilkk194-v6:443,/bns/il/borg/il/bns/android-dw/clearcut_canary.server/4,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBG"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/4"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "android.clients.google.com",
+                    "path": "/auth/devicekey",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 502
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Warning",
+                                        "value": "199 \"martian\" \"dial tcp 74.125.132.139:443: socket: address family not supported by protocol\" \"Thu, 23 Aug 2018 10:57:40 GMT\""
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com",
+                    "path": "/log/batch",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/+I4sJJdypdLiIvP0c8lyN/TJd7J0dk7NECAgUuQi9fJMSTENSgyPjjEMSRYgIGLn4s72NcxKCQ+2DUErIaDiyUkyN9PgEFg+YuGjp27Vty5yKjEAAgAAP//ZncOKVUAAAA=",
+                                        "contentType": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:41 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "ilkk194-v6:443,/bns/il/borg/il/bns/android-dw/clearcut_canary.server/5,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBG"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/5,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lfV-W_rZE9KCygSQwpTwDg"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Frame-Options",
+                                        "value": "SAMEORIGIN"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/5"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Session-Info",
+                                        "value": "GgQYAigLIAE"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/plain; charset=UTF-8"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "googleads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com",
+                    "path": "/log/batch",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/+I4sJJdypdLiIvP0c8lyN/TJd7J0dk7NECAgUuQi9fJMSTENSgyPjjEMSRYgIGLn4s72NcxKCQ+2DUErIaDiyUkyN9PgEFg+YuGjp27Vty5yKjEAAgAAP//ZncOKVUAAAA=",
+                                        "contentType": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/7,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:41 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "ilkk194-v6:443,/bns/il/borg/il/bns/android-dw/clearcut_canary.server/7,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBG"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Session-Info",
+                                        "value": "GgQYAigLIAE"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lfV-W9LpKMPzyATc7IXIBg"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Frame-Options",
+                                        "value": "SAMEORIGIN"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/7"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "googleads.g.doubleclick.net",
+                    "path": "/favicon.ico",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/3yUbUyVZRjHr/t+sCUjOXzQranFWilZrLVZHDgv+LJYsJo2U6NN3bJcW/byqRfEpiAYEopBKNgrayTmCijQMwsrtcgxUBdWkLxlSXIEzoEdPTznPD/3PHznv117tnv739f1u67ruUWUKHG57G+qvJwgskBE0kTEJSKpMnM+m4JTJoXnRlnTNs4TzSGebhunqitCxIzSP3SR3LcXsbxAyC7UrCgUvDuElQWC7bViJltODJD0ZZAFzRPMbwmx8Nsp7jkWovDsGGBx4nwjj75p4ClWZBcZ+HcK/gJh9TtCfzDMwvo/cQVukhQIkdwaJrllwrnjka+uMRkFy4yQV7KYzFJhZYnGWyqs2KXx7RCmzFtkNHQi342jz1kknjGZ2x5Bjl0nr6kPy7IgZrH+4AMsLxM8FYKvVFi9ew7+nQricOH/SdxNXSQ2DSCt/6C/HmZZ42X+CoZsK4Mjf5BdeheZlYL3fQNfmcZfIvh3CxdONRAfG3U4eyamaboyQk13P9cnb2LLjE3zakMuyyoU7irBUylklmu87wneEmF/7n18vNlNy7sb+LHyNcZ6u7GIE8diNDzKK0dzSK9QeGsET9VM+A4Ivn2Cb49Qn7+UL9Yv4pO8Ozn8ZAqhkQGH+WpwiGfqlpBeLWQe0ngOadzVgucDje+AwleucZcJRzfM56M1LhpeX0V7/R6H1wR+6z3NvW9pHjsiZNQKGXWCt1o54bbzlyv8exWfbl7K5fbjWHGIhsfpP/0ZN4Z7HYbakyU8XCR46gyyDhtk1AiZNULWQUV2lbBqr+LGUJ/Tu0hohNbtaZx6VghsmsfV7oBzfqS5ltQ3FpPxoeCrMRz+x8vmkv5SFskP7bPH58SlxiIC64TzLybww3Oajsp8pwZuQdqDv3LH3T+TsqSZlNQ25rg6ET2EqB6I2/sB7YUeftmk6dimOfu8pmv/RqcPttauu0KCTCEKDIkjahKRfzF078yMTZO27ffTsVXo3ib8lC9c+qbYLt/ZvZycQZREESOGUlEMmUDUKCID9oI4nCeL1xLYKHRu1Xz/wjzC//3tzKLn9wiJSdcQiWMoC1F2/ggJEkT0oPMPEjMZ7uukYUsqnz+VwMXjpcSIMx6KkpV9xuHUetq5Q8uMX2TM8e5Ssz4Ns8r23g4AAP//RzjxdH4EAAA=",
+                                        "contentType": "image/x-icon"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\"googleads.g.doubleclick.net:443\"; ma=2592000; v=\"44,43,39,35\",quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Accept-Ranges",
+                                        "value": "bytes"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:41 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "image/x-icon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "sffe"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Vary",
+                                        "value": "Accept-Encoding"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Row-Key",
+                                        "value": "/external_content/imageads/favicon.ico:static-on-bigtable/base:public_static:1461208642003442"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "joa25-v6:443,/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/60,joa25-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/60"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Last-Modified",
+                                        "value": "Thu, 21 Apr 2016 03:17:22 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Data-Version",
+                                        "value": "209956271"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Repo",
+                                        "value": "static-on-bigtable/public_static"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lfV-W77ELMGI2Aa04qDQDQ"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Fri, 23 Aug 2019 17:57:41 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "public, max-age=31536000"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Row-Timestamp",
+                                        "value": "1461208642003442"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/60,joa25-v6:443"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com",
+                    "path": "/log/batch",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/+I4sJJdypdLiIvP0c8lyN/TJd7J0dk7NECAgUuQi9fJMSTENSgyPjjEMSRYgIGLn4s72NcxKCQ+2DUErIaDiyUkyN9PgEFg+YuGjp27Vty5yKjEAAgAAP//ZncOKVUAAAA=",
+                                        "contentType": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lfV-W4qPPJq0yQSs35LIBw"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Session-Info",
+                                        "value": "GgQYAigLIAE"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/3,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:42 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Frame-Options",
+                                        "value": "SAMEORIGIN"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBG"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "ilkk194-v6:443,/bns/il/borg/il/bns/android-dw/clearcut_canary.server/3,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/3"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "android-dw-playlog"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "pubads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "hawkman.URLRegexFilter": {
+                    "regex": "pubads.g.doubleclick.net/gampad/ads/bannermediation/.*",
+                    "modifier": {
+                        "fifo.Group": {
+                            "modifiers": [
+                                {
+                                    "url.Modifier": {
+                                        "host": "pubads.g.doubleclick.net",
+                                        "path": "/gampad/ads/bannermediation/banner_resize",
+                                        "query": "?carrier=310260&native_image_orientation=any&riv=5&_activity_context=true&format=1x1_as&seq_num=1&gl=US&eid=318475418&u_sd=1.5&ms=CpgECoACQoAO77yUKlM3_OIRFs9PAka8pvC1AMGnkCR07of-BMlNtaLwE3S0Nbs8kke0zeJKtJ7tf9EhA1ihHwQoV48mPwHPQTYQ229dh5JQF1HU30yKrDLgqlqgftf3WrKwDpZgWsGXTorbo-Gd23kfAnRrnu-leD_UzC31H7dGEAttcZ-H7LGkbt5TWU-5vGUaykMK_rSOEiKRc2pyWRStcIYjyqq_g60qo71iJFJtbLvfFS7TJdNWdzVt5OHHk1_cQGPb6aO63DzD8X0Y8uVF4704hTl9lfnIXK1c6tJ2gpa1MPLFMS59nBr6esUnmtI18bDniIB4M1Izx-ShY7KCu-GvYQqAAinp74mM7llvgPMNji-TrvPOT2Mhl7ius7VXE7lVzxPd2PrfkGisqbifRCaq-sF2FldJtBkoQa6G1fxV41Wd0uLN0M4D90t8uAVrnAsFgSUR1ExA31r_CQfNFXRnpeGTYc6UrIsW-kyiQ0DKOz77kfMBK7lIbHx0n9kuHFd1jK-18adcxUdLdYlp2xyrTP6DaB78Ee8wx4XaV7C1IxK9rsw6JKPYsvzNgTImFQkZQNs-wFcUDH28UNbC8W4nhT54yqYvP5gC8_cuPqhgGJGHC2dPV-dSzgnWdKPsq6FmrqqtuZNmi39DmZKHj3cp4R16SEHKa_iknoZt1DSG3Md-0UASEF7fToOIYg7tY2itGPbrvQsSlQIKgALWoxiprq-PUrikto1boxYzv5Bbm8SC1Xtf9hR2VumtO1DT9DbChvab-qFKO5T2_VYzvCvMeUmJvIAiTVUgWhhU4oOl-5Mn9Vaub3THPDvoKhSoa7JaYpO4TDNqIDqODBthml0IZMrIeoWk1wVZ74Pp1cQD-JLbLUf3NTaQkzFQVQ-bYvABW4tc0g5uzjQ8Hgw2xAMbDbF1R1eTa2xJA6tsADDaP3LZztBVKt6E3XLtq3V_FWZPbJ34KwufN-sIrxyn79_TDvYbMEy1F3TkWo0_Lnoxgc6LmO3koO4yIfIt4apzqQOm4rCrXxxq5hR8g4C185WWs86AXyloJCny5KG0EhDZFBR__NGfJwxi-3rCakXn&target_api=21&hl=en&scroll_index=-1&iba=true&android_permissions=android.permission.READ_EXTERNAL_STORAGE%2Candroid.permission.INTERNET%2Candroid.permission.ACCESS_NETWORK_STATE%2Candroid.permission.WRITE_EXTERNAL_STORAGE%2Candroid.permission.READ_LOGS%2Candroid.permission.MODIFY_AUDIO_SETTINGS%2Candroid.permission.RECORD_AUDIO%2Candroid.permission.WAKE_LOCK&submodel=Android%20SDK%20built%20for%20x86&native_multiple_images=false&max_num_ads=1&rm=2&android_app_muted=false&request_id=e517f604-5368-45e4-b2f0-d28c1206d15b&am=0&is_latchsky=false&ma=0&cnt=0&disable_ml=false&js=afma-sdk-a-v14510005.14510000.2&native_templates=1%2C2%2C4%2C5&muv=11&coh=1&sp=0&ina=true&gnt=13&forceHttps=true&mv=1801.com.android.vending&native_version=3&android_app_volume=1&render_in_browser=false&android_num_video_cache_tasks=0&_c_csdk_npa_o=false&adtest=on&rmr=true&u_w=320&u_h=534&msid=com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner&_package_name=com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner&an=0.android.com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner&net=ed&u_audio=4&u_so=p&basets=149688&currts=149688&preqs_in_session=0&pclick=0&support_transparent_background=true&pimp=0&preqs=0&time_in_session=0&output=html&region=mobile_app&u_tz=-420&url=0.android.com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner.adsenseformobileapps.com&gdfp_req=1&markup=html&m_ast=afmajs&impl=ifr&iu=%2F6499%2Fexample%2Fnative&sz=1x1&correlator=3623791333981116&gsb=4g&local_service=false&lite=false&caps=inlineVideo_interactiveVideo_mraid1_mraid2_sdkVideo_th_autoplay_mediation_av_transparentBackground_sdkAdmobApiForAds_di_sfv_dinm_dim_nav_navc_dinmo_ipdof_gls_xSeconds&bisch=true&blev=1&swdr=false&cans=5&canm=true&_mv=0.com.google.android.apps.internal.admobsdk.mediumtest.nativeplusbanner&pscfas=false&heap_free=0&heap_max=67108864&heap_total=15177208&wv_count=0&sai=0&blockAutoClicks=false&_emulatorLiveAds=true&cust_params=_emulatorLiveAds%3Dtrue%26dv%3D320%26_newBundle%3Dtrue%26excl_cat&includeDoritos=true&content_infol=-1&blob=ABPQqLEdUCYFa1JgfkGplgMA17Chn6QxProapSYd0TYtHK8KmF9d1_YvGmwrnWpe5dNGtbk6zg4QO4qX9nrx56SkhQKxHyWY15KEqWq6Z97lbJLTrajeXeu_AlkppoYriRBnyqmaFALtoZogGpXL30xzlnX99osrCNImN-B--29kTbc7hwDxkVmdVqVanraJa4V3kNWn0SYsLU-wHwWT8-tu_KoEY_2qhwEA9r2w8Rs8OKz3h0NWXr7VQY3Mcg&et=34&d_imp=1&swipeable=0&tcar=84&jsv=4-production-latest&urll=3702"
+                                    }
+                                },
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "ewoJImFkX3R5cGUiOiAiIiwKCSJxZGF0YSI6ICJ4IiwKCSJhZF9uZXR3b3JrcyI6IFt7CgkJImFkIjogewoJCQkiYWN0aXZlX3ZpZXciOiB7CgkJCQkiYWN0aXZlX2V4cGVyaW1lbnRfaWRzIjogIiIsCgkJCQkiYWN0aXZlX3ZpZXdfdXJsX3ByZWZpeCI6ICJodHRwczovL3BhZ2VhZDIuZ29vZ2xlc3luZGljYXRpb24uY29tL3Bjcy9hY3RpdmV2aWV3P3hhaT1BS0FPanN0Q0hIV1FBN0w2OVJ2ZjNwaHhyd0twR0pRdDhXNk9mZDBrWmc0V2lSZGJZYm1SY09BQk9kSlNUXzU3Y2E1QUEzU0pwLUM5THRkOUlnYUNJOEZaeGZEbFFFb2JkblFPUUJnXHUwMDI2c2lnPUNnMEFyS0pTekV1T1U0a3B4QUtZRUFFIiwKCQkJCSJhY3RpdmV2aWV3X2NpZCI6ICJDQUFTRXVSb0xnMFByb092ZC1RbC1xVW8tSXIyYXciLAoJCQkJImNsaWNrX3N0cmluZyI6ICJCRzNYejlIaGVXNEN1Qjh5YXBnT0E4YmZZQWdBQUFBQVFBVGdCaUFFQnlBRUp3QUlDNEFJQTRBUUJvQVlXMGdnRkNJQmhFQUUiLAoJCQkJImlzX2FjdGl2ZV92aWV3X2ltbWVkaWF0ZV9lbmFibGVkIjogdHJ1ZQoJCQl9LAoJCQkiYWRfYmFzZV91cmwiOiAiaHR0cHM6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQiLAoJCQkiYWRfaHRtbCI6ICJcdTAwM2NodG1sXHUwMDNlXHUwMDNjYm9keSBsZWZ0TWFyZ2luPVwiMFwiIHRvcE1hcmdpbj1cIjBcIiBtYXJnaW53aWR0aD1cIjBcIiBtYXJnaW5oZWlnaHQ9XCIwXCJcdTAwM2VcdFx0XHUwMDNjZGl2IHN0eWxlPVwiYmFja2dyb3VuZDogdXJsKGh0dHBzOi8vYWRzdWktbXR1cmstcGFnZXMuYXBwc3BvdC5jb20vcHVibGljL2RjdGhhbmctZnNhLWFydGJvYXJkLTI5MC0zNjAtdHJpYW5ndWxhcikgbm8tcmVwZWF0IGNlbnRlciBjZW50ZXIgZml4ZWQ7IGJhY2tncm91bmQtc2l6ZTogY292ZXI7XG5cdFx0aGVpZ2h0OiAxMDB2aFwiXHUwMDNlXG5cdFx0XHRGaW5hbCBzaXplOlxuXHRcdFx0XHUwMDNjYiBpZD1cInNpemVcIiBzdHlsZT1cIm1pbi13aWR0aDogMTBweDsgbWluLWhlaWdodDogMTBweFwiXHUwMDNld2lkdGggeCBoZWlnaHRcdTAwM2MvYlx1MDAzZVxuXHRcdFx0XHUwMDNjaHIgL1x1MDAzZVxuXHRcdFx0T3JpZ2luYWwgc2l6ZTogXHUwMDNjaVx1MDAzZTEgeCAxXHUwMDNjL2lcdTAwM2Vcblx0XHRcdTAwM2MvZGl2XHUwMDNlXG5cblx0XHRcdTAwM2NzY3JpcHQgdHlwZT1cInRleHQvamF2YXNjcmlwdFwiXHUwMDNlXG5cdFx0XHRzZXRJbnRlcnZhbChmdW5jdGlvbigpIHtcblx0XHRcdFx0ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NpemUnKS5pbm5lckhUTUwgPSB3aW5kb3cuaW5uZXJXaWR0aCArICd4JyArIHdpbmRvdy5pbm5lckhlaWdodDsgfSwgMTAwMCk7XG5cdFx0XHUwMDNjL3NjcmlwdFx1MDAzZVx1MDAzY2RpdiBzdHlsZT1cImJvdHRvbTowO3JpZ2h0OjA7d2lkdGg6MTAwcHg7aGVpZ2h0OjEwMHB4O2JhY2tncm91bmQ6aW5pdGlhbCAhaW1wb3J0YW50O3Bvc2l0aW9uOmFic29sdXRlICFpbXBvcnRhbnQ7bWF4LXdpZHRoOjEwMCUgIWltcG9ydGFudDttYXgtaGVpZ2h0OjEwMCUgIWltcG9ydGFudDtwb2ludGVyLWV2ZW50czpub25lICFpbXBvcnRhbnQ7aW1hZ2UtcmVuZGVyaW5nOnBpeGVsYXRlZCAhaW1wb3J0YW50O3otaW5kZXg6MjE0NzQ4MzY0NztiYWNrZ3JvdW5kLWltYWdlOnVybCgnZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFDc0FBQUFXQkFNQUFBQ3JsM2lBQUFBQUJsQk1WRVVBQUFEK0FjaVdtWnpXQUFBQUFuUlNUbE1BQXBpZHJCUUFBQUIvU1VSQlZCalRiWkVCRG9Bd0NBUExEL3IvMTdvQkxaZ016WlI0ZEYwRjNoVlY1M25lM1FITXI3bVM3cEpBWFhCM3Z6QXAxa0IzcGpWaitxa3RKMkxiaWF2RWwyK1loTFVoRit5N05vam1FZ3FOVy9TU2JKWjFOdXNCUGJPTVhMaU95ZVcwYllqU1N0alJ5c3o2andTcEpIL1p4ZmdnSnVmWlp2Nmwwcm4xQWU4aEJWNW1pT3lyQUFBQUFFbEZUa1N1UW1DQycpICFpbXBvcnRhbnRcIlx1MDAzZVx1MDAzYy9kaXZcdTAwM2VcdTAwM2MvYm9keVx1MDAzZVx1MDAzYy9odG1sXHUwMDNlIiwKCQkJImF1dG9fcHJvdGVjdGlvbl9jb25maWd1cmF0aW9uIjogewoJCQkJImVuYWJsZV9wcm90ZWN0aW9uIjogZmFsc2UsCgkJCQkicmVwb3J0aW5nX3VybCI6ICJodHRwczovL3BhZ2VhZDIuZ29vZ2xlc3luZGljYXRpb24uY29tL3BhZ2VhZC9nZW5fMjA0P2lkPWdtb2ItYXBwc1x1MDAyNmV2ZW50PWF1dG8tcHJvdGVjdGlvblx1MDAyNnR5cGU9cHJldmVudGVkLWNyZWF0aXZlLWFjdGlvblx1MDAyNnFpZD1DSUQ0Njhqa3hkd0NGVXlOYVFvZGdQZ05Ld1x1MDAyNmNyZWF0aXZlcz1jcmlkMDoxMzgyMzk5MzQ0MjQsYWdjaWQwOjAsY3R5cGUwOjIyLGN0aWQwOjAsY3VpZDA6MCxscDA6aHR0cHM6Ly9hZGNsaWNrLmcuZG91YmxlY2xpY2submV0L3Bjcy9jbGljayUzRnhhaSUzREFLQU9qc3NFSEt0SmVfQ1REMlRiQlcyR01kSmVaaWw0YmZOU0g1eGVIZmdOQm10YVVNcWtsUXBWVE5XOEhZNk5MWEtKSUNkYU1MZTR5WDJESmZtY0wwSHhxdW05TlVBeTVSTzdfRFc4RWJ2NE1pX2RCaFU3RTR3R2NBc3dUdUJpQVJYRERwM2dRYVYybjV4UXo2czZZSjVnS0Vfbmw0aHRKcmh2Zl9BU0RsZWVuV2NLd3RuZWdsMnFpcWkxTmRqbms1Y1VrT09BS2hDMXg5VGRmc3VKcU1MbEE4MEpCTmt1Z0VEbnlfUDZ0YTNVR21IbTc0cmNfak9ZTHVVV3EtM194c3Y0MjY2dkJoTjlGbnJlX3dOcUNkYnYydW1MdzRfVjJwSmJsZmtobnN2a2lkbU13c3FhUU1FVGZSUUc3MnQ5S0otSWdfR1gyYUNRTWxwc20zRmxobXYtb3dlS3d0UzNYM1gzX09jXzJsSVVMUk9MV2tjJTI2c2FpJTNEQU1mbC1ZVFotR2h2NnhTTk5KRVo0bVZrTktjNFBBYTlyci1hS3lEc2kxdmw5ZzVNNWgxcWtYbEpibktwNEtiYXFNSDQzZTNBWThYNXFfc3Jfcy1GN2NvdHVyUnJtd2lGQm5PRzFfbVc5cmtHelp0YnEyajFqTS1wMzZUMkcyd09uWmJobTNpWGdGZmR6S2RxVnFZOHg0Q2VEWm10bVVlSTNLa0slMjZzaWclM0RDZzBBcktKU3pJckl1b2JYcjVTV0VBRSUyNnVybGZpeCUzRDElMjZhZHVybCUzRCxsb2dpbmZvMDpCMnNrTDlIaGVXNEN1Qjh5YXBnT0E4YmZZQXJidWthVkZBQUFBRUFFZ21zQ3BHRGdBV05qXzlfMkNCR0RKbnV1S3RLVFlENGdCQWJJQlN6RXVZVzVrY205cFpDNWpiMjB1WjI5dloyeGxMbVY0WVcxd2JHVXVaMjF6TG1OMWMzUnZiWEpsYm1SbGNtbHVaMlY0WVcxd2JHVXVZV1J6Wlc1elpXWnZjbTF2WW1sc1pXRndjTG9CQ1dkbWNGOXBiV0ZuWmNnQkNkb0JXR2gwZEhBNkx5OHhMbUZ1WkhKdmFXUXVZMjl0TG1kdmIyZHNaUzVsZUdGdGNHeGxMbWR0Y3k1amRYTjBiMjF5Wlc1a1pYSnBibWRsZUdGdGNHeGxMbUZrYzJWdWMyVm1iM0p0YjJKcGJHVmhjSEJ6TG1OdmJTX0FBZ0xnQWdEcUFpY3ZOalE1T1M5a1kzUm9ZVzVuTFdac2FYQmliMkZ5WkM5a1kzUm9ZVzVuTFdaellTMHhjSGo0QXYzUkhvQURBWkFENEFPWUEtQURxQU1CNEFRQjBnVUdFSVhvbjlrUmtBWUJvQVlXMkFZQ3FBZVl6aHZZQndEZ0J3dlNDQWNJZ0dFUUFSZ0RcdTAwMjZjcmVhdGl2ZXNfcGI9Q3VNRENCWVEyUF8zX1lJRUdBQWdBQ2dBTXRFRFFqSnphMHc1U0dobFZ6UkRkVUk0ZVdGd1owOUJPR0ptV1VGeVluVnJZVlpHUVVGQlFVVkJSV2R0YzBOd1IwUm5RVmRPYWw4NVh6SkRRa2RFU201MWRVdDBTMVJaUkRSblFrRmlTVUpUZWtWMVdWYzFhMk50T1hCYVF6VnFZakl3ZFZveU9YWmFNbmhzVEcxV05GbFhNWGRpUjFWMVdqSXhla3h0VGpGak0xSjJZbGhLYkdKdFVteGpiV3gxV2pKV05GbFhNWGRpUjFWMVdWZFNlbHBYTlhwYVYxcDJZMjB4ZGxsdGJITmFWMFozWTB4dlFrTlhaRzFqUmpsd1lsZEdibHBqWjBKRFpHOUNWMGRvTUdSSVFUWk1lVGg0VEcxR2RWcElTblpoVjFGMVdUSTVkRXh0WkhaaU1tUnpXbE0xYkdWSFJuUmpSM2hzVEcxa2RHTjVOV3BrV0U0d1lqSXhlVnBYTld0YVdFcHdZbTFrYkdWSFJuUmpSM2hzVEcxR2EyTXlWblZqTWxadFlqTktkR0l5U25CaVIxWm9ZMGhDZWt4dFRuWmlVMTlCUVdkTVowRm5SSEZCYVdOMlRtcFJOVTlUT1d0Wk0xSnZXVmMxYmt4WFduTmhXRUpwWWpKR2VWcERPV3RaTTFKdldWYzFia3hYV25wWlV6QjRZMGhxTkVGMk0xSkliMEZFUVZwQlJEUkJUMWxCTFVGRWNVRk5RalJCVVVJd1oxVkhSVWxZYjI0NWExSnJRVmxDYjBGWlZ6SkJXVU54UVdWWmVtaDJXVUozUkdkQ2QzWlRRMEZqU1dkSFJWRkJVbWRFXHUwMDI2ZGVidWdEaWFsb2c9QXBwSUQlM0Rjb20uZ29vZ2xlLmV4YW1wbGUuZ21zLmN1c3RvbXJlbmRlcmluZ2V4YW1wbGUlMjZDcmVhdGl2ZXMlM0QxMzgyMzk5MzQ0MjQlMjZMaW5laXRlbXMlM0Q0NzUwNTcwNTAxXHUwMDI2bmF2aWdhdGlvblVSTD17TkFWSUdBVElPTl9VUkx9IiwKCQkJCSJyZXBvcnRpbmdfdXJscyI6IFsiaHR0cHM6Ly9wYWdlYWQyLmdvb2dsZXN5bmRpY2F0aW9uLmNvbS9wYWdlYWQvZ2VuXzIwND9pZD1nbW9iLWFwcHNcdTAwMjZldmVudD1hdXRvLXByb3RlY3Rpb25cdTAwMjZ0eXBlPXByZXZlbnRlZC1jcmVhdGl2ZS1hY3Rpb25cdTAwMjZxaWQ9Q0lENDY4amt4ZHdDRlV5TmFRb2RnUGdOS3dcdTAwMjZjcmVhdGl2ZXM9Y3JpZDA6MTM4MjM5OTM0NDI0LGFnY2lkMDowLGN0eXBlMDoyMixjdGlkMDowLGN1aWQwOjAsbHAwOmh0dHBzOi8vYWRjbGljay5nLmRvdWJsZWNsaWNrLm5ldC9wY3MvY2xpY2slM0Z4YWklM0RBS0FPanNzRUhLdEplX0NURDJUYkJXMkdNZEplWmlsNGJmTlNINXhlSGZnTkJtdGFVTXFrbFFwVlROVzhIWTZOTFhLSklDZGFNTGU0eVgyREpmbWNMMEh4cXVtOU5VQXk1Uk83X0RXOEVidjRNaV9kQmhVN0U0d0djQXN3VHVCaUFSWEREcDNnUWFWMm41eFF6NnM2WUo1Z0tFX25sNGh0SnJodmZfQVNEbGVlbldjS3d0bmVnbDJxaXFpMU5kam5rNWNVa09PQUtoQzF4OVRkZnN1SnFNTGxBODBKQk5rdWdFRG55X1A2dGEzVUdtSG03NHJjX2pPWUx1VVdxLTNfeHN2NDI2NnZCaE45Rm5yZV93TnFDZGJ2MnVtTHc0X1YycEpibGZraG5zdmtpZG1Nd3NxYVFNRVRmUlFHNzJ0OUtKLUlnX0dYMmFDUU1scHNtM0ZsaG12LW93ZUt3dFMzWDNYM19PY18ybElVTFJPTFdrYyUyNnNhaSUzREFNZmwtWVRaLUdodjZ4U05OSkVaNG1Wa05LYzRQQWE5cnItYUt5RHNpMXZsOWc1TTVoMXFrWGxKYm5LcDRLYmFxTUg0M2UzQVk4WDVxX3NyX3MtRjdjb3R1clJybXdpRkJuT0cxX21XOXJrR3padGJxMmoxak0tcDM2VDJHMndPblpiaG0zaVhnRmZkektkcVZxWTh4NENlRFptdG1VZUkzS2tLJTI2c2lnJTNEQ2cwQXJLSlN6SXJJdW9iWHI1U1dFQUUlMjZ1cmxmaXglM0QxJTI2YWR1cmwlM0QsbG9naW5mbzA6QjJza0w5SGhlVzRDdUI4eWFwZ09BOGJmWUFyYnVrYVZGQUFBQUVBRWdtc0NwR0RnQVdOal85XzJDQkdESm51dUt0S1RZRDRnQkFiSUJTekV1WVc1a2NtOXBaQzVqYjIwdVoyOXZaMnhsTG1WNFlXMXdiR1V1WjIxekxtTjFjM1J2YlhKbGJtUmxjbWx1WjJWNFlXMXdiR1V1WVdSelpXNXpaV1p2Y20xdlltbHNaV0Z3Y0xvQkNXZG1jRjlwYldGblpjZ0JDZG9CV0doMGRIQTZMeTh4TG1GdVpISnZhV1F1WTI5dExtZHZiMmRzWlM1bGVHRnRjR3hsTG1kdGN5NWpkWE4wYjIxeVpXNWtaWEpwYm1kbGVHRnRjR3hsTG1Ga2MyVnVjMlZtYjNKdGIySnBiR1ZoY0hCekxtTnZiU19BQWdMZ0FnRHFBaWN2TmpRNU9TOWtZM1JvWVc1bkxXWnNhWEJpYjJGeVpDOWtZM1JvWVc1bkxXWnpZUzB4Y0hqNEF2M1JIb0FEQVpBRDRBT1lBLUFEcUFNQjRBUUIwZ1VHRUlYb245a1JrQVlCb0FZVzJBWUNxQWVZemh2WUJ3RGdCd3ZTQ0FjSWdHRVFBUmdEXHUwMDI2Y3JlYXRpdmVzX3BiPUN1TURDQllRMlBfM19ZSUVHQUFnQUNnQU10RURRakp6YTB3NVNHaGxWelJEZFVJNGVXRndaMDlCT0dKbVdVRnlZblZyWVZaR1FVRkJRVVZCUldkdGMwTndSMFJuUVZkT2FsODVYekpEUWtkRVNtNTFkVXQwUzFSWlJEUm5Ra0ZpU1VKVGVrVjFXVmMxYTJOdE9YQmFRelZxWWpJd2RWb3lPWFphTW5oc1RHMVdORmxYTVhkaVIxVjFXakl4ZWt4dFRqRmpNMUoyWWxoS2JHSnRVbXhqYld4MVdqSldORmxYTVhkaVIxVjFXVmRTZWxwWE5YcGFWMXAyWTIweGRsbHRiSE5hVjBaM1kweHZRa05YWkcxalJqbHdZbGRHYmxwalowSkRaRzlDVjBkb01HUklRVFpNZVRoNFRHMUdkVnBJU25aaFYxRjFXVEk1ZEV4dFpIWmlNbVJ6V2xNMWJHVkhSblJqUjNoc1RHMWtkR041Tldwa1dFNHdZakl4ZVZwWE5XdGFXRXB3WW0xa2JHVkhSblJqUjNoc1RHMUdhMk15Vm5Wak1sWnRZak5LZEdJeVNuQmlSMVpvWTBoQ2VreHRUblppVTE5QlFXZE1aMEZuUkhGQmFXTjJUbXBSTlU5VE9XdFpNMUp2V1ZjMWJreFhXbk5oV0VKcFlqSkdlVnBET1d0Wk0xSnZXVmMxYmt4WFducFpVekI0WTBocU5FRjJNMUpJYjBGRVFWcEJSRFJCVDFsQkxVRkVjVUZOUWpSQlVVSXdaMVZIUlVsWWIyNDVhMUpyUVZsQ2IwRlpWekpCV1VOeFFXVlplbWgyV1VKM1JHZENkM1pUUTBGalNXZEhSVkZCVW1kRVx1MDAyNmRlYnVnRGlhbG9nPUFwcElEJTNEY29tLmdvb2dsZS5leGFtcGxlLmdtcy5jdXN0b21yZW5kZXJpbmdleGFtcGxlJTI2Q3JlYXRpdmVzJTNEMTM4MjM5OTM0NDI0JTI2TGluZWl0ZW1zJTNENDc1MDU3MDUwMVx1MDAyNm5hdmlnYXRpb25VUkw9e05BVklHQVRJT05fVVJMfSJdCgkJCX0sCgkJCSJkZWJ1Z19kaWFsb2ciOiAiQXBwSUQ9Y29tLmdvb2dsZS5leGFtcGxlLmdtcy5jdXN0b21yZW5kZXJpbmdleGFtcGxlXHUwMDI2Q3JlYXRpdmVzPTEzODIzOTkzNDQyNFx1MDAyNkxpbmVpdGVtcz00NzUwNTcwNTAxIiwKCQkJImltcHJlc3Npb25fdXJscyI6IFsiaHR0cHM6Ly9zZWN1cmVwdWJhZHMuZy5kb3VibGVjbGljay5uZXQvcGNzL3ZpZXc/eGFpPUFLQU9qc3RLUmo5ZUR0LXh6LUhQNWpoNzFLZ0NYcHVXaTZVLWVKU2tpSkdWSmVFamlWWDY1VzVtOGlQMWJZTWZFQXd4a0EzRUZQbU43RnZEYWxnY2k0ZU00dDE1ZnhqT2xZeUJ5VkNyM1hSRXBjdWdKVXQxSTNYSWFqUEhmNndPS3lGT2dPUVZTSWd6dFBZeHRlNnE0SWxzME9HbEpwRTJEY0FjNjlLcTN3U2VfaFFjRnI0UTBKMEVBaVgyUEduTzVXYnVheklmbTRaTXJ1YVBhblhNOUs0ZEZSa3BTYnZkZjRsdVBzWGk0eE5RNUVTS09BVWE3eHF4RkJaNGZIY3hJUVluLWFmVlBsaUM1bVYtM0FDTnZhX0FWN2JaVXQ5V04xeXRENzZCVG5XblZUbElKdUNTbFdjdlVPR1luMjF4eTdsMTRHRDhmZHJ4anRsMUhydUk0alJXY0hqMzhGWUlVRlkyYlZUOWFRckhQNUkwUnRobS1Qb1x1MDAyNnNhaT1BTWZsLVlTM2FaVlVOdm4xbUh4cl8yS2JWVWFVdjE0SDJ0RS1IcEtCSnRkVEFhc2Q3QmY5eVRIRF91TTd3NVkwM3VjMVVDbVYxSE9GX2djYkF6YUlrM1hVYjVVQjFGamQ0SWFrQmVDd0YyRkxOdDFvY2txVmNOWXRTSWJob2c4R2RMbFZfUGNLLW5qWUJBUFpJb2pOcHp4OU92NWZLOGRNTmRrLVx1MDAyNnNpZz1DZzBBcktKU3pKVnFXSmlFSkxBZEVBRVx1MDAyNnVybGZpeD0xXHUwMDI2YWR1cmw9Il0sCgkJCSJzYWZlX2Jyb3dzaW5nIjogewoJCQkJImFsbG93ZWRfaGVhZGVycyI6IFsicmVmZXJlciJdLAoJCQkJImNsaWNrX3N0cmluZyI6ICJCMnNrTDlIaGVXNEN1Qjh5YXBnT0E4YmZZQXJidWthVkZBQUFBRUFFZ21zQ3BHRGdBV05qXzlfMkNCR0RKbnV1S3RLVFlENGdCQWJJQlN6RXVZVzVrY205cFpDNWpiMjB1WjI5dloyeGxMbVY0WVcxd2JHVXVaMjF6TG1OMWMzUnZiWEpsYm1SbGNtbHVaMlY0WVcxd2JHVXVZV1J6Wlc1elpXWnZjbTF2WW1sc1pXRndjTG9CQ1dkbWNGOXBiV0ZuWmNnQkNkb0JXR2gwZEhBNkx5OHhMbUZ1WkhKdmFXUXVZMjl0TG1kdmIyZHNaUzVsZUdGdGNHeGxMbWR0Y3k1amRYTjBiMjF5Wlc1a1pYSnBibWRsZUdGdGNHeGxMbUZrYzJWdWMyVm1iM0p0YjJKcGJHVmhjSEJ6TG1OdmJTX0FBZ0xnQWdEcUFpY3ZOalE1T1M5a1kzUm9ZVzVuTFdac2FYQmliMkZ5WkM5a1kzUm9ZVzVuTFdaellTMHhjSGo0QXYzUkhvQURBWkFENEFPWUEtQURxQU1CNEFRQjBnVUdFSVhvbjlrUmtBWUJvQVlXMkFZQ3FBZVl6aHZZQndEZ0J3dlNDQWNJZ0dFUUFSZ0QiLAoJCQkJImhlYWRlcl90b19zY3J1YiI6IFsiY29va2llIl0sCgkJCQkibWFsaWNpb3VzX3JlcG9ydGluZ19lbmFibGVkIjogdHJ1ZSwKCQkJCSJub25fbWFsaWNpb3VzX3JlcG9ydGluZ19lbmFibGVkIjogZmFsc2UsCgkJCQkicHJvdGVjdGlvbl9lbmFibGVkIjogZmFsc2UsCgkJCQkicmVuZGVyZWRfYWRfZW5hYmxlZCI6IGZhbHNlLAoJCQkJInJlcG9ydF91cmwiOiAiaHR0cHM6Ly9zYi1zc2wuZ29vZ2xlLmNvbS9zYWZlYnJvd3NpbmcvY2xpZW50cmVwb3J0L21hbHdhcmUiLAoJCQkJInNjcmVlbnNob3RfZW5hYmxlZCI6IGZhbHNlCgkJCX0sCgkJCSJ1c2VfZGlzcGxheWVkX2ltcHJlc3Npb24iOiB0cnVlCgkJfSwKCQkiYWRhcHRlcnMiOiBbImNvbS5nb29nbGUuYWRzLm1lZGlhdGlvbi5hZG1vYi5BZE1vYkFkYXB0ZXIiXSwKCQkiZGF0YSI6IHsKCQkJImd3aGlybF9zaGFyZV9sb2NhdGlvbiI6ICIxIiwKCQkJInB1YmlkIjogImNhLXB1Yi03NTAyOTkxMDMwNzIxMDk3Ly82NDk5L2RjdGhhbmctZmxpcGJvYXJkL2RjdGhhbmctZnNhLTFweC9jYWs9bm9fY2FjaGVcdTAwMjZjYWRjPWlxXHUwMDI2Y2FxaWQ9OUhoZVdfVzJCdFNjcGdQWm5LUHdBdyIKCQl9LAoJCSJpZCI6ICIiLAogICAgICAgICAgICAgICAgInJlc3BvbnNlX3R5cGUiOiAiYmFubmVyIgoJfV0sCgkic2V0dGluZ3MiOiB7CgkJImNsaWNrX3VybHMiOiBbIkBnd19hZG5ldGlkQCJdLAoJCSJpbXBfdXJscyI6IFtdLAoJCSJub2ZpbGxfdXJscyI6IFtdLAoJCSJhZF9uZXR3b3JrX3RpbWVvdXRfbWlsbGlzIjogNjAwMDAKCX0KfQo=",
+                                        "contentType": "javascript"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Afma-Mediation",
+                                        "value": "true"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "javascript"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "play.googleapis.com",
+                    "path": "/log/batch",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/+I4sJJdypdLiIvP0c8lyN/TJd7J0dk7NECAgUuQi9fJMSTENSgyPjjEMSRYgIGLn4s72NcxKCQ+2DUErIaDiyUkyN9PgEFg+YuGjp27Vty5yKjEAAgAAP//ZncOKVUAAAA=",
+                                        "contentType": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/10,ilkk194-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lvV-W-LnCJGOygS9hoG4Bw"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/plain; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Session-Info",
+                                        "value": "GgQYAigLIAE"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/il/borg/il/bns/android-dw/clearcut_canary.server/10"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:42 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBG"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Frame-Options",
+                                        "value": "SAMEORIGIN"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "android-dw-playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Playlog"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "ilkk194-v6:443,/bns/il/borg/il/bns/android-dw/clearcut_canary.server/10,ilkk194-v6:443"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "adsui-mturk-pages.appspot.com:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "adsui-mturk-pages.appspot.com",
+                    "path": "/public/dcthang-fsa-artboard-290-360-triangular",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "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",
+                                        "contentType": "image/jpeg"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEBJ"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "cloud-l7:apphosting-frontend-l2-zone-ir,main:cloud-layer2-gfe-apphosting"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/ir/borg/ir/bns/apphosting/prod-appengine.frontend/959"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "isrr83-v6:443,jldn4:9810,/bns/ir/borg/ir/bns/apphosting/prod-appengine.frontend/959,jldn4:9810,isrr83-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "no-cache"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Cloud-Trace-Context",
+                                        "value": "73b6ac810a71b5dedb5354df5c74983a;o=1"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:42 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "apphosting-frontend-l2,cloud-layer2-gfe-apphosting"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Clone-Time",
+                                        "value": "78158us"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/ir/borg/ir/bns/apphosting/prod-appengine.appserver/2275,/bns/ir/borg/ir/bns/apphosting/prod-appengine.frontend/959,jldn4:9810,/bns/jl/borg/jl/bns/cloud-gfe-prod-dedicated/cloud-layer2-gfe/22,isrr83-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Cloud-Project-Number",
+                                        "value": "24140215708"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend,response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Cookie-Filter-Tenant-Name",
+                                        "value": "24140215708"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Module",
+                                        "value": "default"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Appid",
+                                        "value": "s~adsui-mturk-pages"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Appserver-Error-Code",
+                                        "value": "1"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "Google Frontend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gslb-Service",
+                                        "value": "apphosting-frontend-l2"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "apphosting-frontend-l2,cloud-layer2-gfe-apphosting"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "image/jpeg"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Version",
+                                        "value": "b173456152"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Appengine-Frontend-Response-Code",
+                                        "value": "1"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "pubads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "pubads.g.doubleclick.net",
+                    "path": "/favicon.ico",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 502
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Warning",
+                                        "value": "199 \"martian\" \"dial tcp 74.125.202.154:443: socket: address family not supported by protocol\" \"Thu, 23 Aug 2018 10:57:42 GMT\""
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "googleads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "googleads.g.doubleclick.net",
+                    "path": "/favicon.ico",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/3yUbUyVZRjHr/t+sCUjOXzQranFWilZrLVZHDgv+LJYsJo2U6NN3bJcW/byqRfEpiAYEopBKNgrayTmCijQMwsrtcgxUBdWkLxlSXIEzoEdPTznPD/3PHznv117tnv739f1u67ruUWUKHG57G+qvJwgskBE0kTEJSKpMnM+m4JTJoXnRlnTNs4TzSGebhunqitCxIzSP3SR3LcXsbxAyC7UrCgUvDuElQWC7bViJltODJD0ZZAFzRPMbwmx8Nsp7jkWovDsGGBx4nwjj75p4ClWZBcZ+HcK/gJh9TtCfzDMwvo/cQVukhQIkdwaJrllwrnjka+uMRkFy4yQV7KYzFJhZYnGWyqs2KXx7RCmzFtkNHQi342jz1kknjGZ2x5Bjl0nr6kPy7IgZrH+4AMsLxM8FYKvVFi9ew7+nQricOH/SdxNXSQ2DSCt/6C/HmZZ42X+CoZsK4Mjf5BdeheZlYL3fQNfmcZfIvh3CxdONRAfG3U4eyamaboyQk13P9cnb2LLjE3zakMuyyoU7irBUylklmu87wneEmF/7n18vNlNy7sb+LHyNcZ6u7GIE8diNDzKK0dzSK9QeGsET9VM+A4Ivn2Cb49Qn7+UL9Yv4pO8Ozn8ZAqhkQGH+WpwiGfqlpBeLWQe0ngOadzVgucDje+AwleucZcJRzfM56M1LhpeX0V7/R6H1wR+6z3NvW9pHjsiZNQKGXWCt1o54bbzlyv8exWfbl7K5fbjWHGIhsfpP/0ZN4Z7HYbakyU8XCR46gyyDhtk1AiZNULWQUV2lbBqr+LGUJ/Tu0hohNbtaZx6VghsmsfV7oBzfqS5ltQ3FpPxoeCrMRz+x8vmkv5SFskP7bPH58SlxiIC64TzLybww3Oajsp8pwZuQdqDv3LH3T+TsqSZlNQ25rg6ET2EqB6I2/sB7YUeftmk6dimOfu8pmv/RqcPttauu0KCTCEKDIkjahKRfzF078yMTZO27ffTsVXo3ib8lC9c+qbYLt/ZvZycQZREESOGUlEMmUDUKCID9oI4nCeL1xLYKHRu1Xz/wjzC//3tzKLn9wiJSdcQiWMoC1F2/ggJEkT0oPMPEjMZ7uukYUsqnz+VwMXjpcSIMx6KkpV9xuHUetq5Q8uMX2TM8e5Ssz4Ns8r23g4AAP//RzjxdH4EAAA=",
+                                        "contentType": "image/x-icon"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Service-Trace",
+                                        "value": "static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Date",
+                                        "value": "Thu, 23 Aug 2018 17:57:42 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Vary",
+                                        "value": "Accept-Encoding"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Repo",
+                                        "value": "static-on-bigtable/public_static"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Accept-Ranges",
+                                        "value": "bytes"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Expires",
+                                        "value": "Fri, 23 Aug 2019 17:57:42 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "image/x-icon"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Server",
+                                        "value": "sffe"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Dos-Service-Trace",
+                                        "value": "main:static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Netmon-Label",
+                                        "value": "/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/61"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Service",
+                                        "value": "static-content"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Code-Details-Trace",
+                                        "value": "response_code_set_by_backend"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Shellfish-Status",
+                                        "value": "CA0gBEAy"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Response-Body-Transformations",
+                                        "value": "chunked"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Data-Version",
+                                        "value": "209956271"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Backends",
+                                        "value": "/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/61,joa25-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Xss-Protection",
+                                        "value": "1; mode=block"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Info",
+                                        "value": "eid=lvV-W-G-OofxjAHho5-4BQ"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "public, max-age=31536000"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Row-Key",
+                                        "value": "/external_content/imageads/favicon.ico:static-on-bigtable/base:public_static:1461208642003442"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Scs-Row-Timestamp",
+                                        "value": "1461208642003442"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Last-Modified",
+                                        "value": "Thu, 21 Apr 2016 03:17:22 GMT"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Alt-Svc",
+                                        "value": "quic=\"googleads.g.doubleclick.net:443\"; ma=2592000; v=\"44,43,39,35\",quic=\":443\"; ma=2592000; v=\"44,43,39,35\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Request-Trace",
+                                        "value": "joa25-v6:443,/bns/is/borg/is/bns/static-on-bigtable/staticfile.frontend.sffe/61,joa25-v6:443"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "securepubads.g.doubleclick.net:443",
+                    "path": "/",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "url.Filter": {
+                    "host": "securepubads.g.doubleclick.net",
+                    "path": "/pcs/view",
+                    "query": "?xai=AKAOjstKRj9eDt-xz-HP5jh71KgCXpuWi6U-eJSkiJGVJeEjiVX65W5m8iP1bYMfEAwxkA3EFPmN7FvDalgci4eM4t15fxjOlYyByVCr3XREpcugJUt1I3XIajPHf6wOKyFOgOQVSIgztPYxte6q4Ils0OGlJpE2DcAc69Kq3wSe_hQcFr4Q0J0EAiX2PGnO5WbuazIfm4ZMruaPanXM9K4dFRkpSbvdf4luPsXi4xNQ5ESKOAUa7xqxFBZ4fHcxIQYn-afVPliC5mV-3ACNva_AV7bZUt9WN1ytD76BTnWnVTlIJuCSlWcvUOGYn21xy7l14GD8fdrxjtl1HruI4jRWcHj38FYIUFY2bVT9aQrHP5I0Rthm-Po&sai=AMfl-YS3aZVUNvn1mHxr_2KbVUaUv14H2tE-HpKBJtdTAasd7Bf9yTHD_uM7w5Y03uc1UCmV1HOF_gcbAzaIk3XUb5UB1Fjd4IakBeCwF2FLNt1ockqVcNYtSIbhog8GdLlV_PcK-njYBAPZIojNpzx9Ov5fK8dMNdk-&sig=Cg0ArKJSzJVqWJiEJLAdEAE&urlfix=1&adurl=",
+                    "modifier": {
+                        "fifo.Group": {
+                            "scope": [
+                                "request",
+                                "response"
+                            ],
+                            "modifiers": [
+                                {
+                                    "skip.RoundTrip": {
+                                        "scope": [
+                                            "request"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "body.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "body": "H4sIAAAAAAAA/wEAAP//AAAAAAAAAAA=",
+                                        "contentType": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "status.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "statusCode": 200
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cassette",
+                                        "value": "Cassette"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Cache-Control",
+                                        "value": "private"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Google-Gfe-Backend-Request-Cost",
+                                        "value": "58.75"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "P3p",
+                                        "value": "policyref=\"https://googleads.g.doubleclick.net/pagead/gcn_p3p_.xml\", CP=\"CURa ADMa DEVa TAIo PSAo PSDo OUR IND UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\""
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Set-Cookie",
+                                        "value": "test_cookie=CheckForPermission; expires=Thu, 23-Aug-2018 18:12:43 GMT; path=/; domain=.doubleclick.net"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Content-Type",
+                                        "value": "text/html; charset=UTF-8"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "X-Content-Type-Options",
+                                        "value": "nosniff"
+                                    }
+                                },
+                                {
+                                    "header.Modifier": {
+                                        "scope": [
+                                            "response"
+                                        ],
+                                        "name": "Timing-Allow-Origin",
+                                        "value": "*"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

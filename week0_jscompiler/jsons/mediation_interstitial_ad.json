@@ -1,0 +1,94 @@
+{
+  "ad_type": "interstitial",
+  "qdata": "x",
+  "ad_networks": [
+    {
+      "adapters": [
+        "com.google.ads.mediation.facebook.FacebookAdapter"
+      ],
+      "allocation_id": "123",
+      "id": "https://googleads.g.doubleclick.net/aclk?sa=L&ai=Cu7wWBEp4VvuMEtiIpgPK6oUg-cnapgXR74W6kgEAEAggwuzcIGDJ7u2GyKOgGYgBAakCAAAAAICELkGoAwGqBCBP0HX9RtjpOYczx94OoxdKogbNZyu3mwpwq-t3WM-5icAGC4AHgfipMJgHAQ&num=1&cid=5Gi6sA&sig=AOD64_3a1ryYFKeH4eECoGnOEa_qCDFJBQ&fbs_aeid=[gw_fbsaeid]&adurl=http://example.com",
+      "data": {
+        "gwhirl_share_location": "1",
+        "pubid": "noFill"
+      },
+      "imp_urls": [
+        "https://example.com/wrong_impression_ping"
+      ],
+      "fill_urls": [
+        "https://example.com/wrong_fill_ping"
+      ],
+      "video_start_urls": [
+        "https://example.com/wrong_video_ping"
+      ],
+      "video_complete_urls": [
+        "https://example.com/wrong_video_ping"
+      ]
+    },
+    {
+      "adapters": [
+        "com.google.ads.mediation.admob.AdMobAdapter"
+      ],
+      "allocation_id": "456",
+      "id": "https://example.com/aclk?fbs_aeid=[gw_fbsaeid]",
+      "data": {
+        "gwhirl_share_location": "1",
+        "pubid": "ca-app-pub-3940256099942544/3489590519/cak=no_cache&cadc=iq&caqid=BEp4VtmwEcmP-QKB_oGoCQ"
+      },
+      "imp_urls": [
+        "https://example.com/imp/mediation_network_1",
+        "https://example.com/adview/mediation_network_2?fbs_aeid=[gw_fbsaeid]"
+      ],
+      "clickurl": [
+        "https://example.com/aclk?mediation_network_1&fbs_aeid=[gw_fbsaeid]",
+        "https://example.com/clk?mediation_network_2"
+      ],
+      "fill_urls": [
+        "https://example.com/fill/mediation_network_1",
+        "https://example.com/fill/mediation_network_2"
+      ],
+      "video_start_urls": [
+        "https://example.com/wrong_video_ping"
+      ],
+      "video_complete_urls": [
+        "https://example.com/wrong_video_ping"
+      ],
+      "ad": {
+        "ad_html": "<!DOCTYPE HTML><html>  <head>    <script>  window.textClicked = function() {        openBrowser();      };          window.openBrowser = function() {        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/open?a=browser&u=http%3A%2F%2Fempty_response.com';        document.body.appendChild(iframe);      };          window.sendGrantReward = function() {        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/reward?action=grant&type=cow&amount=7';        document.body.appendChild(iframe);      };      window.AFMA_ReceiveMessage = function(ev) {        if (ev != 'onshow') {          return;        }        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/reward?action=video_start';        document.body.appendChild(iframe);      };    </script>  </head>  <body style=\"position:absolute; width:100%; height:100%; background-color: white;\">    <center>  <h2>        <a href=\"javascript:sendGrantReward();\" id=\"click-to-reward\">CLICK TO CLAIM REWARD</a>      </h2>     <h1 >        <a  href=\"javascript:textClicked();\" id=\"click-to-open\">CLICK TO OPEN</a>      </h1>    </center>  </body></html>",
+        "ad_base_url": "https://localhost:8080",
+        "impression_urls": [
+          "https://example.com/adview/tym1?fbs_aeid=[gw_fbsaeid]",
+          "https://example.com/imp/tym2"
+        ],
+        "click_urls": [
+          "https://example.com/aclk?tym1&fbs_aeid=[gw_fbsaeid]",
+          "https://example.com/clk?tym2"
+        ],
+        "orientation": "any",
+        "debug_dialog": "Fake ad interstitial_tym_response.json from GADTestServer",
+        "active_view": {
+          "click_string": "THISISTHECORRECTCLICKSTRING",
+          "is_active_view_immediate_enabled": true,
+          "activeview_cpm_urls": [],
+          "active_experiment_ids": ""
+        },
+        "gws_query_id": "BEp4VtmwEcmP-QKB_oGoCQ"
+      }
+    }
+  ],
+  "settings": {
+    "click_urls": [
+      "https://example.com/aclk?server1&fbs_aeid=[gw_fbsaeid]",
+      "https://example.com/clk?server2",
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+      "https://example.com/adview/server1?fbs_aeid=[gw_fbsaeid]",
+      "https://example.com/imp/server2"
+    ],
+    "nofill_urls": [
+      "https://example.com/nofill1",
+      "https://example.com/nofill2"
+    ]
+  }
+}

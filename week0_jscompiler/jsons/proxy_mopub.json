@@ -1,0 +1,62 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/mediation/files/admobmediation.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+        "Alt-Svc": "quic=\":443\"; ma=604800; v=\"30,29,28,27,26,25\"",
+        "Alternate-Protocol": "443:quic,p=1",
+        "Cache-Control": "private, no-cache, no-store",
+        "Content-Disposition": "attachment; filename=\"f.txt\"",
+        "Content-Type": "application/json; charset=UTF-8",
+        "Date": "Fri, 05 Feb 2016 04:14:23 GMT",
+        "P3P": "policyref=\"https://googleads.g.doubleclick.net/pagead/gcn_p3p_.xml\", CP=\"CURa ADMa DEVa TAIo PSAo PSDo OUR IND UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\"",
+        "Server": "cafe",
+        "Transfer-Encoding": "chunked",
+        "X-Afma-Content-Url-Opted-Out": "true",
+        "X-Afma-Mediation": "true",
+        "X-Afma-Use-Https": "false",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "ads.mopub.com",
+        "request_path": "/m/ad"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/mediation/files/mopubad.html",
+        "content_type": "html"
+      }
+    },
+    "extra_response_headers": {
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Fri, 05 Feb 2016 04:14:23 GMT",
+        "server": "tsa_b",
+        "x-adtype": "html",
+        "x-clickthrough": "http://ads.mopub.com/m/aclk?appid=&cid=a3e0c180501d4761ae4dc666d8fce2ce&city=Sunnyvale&ckv=2&country_code=US&cppck=38148&dev=Nexus%207&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&is_mraid=0&os=Android&osv=5.1.1&req=9cf1bb33065b4a9f8faddea919d33a91&reqt=1454645663.0&rev=0&udid=sha%3Aa6c64bb27a298710d84399d54bdd92f64c7e2c05&video_type=",
+        "x-connection-hash": "48658ee7482ea65c2bd75204739d3677",
+        "x-creativeid": "a3e0c180501d4761ae4dc666d8fce2ce",
+        "x-failurl": "http://ads.mopub.com/m/ad?v=6&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&nv=3.13.0&dn=asus%2CNexus%207%2Crazor&bundle=com.google.android.apps.internal.admobsdk.mediumtest.mediation&q=tp%3Ddfp_custom_1.0%2Cm_age%3A46%2Cm_birthday%3AWed%20Dec%2031%2023%3A59%3A59%20GMT%2B00%3A00%201969%2Cm_gender%3AUNKNOWN&z=%2B0000&o=p&w=1200&h=1920&sc_a=2.0&ct=2&udid=sha%3Aa6c64bb27a298710d84399d54bdd92f64c7e2c05&dnt=0&mr=1&android_perms_ext_storage=1&exclude=b91ed25a81de45ae84bb7f2f7d8000c3&request_id=9cf1bb33065b4a9f8faddea919d33a91&fail=1",
+        "x-height": "50",
+        "x-imptracker": "http://ads.mopub.com/m/imp?appid=&cid=a3e0c180501d4761ae4dc666d8fce2ce&city=Sunnyvale&ckv=2&country_code=US&cppck=4ED5F&dev=Nexus%207&id=9dfa2c4e841c4a66bdeb0cc5f0c97156&is_mraid=0&os=Android&osv=5.1.1&req=9cf1bb33065b4a9f8faddea919d33a91&reqt=1454645663.0&rev=0.000010&udid=sha%3Aa6c64bb27a298710d84399d54bdd92f64c7e2c05&video_type=",
+        "x-refreshtime": "30",
+        "x-response-time": "15",
+        "x-width": "320",
+        "x-xss-protection": "1; mode=block"
+    }
+  }
+]

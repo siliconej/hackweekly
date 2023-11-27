@@ -1,0 +1,54 @@
+{
+  "qdata": "x",
+  "ad_networks": [
+    {
+      "response_type": "native",
+      "adapters": [
+        "com.google.ads.mediation.customevent.CustomEventAdapter"
+      ],
+      "allocation_id": "5644659878789254",
+      "id": "https://googleads.g.doubleclick.net/aclk?sa=L&ai=CNInrL09PV5DPNs-mpgOX8Z6oDPnJ2qYF0a-FupIBABAIIOSHkS1gye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9D3Ai8YiF9AyeQbuyXuIzmm9VUV3dse2H8rzwyvWT7ABguAB4H4qTCYBwE&num=1&cid=CAASBORo7r4&sig=AOD64_1r9cm3XdVYsQh2ZFqxL0XrDeC9rw&adurl=http://example.com",
+      "data": {
+        "label": "Non Existing Custom Event",
+        "class_name": "com.nonexistingcompany.nonexistingcustomevent"
+      }
+    },
+    {
+      "response_type": "banner",
+      "slot_sizes": [
+        "320x50"
+      ],
+      "adapters": [
+        "com.google.ads.mediation.admob.AdMobAdapter"
+      ],
+      "id": "",
+      "data": {
+        "pubid": ""
+      },
+      "ad": {
+        "ad_html": "<html> <body><center><h1>This is ad</h1></center></body></html>",
+        "ad_size": "320x50",
+        "ad_base_url": "http://googleads.g.doubleclick.net",
+        "impression_urls": [
+          "http:\/\/www.google.com/?impression=test"
+        ],
+        "use_displayed_impression": true,
+        "active_view": {
+          "click_string": "some click string",
+          "is_active_view_immediate_enabled": true,
+          "activeview_cpm_urls": [
+          ],
+          "active_experiment_ids": ""
+        },
+        "gws_query_id": "edOSVtHQF8WepgPsv7XQDw"
+      }
+    }
+  ],
+  "settings": {
+    "click_urls": [
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+    ]
+  }
+}

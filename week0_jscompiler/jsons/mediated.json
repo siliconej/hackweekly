@@ -1,0 +1,15 @@
+{
+  "ad_type": "interstitial",
+  "qdata": "x",
+  "ad_networks": [{
+    "adapters": ["com.google.ads.mediation.admob.AdMobAdapter"],
+    "data": {
+      "gwhirl_share_location": "1",
+      "pubid": "ca-app-pub-8123415297019784\/7779899132\/cak=no_cache\u0026cadc=jb\u0026caqid=Hu6kWK7IF4eXBYuGmIgE"
+    },
+    "ad": {
+      "ad_base_url": "https://googleads.g.doubleclick.net",
+      "ad_html": "<html>\r\n  <head>\r\n    <meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\r\n    <meta name=\"viewport\" content=\"user-scalable=no, width=device-width,initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\"\/>\r\n    <script>\r\nfunction onLoad() {\r\n  if (mraid.getState() === 'loading') {\r\n    mraid.addEventListener('ready', onMraidReady);\r\n  } else {\r\n      onMraidReady();\r\n  }\r\n\r\n  function onMraidReady() {\r\n    console.log(\"Here we are!\");\r\n    mraid.useCustomClose(true);\r\n\r\n    var btn = document.querySelector('#btn');\r\n    btn.addEventListener('click', function() {\r\n      mraid.close();\r\n    });\r\n  }\r\n}\r\n    <\/script>\r\n    <script src=\"mraid.js\" onload=\"onLoad()\"><\/script>\r\n  <\/head>\r\n  <body>\r\n    <button id=\"btn\" style=\"width: 100px; height: 50px;\">Close<\/button>\r\n  <\/body>\r\n<\/html>\r\n"
+    }
+  }]
+}

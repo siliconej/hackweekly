@@ -1,0 +1,59 @@
+{
+  "type": "ads",
+  "code": 0,
+  "placements": [
+    {
+      "definition": {
+        "type": "native",
+        "min_viewability_percentage": "1",
+        "refresh": "63",
+        "refresh_threshold": "-1",
+        "cacheable": true
+      },
+      "ads": [
+        {
+          "adapter": "AN",
+          "data": {
+            "title": "Facebook Test Ad",
+            "subtitle": "An ad for Facebook",
+            "call_to_action": "Install Now",
+            "social_context": "Get it on Google Play",
+            "body": "Your ad integration works. Woohoo!",
+            "impression_report_url": "https://pagead2.googleadservices.com/pagead/adview?ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0e-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&sigh=sGjg8v09-Xw&cid=5GjxDA&gvr=1",
+            "click_report_url": "https://googleads.g.doubleclick.net/aclk?sa=L&ai=CSOdMIBooVv3oCoSV-QLHqIuwBfnJ2qYF0a-FupIBABAIIJ3IsyZgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9CHMkk2fLqIMLrWuY887ATEgjYPnzLDi45A5oJKuQPABguAB4H4qTCYBwE&num=1&cid=5GjxDA&sig=AOD64_2nAOfXdTXdIJHY3dRvKApvOG2aog&adurl=http://example.com",
+            "used_report_url": "",
+            "invalidation_report_url": "",
+            "fbad_command": "fbad://store?store_id=com.facebook.katana&store_url=market%3A%2F%2Fdetails%3Fid%3Dcom.facebook.katana&store_url_web_fallback=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.facebook.katana&appsite_data=%5B%5D",
+            "invalidation_behavior": "none",
+            "appsite_data": "[]",
+            "detection_strings": "[]",
+            "manual_imp": false,
+            "viewability_check_interval": "1000",
+            "viewability_check_initial_delay": "1000",
+            "native_ui_config": [],
+            "ad_choices_icon": {
+              "url": "https://fbstatic-a.akamaihd.net/rsrc.php/v2/ym/r/-oNSZayf7QK.png",
+              "width": "16",
+              "height": "16"
+            },
+            "ad_choices_link_url": "http://m.facebook.com/ads/ad_choices",
+            "request_id": "c70896bd-21a5-4371-947b-e9485ced4af9",
+            "trackers": [],
+            "icon": {
+              "url": "https://lh5.ggpht.com/V6cwH259OoCp3SoQyDWYGAGA5KysFr7r-m5pS-LMKDey3ggiNFV_Sd_mspCnFevSUeaqtNsOiKtH=w128-h128",
+              "width": "128",
+              "height": "128"
+            },
+            "image": {
+              "url": "https://lh3.ggpht.com/_TnsyOuKW41ASh9lV2VrK1g2NJzCEZXGjxnSvrmaR6sZKK8TiSNnYepardXWOFOQkA=w300-rw",
+              "width": "1200",
+              "height": "627"
+            },
+            "is_organic": false
+          },
+          "trackers": []
+        }
+      ]
+    }
+  ]
+}

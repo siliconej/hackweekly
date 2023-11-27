@@ -1,0 +1,16 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/aclk"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/rewardedvideo/data/forced_landing_page.html",
+        "content_type": "text/html"
+      }
+    }
+  }
+]

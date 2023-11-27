@@ -1,0 +1,51 @@
+{
+	"ad_type": "banner",
+	"qdata": "x",
+	"ad_networks": [{
+		"adapters": ["ADResultAdapter"],
+    "allocation_id": "123",
+		"id": "https:\/\/googleads.g.doubleclick.net\/aclk?sa=L\u0026ai=CzQElI0B4VtSUOc2apgOrgJLgAfnJ2qYF0e-FupIBABAIIMLs3CBgye7thsijoBmIAQGpAgAAAACAhC5BqAMBqgQgT9DjJhV1xl8hHLXm1Nat2Egp96vtdXYDREB_G_QFWZ3ABguAB4H4qTCYBwE\u0026num=1\u0026cid=5GiZwA\u0026sig=AOD64_1cK7RkXzaPMy2Y6yDHwbPP6UTPaQ\u0026adurl=http:\/\/example.com",
+		"data": {
+			"gwhirl_share_location": "1",
+			"pubid": "noFill"
+		},
+		"imp_urls": ["https://example.com/wrong_impression_ping"],
+    "fill_urls": ["https://example.com/wrong_fill_ping"],
+		"video_start_urls": ["https://example.com/wrong_video_ping"],
+		"video_complete_urls": ["https://example.com/wrong_video_ping"]
+	}, {
+                "adapters": ["com.google.ads.mediation.admob.AdMobAdapter"],
+    "allocation_id": "456",
+                "id": "https://example.com/aclk?",
+		"data": {
+			"gwhirl_share_location": "1",
+			"pubid": "ca-app-pub-3940256099942544\/2012857313\/cak=no_cache\u0026cadc=jb\u0026caqid=I0B4VvvbONTFBev3mLAD"
+		},
+		"imp_urls": ["https://example.com/adview/mediation_network_1", "https://example.com/imp/mediation_network_2"],
+		"clickurl": ["https://example.com/aclk?mediation_network_1","https://example.com/clk?mediation_network_2"],
+    "fill_urls": ["https://example.com/fill/mediation_network_1","https://example.com/fill/mediation_network_2"],
+		"video_start_urls": ["https://example.com/wrong_video_ping"],
+		"video_complete_urls": ["https://example.com/wrong_video_ping"],
+		"ad": {
+			"ad_html": "<body bgcolor='#FFF'><h1>Hello <a href='http://www.google.com'>World</a>...</h1></body>",
+			"ad_base_url": "http:\/\/localhost:8080",
+			"impression_urls": ["https://example.com/adview/tym1","https://example.com/imp/tym2"],
+			"click_urls": ["https://example.com/aclk?tym1", "https://example.com/clk?tym2"],
+			"debug_dialog": "Fake ad banner_tym_response.json from GADTestServer",
+			"active_view": {
+				"click_string": "THISISTHECORRECTCLICKSTRING",
+				"is_active_view_immediate_enabled": true,
+				"activeview_cpm_urls": [],
+				"active_experiment_ids": ""
+			},
+			"gws_query_id": "I0B4VvvbONTFBev3mLAD"
+		}
+	}],
+	"settings": {
+		"click_urls": ["https://example.com/aclk?server1","https://example.com/clk?server2", "@gw_adnetid@"],
+		"imp_urls": ["https://example.com/adview/server1","https://example.com/imp/server2"],
+    "downloaded_imp_urls": ["https://www.google.com/settingsDownloadedImp"],
+		"nofill_urls": ["https://example.com/nofill1","https://example.com/nofill2"],
+		"refresh": "60"
+	}
+}

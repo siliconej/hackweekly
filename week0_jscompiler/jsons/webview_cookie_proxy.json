@@ -1,0 +1,47 @@
+/**
+ * =============================================================================
+ *                       For WebviewCookieTest Only.
+ *
+ * To add response headers with either valid or expired cookie within this file:
+ *
+ * Add a Set-Cookie header with a valid cookie to an admob response.
+ * Add a Set-Cookie header with an expired cookie to a drx response.
+ * =============================================================================
+ */
+
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/canned_ad.html",
+        "content_type": ""
+      }
+    },
+    "extra_response_headers": {
+      "Set-Cookie": "id=1||t=1|et=1|cs=1; expires=Mon, 05-Feb-2024 00:21:47 GMT; path=/; domain=.doubleclick.net"
+    }
+  },
+  {
+    "request_filter": {
+       "request_host_path": {
+         "request_host": "pubads.g.doubleclick.net",
+         "request_path": "/gampad/ads"
+       }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/canned_ad.html",
+        "content_type": ""
+       }
+     },
+    "extra_response_headers": {
+      "Set-Cookie": "id=1||t=1|et=1|cs=1; expires=Mon, 08-Feb-2016 00:21:47 GMT; path=/; domain=.doubleclick.net"
+    }
+  }
+]

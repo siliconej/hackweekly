@@ -1,0 +1,137 @@
+[ACLex] parse_program()
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=1, Col=0, AbsPos=0, LinePos=0}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(102)=BOOL_NOT, Pos={Line=1, Col=1, AbsPos=1, LinePos=0}, len=1, `!'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=1, Col=2, AbsPos=2, LinePos=0}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=2, Col=0, AbsPos=4, LinePos=4}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(107)=NOT_EQUAL_V, Pos={Line=2, Col=1, AbsPos=5, LinePos=4}, len=2, `!='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=2, Col=3, AbsPos=7, LinePos=4}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=3, Col=0, AbsPos=9, LinePos=9}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(109)=NOT_EQUAL_VT, Pos={Line=3, Col=1, AbsPos=10, LinePos=9}, len=3, `!=='(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=3, Col=4, AbsPos=13, LinePos=9}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=4, Col=0, AbsPos=15, LinePos=15}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(123)=MOD, Pos={Line=4, Col=1, AbsPos=16, LinePos=15}, len=1, `%'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=4, Col=2, AbsPos=17, LinePos=15}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=5, Col=0, AbsPos=19, LinePos=19}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(145)=ASSIGN_MOD, Pos={Line=5, Col=1, AbsPos=20, LinePos=19}, len=2, `%='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=5, Col=3, AbsPos=22, LinePos=19}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=6, Col=0, AbsPos=24, LinePos=24}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(105)=BIT_AND, Pos={Line=6, Col=1, AbsPos=25, LinePos=24}, len=1, `&'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=6, Col=2, AbsPos=26, LinePos=24}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=7, Col=0, AbsPos=28, LinePos=28}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(101)=BOOL_AND, Pos={Line=7, Col=1, AbsPos=29, LinePos=28}, len=2, `&&'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=7, Col=3, AbsPos=31, LinePos=28}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=8, Col=0, AbsPos=33, LinePos=33}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(149)=ASSIGN_BIT_AND, Pos={Line=8, Col=1, AbsPos=34, LinePos=33}, len=2, `&='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=8, Col=3, AbsPos=36, LinePos=33}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=9, Col=0, AbsPos=38, LinePos=38}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(104)=BIT_XOR, Pos={Line=9, Col=1, AbsPos=39, LinePos=38}, len=1, `^'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=9, Col=2, AbsPos=40, LinePos=38}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(16)=PAREN_LEFT, Pos={Line=10, Col=0, AbsPos=42, LinePos=42}, len=1, `('(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=10, Col=1, AbsPos=43, LinePos=42}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(15)=PAREN_RIGHT, Pos={Line=10, Col=2, AbsPos=44, LinePos=42}, len=1, `)'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=11, Col=0, AbsPos=46, LinePos=46}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(121)=MULTIPLY, Pos={Line=11, Col=1, AbsPos=47, LinePos=46}, len=1, `*'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=11, Col=2, AbsPos=48, LinePos=46}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=12, Col=0, AbsPos=50, LinePos=50}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(143)=ASSIGN_MULTIPLY, Pos={Line=12, Col=1, AbsPos=51, LinePos=50}, len=2, `*='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=12, Col=3, AbsPos=53, LinePos=50}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=13, Col=0, AbsPos=55, LinePos=55}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(119)=PLUS, Pos={Line=13, Col=1, AbsPos=56, LinePos=55}, len=1, `+'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=13, Col=2, AbsPos=57, LinePos=55}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=14, Col=0, AbsPos=59, LinePos=59}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(129)=SELF_PLUS, Pos={Line=14, Col=1, AbsPos=60, LinePos=59}, len=2, `++'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=15, Col=0, AbsPos=63, LinePos=63}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(141)=ASSIGN_PLUS, Pos={Line=15, Col=1, AbsPos=64, LinePos=63}, len=2, `+='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=15, Col=3, AbsPos=66, LinePos=63}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=16, Col=0, AbsPos=68, LinePos=68}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(128)=COMMA, Pos={Line=16, Col=1, AbsPos=69, LinePos=68}, len=1, `,'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=16, Col=2, AbsPos=70, LinePos=68}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=17, Col=0, AbsPos=72, LinePos=72}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(120)=MINUS, Pos={Line=17, Col=1, AbsPos=73, LinePos=72}, len=1, `-'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=17, Col=2, AbsPos=74, LinePos=72}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=18, Col=0, AbsPos=76, LinePos=76}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(142)=ASSIGN_MINUS, Pos={Line=18, Col=1, AbsPos=77, LinePos=76}, len=2, `-='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=18, Col=3, AbsPos=79, LinePos=76}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=19, Col=0, AbsPos=81, LinePos=81}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(124)=DOT, Pos={Line=19, Col=1, AbsPos=82, LinePos=81}, len=1, `.'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=19, Col=2, AbsPos=83, LinePos=81}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=20, Col=0, AbsPos=85, LinePos=85}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(122)=DIVIDE, Pos={Line=20, Col=1, AbsPos=86, LinePos=85}, len=1, `/'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=20, Col=2, AbsPos=87, LinePos=85}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=21, Col=0, AbsPos=89, LinePos=89}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(144)=ASSIGN_DIVIDE, Pos={Line=21, Col=1, AbsPos=90, LinePos=89}, len=2, `/='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=21, Col=3, AbsPos=92, LinePos=89}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=22, Col=0, AbsPos=94, LinePos=94}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(125)=COLON, Pos={Line=22, Col=1, AbsPos=95, LinePos=94}, len=1, `:'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=22, Col=2, AbsPos=96, LinePos=94}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=23, Col=0, AbsPos=98, LinePos=98}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(21)=SEMICOLON, Pos={Line=23, Col=1, AbsPos=99, LinePos=98}, len=1, `;'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=23, Col=2, AbsPos=100, LinePos=98}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=24, Col=0, AbsPos=102, LinePos=102}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(110)=LT, Pos={Line=24, Col=1, AbsPos=103, LinePos=102}, len=1, `<'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=24, Col=2, AbsPos=104, LinePos=102}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=25, Col=0, AbsPos=106, LinePos=106}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(116)=BIT_SHIFT_L, Pos={Line=25, Col=1, AbsPos=107, LinePos=106}, len=2, `<<'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=25, Col=3, AbsPos=109, LinePos=106}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=26, Col=0, AbsPos=111, LinePos=111}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(146)=ASSIGN_SHIFT_LEFT, Pos={Line=26, Col=1, AbsPos=112, LinePos=111}, len=3, `<<='(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=26, Col=4, AbsPos=115, LinePos=111}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=27, Col=0, AbsPos=117, LinePos=117}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(112)=LTE, Pos={Line=27, Col=1, AbsPos=118, LinePos=117}, len=2, `<='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=27, Col=3, AbsPos=120, LinePos=117}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=28, Col=0, AbsPos=122, LinePos=122}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(140)=ASSIGN_EQUAL, Pos={Line=28, Col=1, AbsPos=123, LinePos=122}, len=1, `='(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=28, Col=2, AbsPos=124, LinePos=122}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=29, Col=0, AbsPos=126, LinePos=126}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(106)=EQUAL_V, Pos={Line=29, Col=1, AbsPos=127, LinePos=126}, len=2, `=='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=29, Col=3, AbsPos=129, LinePos=126}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=30, Col=0, AbsPos=131, LinePos=131}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(108)=EQUAL_VT, Pos={Line=30, Col=1, AbsPos=132, LinePos=131}, len=3, `==='(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=30, Col=4, AbsPos=135, LinePos=131}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=31, Col=0, AbsPos=137, LinePos=137}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(131)=LAMBDA, Pos={Line=31, Col=1, AbsPos=138, LinePos=137}, len=2, `=>'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=31, Col=3, AbsPos=140, LinePos=137}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=32, Col=0, AbsPos=142, LinePos=142}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(111)=GT, Pos={Line=32, Col=1, AbsPos=143, LinePos=142}, len=1, `>'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=32, Col=2, AbsPos=144, LinePos=142}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=33, Col=0, AbsPos=146, LinePos=146}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(113)=LGE, Pos={Line=33, Col=1, AbsPos=147, LinePos=146}, len=2, `>='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=33, Col=3, AbsPos=149, LinePos=146}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=34, Col=0, AbsPos=151, LinePos=151}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(117)=BIT_SHIFT_R, Pos={Line=34, Col=1, AbsPos=152, LinePos=151}, len=2, `>>'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=34, Col=3, AbsPos=154, LinePos=151}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=35, Col=0, AbsPos=156, LinePos=156}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(147)=ASSIGN_SHIFT_RIGHT, Pos={Line=35, Col=1, AbsPos=157, LinePos=156}, len=3, `>>='(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=35, Col=4, AbsPos=160, LinePos=156}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=36, Col=0, AbsPos=162, LinePos=162}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(118)=BIT_SHIFT_RZ, Pos={Line=36, Col=1, AbsPos=163, LinePos=162}, len=3, `>>>'(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=36, Col=4, AbsPos=166, LinePos=162}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=37, Col=0, AbsPos=168, LinePos=168}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(148)=ASSIGN_SHIFT_RIGHTZ, Pos={Line=37, Col=1, AbsPos=169, LinePos=168}, len=4, `>>>='(unicode len=4)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=37, Col=5, AbsPos=173, LinePos=168}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=38, Col=0, AbsPos=175, LinePos=175}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(126)=QUESTION_MARK, Pos={Line=38, Col=1, AbsPos=176, LinePos=175}, len=1, `?'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=38, Col=2, AbsPos=177, LinePos=175}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(125)=COLON, Pos={Line=38, Col=3, AbsPos=178, LinePos=175}, len=1, `:'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=38, Col=4, AbsPos=179, LinePos=175}, len=1, `c'(unicode len=1 [99])}
+[ACLex] peek(): {Type(19)=SQUARE_BRACKET_LEFT, Pos={Line=39, Col=0, AbsPos=181, LinePos=181}, len=1, `['(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=39, Col=1, AbsPos=182, LinePos=181}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(20)=SQUARE_BRACKET_RIGHT, Pos={Line=39, Col=2, AbsPos=183, LinePos=181}, len=1, `]'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=40, Col=0, AbsPos=185, LinePos=185}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(103)=BIT_OR, Pos={Line=40, Col=1, AbsPos=186, LinePos=185}, len=1, `|'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=40, Col=2, AbsPos=187, LinePos=185}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=41, Col=0, AbsPos=189, LinePos=189}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(150)=ASSIGN_BIT_OR, Pos={Line=41, Col=1, AbsPos=190, LinePos=189}, len=2, `|='(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=41, Col=3, AbsPos=192, LinePos=189}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=42, Col=0, AbsPos=194, LinePos=194}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(100)=BOOL_OR, Pos={Line=42, Col=1, AbsPos=195, LinePos=194}, len=2, `||'(unicode len=2)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=42, Col=3, AbsPos=197, LinePos=194}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=43, Col=0, AbsPos=199, LinePos=199}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(127)=TILDA, Pos={Line=43, Col=1, AbsPos=200, LinePos=199}, len=1, `~'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=43, Col=2, AbsPos=201, LinePos=199}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(17)=CURLY_BRACKET_LEFT, Pos={Line=44, Col=0, AbsPos=203, LinePos=203}, len=1, `{'(unicode len=1)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=44, Col=1, AbsPos=204, LinePos=203}, len=1, `a'(unicode len=1 [97])}
+[ACLex] peek(): {Type(18)=CURLY_BRACKET_RIGHT, Pos={Line=44, Col=2, AbsPos=205, LinePos=203}, len=1, `}'(unicode len=1)}
+[ACLex] peek(): {Type(132)=SPREAD, Pos={Line=45, Col=0, AbsPos=207, LinePos=207}, len=3, `...'(unicode len=3)}
+[ACLex] peek(): {Type(3)=IDENTIFIER, Pos={Line=45, Col=3, AbsPos=210, LinePos=207}, len=1, `b'(unicode len=1 [98])}
+[ACLex] peek(): {Type(1)=EOF, Pos={Line=46, Col=10, AbsPos=222, LinePos=212}, len=1, ` '(unicode len=0)}

@@ -1,0 +1,12 @@
+##### Parse Result #####
+((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,assignment expr) {[] ((*)) AST(variant,reference var) {{[99]}}{ASSIGN_EQUAL(=)} {((*)) AST(variant,regex var) {{/[1-9]*/i}}}}}((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,assignment expr) {[] ((*)) AST(variant,reference var) {{[100]}}{ASSIGN_EQUAL(=)} {((*)) AST(variant,regex var) {{/[1-9]*/i}}}}}
+########################
+##### Parse Result #####
+((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,call expr) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(variant,regex var) {{/[1-9][1-9]/ig}} <.> ((*)) AST(variant,reference var) {{[97][112][112][108][121]}}}(((*)) AST(variant,string var) {{[104][101][108][108][111]}})}}
+########################
+##### Parse Result #####
+((*)) AST(function,function) {function((*)) AST(variant,reference var) {{[98]}}(((*)) AST(function,id param) {{((*)) AST(variant,reference var) {{[97]}}}})((*)) AST(block) {>>>>>> 0 >>>>>> (#13)((@)) AST(statement,return stmt) {*RETURN*[] ((*)) AST(member ref,runtime member) {[] ((*)) AST(expression,call expr) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(variant,regex var) {{/^[\s\xa0]*([\s\S]*?)[\s\xa0]*$/}} <.> ((*)) AST(variant,reference var) {{[101][120][101][99]}}}(((*)) AST(variant,reference var) {{[97]}})}[((*)) AST(variant,numeric var) {{(I)1}}]}} (#13) <<<<<<<<<<< }}
+########################
+##### Parse Result #####
+((@)) AST(statement,expr stmt) {[] ((*)) AST(expression,call expr) {[] ((*)) AST(member ref,static member) {[] ((*)) AST(variant,regex var) {{/[1-9][1-9]/}} <.> ((*)) AST(variant,reference var) {{[97][112][112][108][121]}}}(((*)) AST(variant,string var) {{[104][101][108][108][111]}})}}
+########################

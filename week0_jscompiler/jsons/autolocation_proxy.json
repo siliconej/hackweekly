@@ -1,0 +1,223 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/non_mediation_location_true"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/non_mediation_response.html",
+        "content_type": "html"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/non_mediation_location_false"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/non_mediation_response.html",
+        "content_type": "html"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "false"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/non_mediation_no_header"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/non_mediation_response.html",
+        "content_type": "html"
+      }
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_inlined_location_true"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "true",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_inlined_location_false"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "false",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_inlined_no_header"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+        "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_non_inlined_location_true"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_non_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "true",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_non_inlined_location_false"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_non_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "false",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_non_inlined_no_header"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_non_inlined_ad_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_3p_location_true"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_3p_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "true",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_3p_location_false"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_3p_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Auto-Collect-Location": "false",
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/mediation_3p_no_header"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/mediation_response_3p_wins.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Mediation": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma/empty_response"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/autopopulatelocation/files/empty_response.html",
+        "content_type": "html"
+      }
+    }
+  }
+]

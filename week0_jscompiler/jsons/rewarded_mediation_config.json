@@ -1,0 +1,29 @@
+{
+   "status":1,
+   "app_id":"ca-app-pub-1234~5678",
+   "ad_unit_settings":[
+      {
+         "ad_unit_id":"ca-app-pub-123/456",
+         "format":"rewarded",
+         "mediation_config":{
+            "ad_networks":[
+               {
+                  "adapters":[
+                     "com.google.android.apps.internal.admobsdk.mediumtest.rewardedvideo.DummyMediationRewardedVideoAdapter"
+                  ]
+               },
+               {
+                  "adapters":[
+                     "com.google.ads.mediation.unity.UnityAdapter"
+                  ]
+               },
+               {
+                  "adapters":[
+                     "com.google.ads.mediation.admob.AdMobAdapter"
+                  ]
+               }
+            ]
+         }
+      }
+   ]
+}

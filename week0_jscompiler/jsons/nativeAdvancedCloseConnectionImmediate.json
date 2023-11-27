@@ -1,0 +1,11 @@
+{
+    "trafficshape": {
+        "shapes": [{
+            "url_regex": "^https?:\\/\\/(www\\.)?youtube\\.com\\/get_video",
+            "close_connections":[{
+                    "byte": 1,
+                    "count": -1
+            }]
+        }]
+    }
+}

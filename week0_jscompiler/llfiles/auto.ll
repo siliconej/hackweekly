@@ -1,0 +1,544 @@
+; ModuleID = 'temp.bc'
+source_filename = "auto.cc"
+target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-apple-macosx10.13.0"
+
+%"class.std::__1::auto_ptr" = type { i32* }
+
+; Function Attrs: noinline norecurse nounwind optnone ssp uwtable
+define i32 @main(i32, i8**) #0 !dbg !353 {
+  %3 = alloca %"class.std::__1::auto_ptr"*, align 8
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"** %3, metadata !356, metadata !DIExpression()), !dbg !402
+  %4 = alloca %"class.std::__1::auto_ptr"*, align 8
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"** %4, metadata !404, metadata !DIExpression()), !dbg !407
+  %5 = alloca %"class.std::__1::auto_ptr"*, align 8
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"** %5, metadata !411, metadata !DIExpression()), !dbg !412
+  %6 = alloca %"class.std::__1::auto_ptr"*, align 8
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"** %6, metadata !413, metadata !DIExpression()), !dbg !415
+  %7 = alloca i32*, align 8
+  call void @llvm.dbg.declare(metadata i32** %7, metadata !419, metadata !DIExpression()), !dbg !420
+  %8 = alloca %"class.std::__1::auto_ptr"*, align 8
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"** %8, metadata !421, metadata !DIExpression()), !dbg !422
+  %9 = alloca i32*, align 8
+  call void @llvm.dbg.declare(metadata i32** %9, metadata !423, metadata !DIExpression()), !dbg !424
+  %10 = alloca i32, align 4
+  %11 = alloca i32, align 4
+  %12 = alloca i8**, align 8
+  %13 = alloca i32*, align 8
+  %14 = alloca %"class.std::__1::auto_ptr", align 8
+  store i32 0, i32* %10, align 4
+  store i32 %0, i32* %11, align 4
+  call void @llvm.dbg.declare(metadata i32* %11, metadata !425, metadata !DIExpression()), !dbg !426
+  store i8** %1, i8*** %12, align 8
+  call void @llvm.dbg.declare(metadata i8*** %12, metadata !427, metadata !DIExpression()), !dbg !428
+  call void @llvm.dbg.declare(metadata i32** %13, metadata !429, metadata !DIExpression()), !dbg !430
+  %15 = call i8* @calloc(i64 1, i64 4) #4, !dbg !431
+  %16 = bitcast i8* %15 to i32*, !dbg !432
+  store i32* %16, i32** %13, align 8, !dbg !430
+  %17 = load i32*, i32** %13, align 8, !dbg !433
+  store i32 5, i32* %17, align 4, !dbg !434
+  call void @llvm.dbg.declare(metadata %"class.std::__1::auto_ptr"* %14, metadata !435, metadata !DIExpression()), !dbg !436
+  %18 = load i32*, i32** %13, align 8, !dbg !437
+  store %"class.std::__1::auto_ptr"* %14, %"class.std::__1::auto_ptr"** %8, align 8
+  store i32* %18, i32** %9, align 8
+  %19 = load %"class.std::__1::auto_ptr"*, %"class.std::__1::auto_ptr"** %8, align 8
+  %20 = load i32*, i32** %9, align 8, !dbg !438
+  store %"class.std::__1::auto_ptr"* %19, %"class.std::__1::auto_ptr"** %6, align 8
+  store i32* %20, i32** %7, align 8
+  %21 = load %"class.std::__1::auto_ptr"*, %"class.std::__1::auto_ptr"** %6, align 8
+  %22 = getelementptr inbounds %"class.std::__1::auto_ptr", %"class.std::__1::auto_ptr"* %21, i32 0, i32 0, !dbg !439
+  %23 = load i32*, i32** %7, align 8, !dbg !440
+  store i32* %23, i32** %22, align 8, !dbg !439
+  store %"class.std::__1::auto_ptr"* %14, %"class.std::__1::auto_ptr"** %3, align 8
+  %24 = load %"class.std::__1::auto_ptr"*, %"class.std::__1::auto_ptr"** %3, align 8
+  %25 = getelementptr inbounds %"class.std::__1::auto_ptr", %"class.std::__1::auto_ptr"* %24, i32 0, i32 0, !dbg !441
+  %26 = load i32*, i32** %25, align 8, !dbg !441
+  %27 = load i32, i32* %26, align 4, !dbg !442
+  store i32 %27, i32* %10, align 4, !dbg !443
+  store %"class.std::__1::auto_ptr"* %14, %"class.std::__1::auto_ptr"** %5, align 8
+  %28 = load %"class.std::__1::auto_ptr"*, %"class.std::__1::auto_ptr"** %5, align 8
+  store %"class.std::__1::auto_ptr"* %28, %"class.std::__1::auto_ptr"** %4, align 8
+  %29 = load %"class.std::__1::auto_ptr"*, %"class.std::__1::auto_ptr"** %4, align 8
+  %30 = getelementptr inbounds %"class.std::__1::auto_ptr", %"class.std::__1::auto_ptr"* %29, i32 0, i32 0, !dbg !444
+  %31 = load i32*, i32** %30, align 8, !dbg !444
+  %32 = icmp eq i32* %31, null, !dbg !446
+  br i1 %32, label %35, label %33, !dbg !446
+
+; <label>:33:                                     ; preds = %2
+  %34 = bitcast i32* %31 to i8*, !dbg !446
+  call void @_ZdlPv(i8* %34) #5, !dbg !446
+  br label %35, !dbg !446
+
+; <label>:35:                                     ; preds = %2, %33
+  %36 = load i32, i32* %10, align 4, !dbg !447
+  ret i32 %36, !dbg !447
+}
+
+; Function Attrs: nounwind readnone speculatable
+declare void @llvm.dbg.declare(metadata, metadata, metadata) #1
+
+; Function Attrs: allocsize(0,1)
+declare i8* @calloc(i64, i64) #2
+
+; Function Attrs: nobuiltin nounwind
+declare void @_ZdlPv(i8*) #3
+
+attributes #0 = { noinline norecurse nounwind optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind readnone speculatable }
+attributes #2 = { allocsize(0,1) "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { nobuiltin nounwind "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { allocsize(0,1) }
+attributes #5 = { builtin nounwind }
+
+!llvm.dbg.cu = !{!0}
+!llvm.module.flags = !{!348, !349, !350, !351}
+!llvm.ident = !{!352}
+
+!0 = distinct !DICompileUnit(language: DW_LANG_C_plus_plus, file: !1, producer: "Apple LLVM version 9.1.0 (clang-902.0.39.2)", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !2, retainedTypes: !3, imports: !6)
+!1 = !DIFile(filename: "auto.cc", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!2 = !{}
+!3 = !{!4}
+!4 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !5, size: 64)
+!5 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
+!6 = !{!7, !14, !17, !21, !23, !30, !36, !43, !51, !55, !59, !63, !69, !74, !78, !82, !86, !90, !95, !99, !104, !109, !113, !117, !121, !125, !130, !134, !136, !140, !142, !151, !155, !160, !164, !166, !170, !174, !176, !180, !186, !190, !194, !200, !205, !209, !212, !215, !219, !223, !226, !229, !232, !234, !236, !238, !240, !242, !244, !246, !248, !250, !252, !254, !256, !258, !260, !262, !267, !270, !273, !276, !278, !283, !285, !289, !293, !295, !297, !301, !305, !309, !311, !315, !320, !324, !328, !330, !332, !334, !336, !338, !340, !344}
+!7 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !10, file: !13, line: 49)
+!8 = !DINamespace(name: "__1", scope: !9, exportSymbols: true)
+!9 = !DINamespace(name: "std", scope: null)
+!10 = !DIDerivedType(tag: DW_TAG_typedef, name: "ptrdiff_t", file: !11, line: 51, baseType: !12)
+!11 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.1.0/include/stddef.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!12 = !DIBasicType(name: "long int", size: 64, encoding: DW_ATE_signed)
+!13 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/cstddef", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!14 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !15, file: !13, line: 50)
+!15 = !DIDerivedType(tag: DW_TAG_typedef, name: "size_t", file: !11, line: 62, baseType: !16)
+!16 = !DIBasicType(name: "long unsigned int", size: 64, encoding: DW_ATE_unsigned)
+!17 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !18, file: !13, line: 55)
+!18 = !DIDerivedType(tag: DW_TAG_typedef, name: "max_align_t", file: !19, line: 32, baseType: !20)
+!19 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.1.0/include/__stddef_max_align_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!20 = !DIBasicType(name: "long double", size: 128, encoding: DW_ATE_float)
+!21 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !15, file: !22, line: 100)
+!22 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/cstdlib", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!23 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !24, file: !22, line: 101)
+!24 = !DIDerivedType(tag: DW_TAG_typedef, name: "div_t", file: !25, line: 85, baseType: !26)
+!25 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/stdlib.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!26 = distinct !DICompositeType(tag: DW_TAG_structure_type, file: !25, line: 82, size: 64, elements: !27, identifier: "_ZTS5div_t")
+!27 = !{!28, !29}
+!28 = !DIDerivedType(tag: DW_TAG_member, name: "quot", scope: !26, file: !25, line: 83, baseType: !5, size: 32)
+!29 = !DIDerivedType(tag: DW_TAG_member, name: "rem", scope: !26, file: !25, line: 84, baseType: !5, size: 32, offset: 32)
+!30 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !31, file: !22, line: 102)
+!31 = !DIDerivedType(tag: DW_TAG_typedef, name: "ldiv_t", file: !25, line: 90, baseType: !32)
+!32 = distinct !DICompositeType(tag: DW_TAG_structure_type, file: !25, line: 87, size: 128, elements: !33, identifier: "_ZTS6ldiv_t")
+!33 = !{!34, !35}
+!34 = !DIDerivedType(tag: DW_TAG_member, name: "quot", scope: !32, file: !25, line: 88, baseType: !12, size: 64)
+!35 = !DIDerivedType(tag: DW_TAG_member, name: "rem", scope: !32, file: !25, line: 89, baseType: !12, size: 64, offset: 64)
+!36 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !37, file: !22, line: 104)
+!37 = !DIDerivedType(tag: DW_TAG_typedef, name: "lldiv_t", file: !25, line: 96, baseType: !38)
+!38 = distinct !DICompositeType(tag: DW_TAG_structure_type, file: !25, line: 93, size: 128, elements: !39, identifier: "_ZTS7lldiv_t")
+!39 = !{!40, !42}
+!40 = !DIDerivedType(tag: DW_TAG_member, name: "quot", scope: !38, file: !25, line: 94, baseType: !41, size: 64)
+!41 = !DIBasicType(name: "long long int", size: 64, encoding: DW_ATE_signed)
+!42 = !DIDerivedType(tag: DW_TAG_member, name: "rem", scope: !38, file: !25, line: 95, baseType: !41, size: 64, offset: 64)
+!43 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !44, file: !22, line: 106)
+!44 = !DISubprogram(name: "atof", scope: !25, file: !25, line: 139, type: !45, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!45 = !DISubroutineType(types: !46)
+!46 = !{!47, !48}
+!47 = !DIBasicType(name: "double", size: 64, encoding: DW_ATE_float)
+!48 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !49, size: 64)
+!49 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !50)
+!50 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
+!51 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !52, file: !22, line: 107)
+!52 = !DISubprogram(name: "atoi", scope: !25, file: !25, line: 140, type: !53, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!53 = !DISubroutineType(types: !54)
+!54 = !{!5, !48}
+!55 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !56, file: !22, line: 108)
+!56 = !DISubprogram(name: "atol", scope: !25, file: !25, line: 141, type: !57, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!57 = !DISubroutineType(types: !58)
+!58 = !{!12, !48}
+!59 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !60, file: !22, line: 110)
+!60 = !DISubprogram(name: "atoll", scope: !25, file: !25, line: 144, type: !61, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!61 = !DISubroutineType(types: !62)
+!62 = !{!41, !48}
+!63 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !64, file: !22, line: 112)
+!64 = !DISubprogram(name: "strtod", linkageName: "\01_strtod", scope: !25, file: !25, line: 170, type: !65, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!65 = !DISubroutineType(types: !66)
+!66 = !{!47, !48, !67}
+!67 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !68, size: 64)
+!68 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !50, size: 64)
+!69 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !70, file: !22, line: 113)
+!70 = !DISubprogram(name: "strtof", linkageName: "\01_strtof", scope: !25, file: !25, line: 171, type: !71, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!71 = !DISubroutineType(types: !72)
+!72 = !{!73, !48, !67}
+!73 = !DIBasicType(name: "float", size: 32, encoding: DW_ATE_float)
+!74 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !75, file: !22, line: 114)
+!75 = !DISubprogram(name: "strtold", scope: !25, file: !25, line: 174, type: !76, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!76 = !DISubroutineType(types: !77)
+!77 = !{!20, !48, !67}
+!78 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !79, file: !22, line: 115)
+!79 = !DISubprogram(name: "strtol", scope: !25, file: !25, line: 172, type: !80, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!80 = !DISubroutineType(types: !81)
+!81 = !{!12, !48, !67, !5}
+!82 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !83, file: !22, line: 117)
+!83 = !DISubprogram(name: "strtoll", scope: !25, file: !25, line: 177, type: !84, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!84 = !DISubroutineType(types: !85)
+!85 = !{!41, !48, !67, !5}
+!86 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !87, file: !22, line: 119)
+!87 = !DISubprogram(name: "strtoul", scope: !25, file: !25, line: 180, type: !88, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!88 = !DISubroutineType(types: !89)
+!89 = !{!16, !48, !67, !5}
+!90 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !91, file: !22, line: 121)
+!91 = !DISubprogram(name: "strtoull", scope: !25, file: !25, line: 183, type: !92, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!92 = !DISubroutineType(types: !93)
+!93 = !{!94, !48, !67, !5}
+!94 = !DIBasicType(name: "long long unsigned int", size: 64, encoding: DW_ATE_unsigned)
+!95 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !96, file: !22, line: 123)
+!96 = !DISubprogram(name: "rand", scope: !25, file: !25, line: 167, type: !97, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!97 = !DISubroutineType(types: !98)
+!98 = !{!5}
+!99 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !100, file: !22, line: 124)
+!100 = !DISubprogram(name: "srand", scope: !25, file: !25, line: 169, type: !101, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!101 = !DISubroutineType(types: !102)
+!102 = !{null, !103}
+!103 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
+!104 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !105, file: !22, line: 125)
+!105 = !DISubprogram(name: "calloc", scope: !25, file: !25, line: 148, type: !106, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!106 = !DISubroutineType(types: !107)
+!107 = !{!108, !15, !15}
+!108 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: null, size: 64)
+!109 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !110, file: !22, line: 126)
+!110 = !DISubprogram(name: "free", scope: !25, file: !25, line: 151, type: !111, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!111 = !DISubroutineType(types: !112)
+!112 = !{null, !108}
+!113 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !114, file: !22, line: 127)
+!114 = !DISubprogram(name: "malloc", scope: !25, file: !25, line: 160, type: !115, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!115 = !DISubroutineType(types: !116)
+!116 = !{!108, !15}
+!117 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !118, file: !22, line: 128)
+!118 = !DISubprogram(name: "realloc", scope: !25, file: !25, line: 168, type: !119, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!119 = !DISubroutineType(types: !120)
+!120 = !{!108, !108, !15}
+!121 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !122, file: !22, line: 129)
+!122 = !DISubprogram(name: "abort", scope: !25, file: !25, line: 136, type: !123, isLocal: false, isDefinition: false, flags: DIFlagPrototyped | DIFlagNoReturn, isOptimized: false)
+!123 = !DISubroutineType(types: !124)
+!124 = !{null}
+!125 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !126, file: !22, line: 130)
+!126 = !DISubprogram(name: "atexit", scope: !25, file: !25, line: 138, type: !127, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!127 = !DISubroutineType(types: !128)
+!128 = !{!5, !129}
+!129 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !123, size: 64)
+!130 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !131, file: !22, line: 131)
+!131 = !DISubprogram(name: "exit", scope: !25, file: !25, line: 150, type: !132, isLocal: false, isDefinition: false, flags: DIFlagPrototyped | DIFlagNoReturn, isOptimized: false)
+!132 = !DISubroutineType(types: !133)
+!133 = !{null, !5}
+!134 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !135, file: !22, line: 132)
+!135 = !DISubprogram(name: "_Exit", scope: !25, file: !25, line: 203, type: !132, isLocal: false, isDefinition: false, flags: DIFlagPrototyped | DIFlagNoReturn, isOptimized: false)
+!136 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !137, file: !22, line: 134)
+!137 = !DISubprogram(name: "getenv", scope: !25, file: !25, line: 152, type: !138, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!138 = !DISubroutineType(types: !139)
+!139 = !{!68, !48}
+!140 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !141, file: !22, line: 135)
+!141 = !DISubprogram(name: "system", linkageName: "\01_system", scope: !25, file: !25, line: 195, type: !53, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!142 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !143, file: !22, line: 137)
+!143 = !DISubprogram(name: "bsearch", scope: !25, file: !25, line: 146, type: !144, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!144 = !DISubroutineType(types: !145)
+!145 = !{!108, !146, !146, !15, !15, !148}
+!146 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !147, size: 64)
+!147 = !DIDerivedType(tag: DW_TAG_const_type, baseType: null)
+!148 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !149, size: 64)
+!149 = !DISubroutineType(types: !150)
+!150 = !{!5, !146, !146}
+!151 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !152, file: !22, line: 138)
+!152 = !DISubprogram(name: "qsort", scope: !25, file: !25, line: 165, type: !153, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!153 = !DISubroutineType(types: !154)
+!154 = !{null, !108, !15, !15, !148}
+!155 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !156, file: !22, line: 139)
+!156 = !DISubprogram(name: "abs", linkageName: "_Z3absx", scope: !157, file: !157, line: 113, type: !158, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!157 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/stdlib.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!158 = !DISubroutineType(types: !159)
+!159 = !{!41, !41}
+!160 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !161, file: !22, line: 140)
+!161 = !DISubprogram(name: "labs", scope: !25, file: !25, line: 153, type: !162, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!162 = !DISubroutineType(types: !163)
+!163 = !{!12, !12}
+!164 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !165, file: !22, line: 142)
+!165 = !DISubprogram(name: "llabs", scope: !25, file: !25, line: 157, type: !158, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!166 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !167, file: !22, line: 144)
+!167 = !DISubprogram(name: "div", linkageName: "_Z3divxx", scope: !157, file: !157, line: 118, type: !168, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!168 = !DISubroutineType(types: !169)
+!169 = !{!37, !41, !41}
+!170 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !171, file: !22, line: 145)
+!171 = !DISubprogram(name: "ldiv", scope: !25, file: !25, line: 154, type: !172, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!172 = !DISubroutineType(types: !173)
+!173 = !{!31, !12, !12}
+!174 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !175, file: !22, line: 147)
+!175 = !DISubprogram(name: "lldiv", scope: !25, file: !25, line: 158, type: !168, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!176 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !177, file: !22, line: 149)
+!177 = !DISubprogram(name: "mblen", scope: !25, file: !25, line: 161, type: !178, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!178 = !DISubroutineType(types: !179)
+!179 = !{!5, !48, !15}
+!180 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !181, file: !22, line: 150)
+!181 = !DISubprogram(name: "mbtowc", scope: !25, file: !25, line: 163, type: !182, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!182 = !DISubroutineType(types: !183)
+!183 = !{!5, !184, !48, !15}
+!184 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !185, size: 64)
+!185 = !DIBasicType(name: "wchar_t", size: 32, encoding: DW_ATE_signed)
+!186 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !187, file: !22, line: 151)
+!187 = !DISubprogram(name: "wctomb", scope: !25, file: !25, line: 200, type: !188, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!188 = !DISubroutineType(types: !189)
+!189 = !{!5, !68, !185}
+!190 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !191, file: !22, line: 152)
+!191 = !DISubprogram(name: "mbstowcs", scope: !25, file: !25, line: 162, type: !192, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!192 = !DISubroutineType(types: !193)
+!193 = !{!15, !184, !48, !15}
+!194 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !195, file: !22, line: 153)
+!195 = !DISubprogram(name: "wcstombs", scope: !25, file: !25, line: 199, type: !196, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!196 = !DISubroutineType(types: !197)
+!197 = !{!15, !68, !198, !15}
+!198 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !199, size: 64)
+!199 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !185)
+!200 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !201, file: !204, line: 153)
+!201 = !DIDerivedType(tag: DW_TAG_typedef, name: "int8_t", file: !202, line: 30, baseType: !203)
+!202 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_int8_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!203 = !DIBasicType(name: "signed char", size: 8, encoding: DW_ATE_signed_char)
+!204 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/cstdint", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!205 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !206, file: !204, line: 154)
+!206 = !DIDerivedType(tag: DW_TAG_typedef, name: "int16_t", file: !207, line: 30, baseType: !208)
+!207 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_int16_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!208 = !DIBasicType(name: "short", size: 16, encoding: DW_ATE_signed)
+!209 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !210, file: !204, line: 155)
+!210 = !DIDerivedType(tag: DW_TAG_typedef, name: "int32_t", file: !211, line: 30, baseType: !5)
+!211 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_int32_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!212 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !213, file: !204, line: 156)
+!213 = !DIDerivedType(tag: DW_TAG_typedef, name: "int64_t", file: !214, line: 30, baseType: !41)
+!214 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_int64_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!215 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !216, file: !204, line: 158)
+!216 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint8_t", file: !217, line: 31, baseType: !218)
+!217 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_uint8_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!218 = !DIBasicType(name: "unsigned char", size: 8, encoding: DW_ATE_unsigned_char)
+!219 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !220, file: !204, line: 159)
+!220 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint16_t", file: !221, line: 31, baseType: !222)
+!221 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_uint16_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!222 = !DIBasicType(name: "unsigned short", size: 16, encoding: DW_ATE_unsigned)
+!223 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !224, file: !204, line: 160)
+!224 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint32_t", file: !225, line: 31, baseType: !103)
+!225 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_uint32_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!226 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !227, file: !204, line: 161)
+!227 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint64_t", file: !228, line: 31, baseType: !94)
+!228 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_uint64_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!229 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !230, file: !204, line: 163)
+!230 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_least8_t", file: !231, line: 29, baseType: !201)
+!231 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/stdint.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!232 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !233, file: !204, line: 164)
+!233 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_least16_t", file: !231, line: 30, baseType: !206)
+!234 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !235, file: !204, line: 165)
+!235 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_least32_t", file: !231, line: 31, baseType: !210)
+!236 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !237, file: !204, line: 166)
+!237 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_least64_t", file: !231, line: 32, baseType: !213)
+!238 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !239, file: !204, line: 168)
+!239 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_least8_t", file: !231, line: 33, baseType: !216)
+!240 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !241, file: !204, line: 169)
+!241 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_least16_t", file: !231, line: 34, baseType: !220)
+!242 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !243, file: !204, line: 170)
+!243 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_least32_t", file: !231, line: 35, baseType: !224)
+!244 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !245, file: !204, line: 171)
+!245 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_least64_t", file: !231, line: 36, baseType: !227)
+!246 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !247, file: !204, line: 173)
+!247 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_fast8_t", file: !231, line: 40, baseType: !201)
+!248 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !249, file: !204, line: 174)
+!249 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_fast16_t", file: !231, line: 41, baseType: !206)
+!250 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !251, file: !204, line: 175)
+!251 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_fast32_t", file: !231, line: 42, baseType: !210)
+!252 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !253, file: !204, line: 176)
+!253 = !DIDerivedType(tag: DW_TAG_typedef, name: "int_fast64_t", file: !231, line: 43, baseType: !213)
+!254 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !255, file: !204, line: 178)
+!255 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_fast8_t", file: !231, line: 44, baseType: !216)
+!256 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !257, file: !204, line: 179)
+!257 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_fast16_t", file: !231, line: 45, baseType: !220)
+!258 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !259, file: !204, line: 180)
+!259 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_fast32_t", file: !231, line: 46, baseType: !224)
+!260 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !261, file: !204, line: 181)
+!261 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint_fast64_t", file: !231, line: 47, baseType: !227)
+!262 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !263, file: !204, line: 183)
+!263 = !DIDerivedType(tag: DW_TAG_typedef, name: "intptr_t", file: !264, line: 32, baseType: !265)
+!264 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_intptr_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!265 = !DIDerivedType(tag: DW_TAG_typedef, name: "__darwin_intptr_t", file: !266, line: 49, baseType: !12)
+!266 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/i386/_types.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!267 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !268, file: !204, line: 184)
+!268 = !DIDerivedType(tag: DW_TAG_typedef, name: "uintptr_t", file: !269, line: 30, baseType: !16)
+!269 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/sys/_types/_uintptr_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!270 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !271, file: !204, line: 186)
+!271 = !DIDerivedType(tag: DW_TAG_typedef, name: "intmax_t", file: !272, line: 32, baseType: !12)
+!272 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_intmax_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!273 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !274, file: !204, line: 187)
+!274 = !DIDerivedType(tag: DW_TAG_typedef, name: "uintmax_t", file: !275, line: 32, baseType: !16)
+!275 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/_types/_uintmax_t.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!276 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !15, file: !277, line: 69)
+!277 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/cstring", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!278 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !279, file: !277, line: 70)
+!279 = !DISubprogram(name: "memcpy", scope: !280, file: !280, line: 72, type: !281, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!280 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include/string.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!281 = !DISubroutineType(types: !282)
+!282 = !{!108, !108, !146, !15}
+!283 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !284, file: !277, line: 71)
+!284 = !DISubprogram(name: "memmove", scope: !280, file: !280, line: 73, type: !281, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!285 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !286, file: !277, line: 72)
+!286 = !DISubprogram(name: "strcpy", scope: !280, file: !280, line: 79, type: !287, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!287 = !DISubroutineType(types: !288)
+!288 = !{!68, !68, !48}
+!289 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !290, file: !277, line: 73)
+!290 = !DISubprogram(name: "strncpy", scope: !280, file: !280, line: 85, type: !291, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!291 = !DISubroutineType(types: !292)
+!292 = !{!68, !68, !48, !15}
+!293 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !294, file: !277, line: 74)
+!294 = !DISubprogram(name: "strcat", scope: !280, file: !280, line: 75, type: !287, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!295 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !296, file: !277, line: 75)
+!296 = !DISubprogram(name: "strncat", scope: !280, file: !280, line: 83, type: !291, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!297 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !298, file: !277, line: 76)
+!298 = !DISubprogram(name: "memcmp", scope: !280, file: !280, line: 71, type: !299, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!299 = !DISubroutineType(types: !300)
+!300 = !{!5, !146, !146, !15}
+!301 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !302, file: !277, line: 77)
+!302 = !DISubprogram(name: "strcmp", scope: !280, file: !280, line: 77, type: !303, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!303 = !DISubroutineType(types: !304)
+!304 = !{!5, !48, !48}
+!305 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !306, file: !277, line: 78)
+!306 = !DISubprogram(name: "strncmp", scope: !280, file: !280, line: 84, type: !307, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!307 = !DISubroutineType(types: !308)
+!308 = !{!5, !48, !48, !15}
+!309 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !310, file: !277, line: 79)
+!310 = !DISubprogram(name: "strcoll", scope: !280, file: !280, line: 78, type: !303, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!311 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !312, file: !277, line: 80)
+!312 = !DISubprogram(name: "strxfrm", scope: !280, file: !280, line: 91, type: !313, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!313 = !DISubroutineType(types: !314)
+!314 = !{!15, !68, !48, !15}
+!315 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !316, file: !277, line: 81)
+!316 = !DISubprogram(name: "memchr", linkageName: "_Z6memchrUa9enable_ifIXLb1EEEPvim", scope: !317, file: !317, line: 99, type: !318, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!317 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/string.h", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!318 = !DISubroutineType(types: !319)
+!319 = !{!108, !108, !5, !15}
+!320 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !321, file: !277, line: 82)
+!321 = !DISubprogram(name: "strchr", linkageName: "_Z6strchrUa9enable_ifIXLb1EEEPci", scope: !317, file: !317, line: 78, type: !322, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!322 = !DISubroutineType(types: !323)
+!323 = !{!68, !68, !5}
+!324 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !325, file: !277, line: 83)
+!325 = !DISubprogram(name: "strcspn", scope: !280, file: !280, line: 80, type: !326, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!326 = !DISubroutineType(types: !327)
+!327 = !{!15, !48, !48}
+!328 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !329, file: !277, line: 84)
+!329 = !DISubprogram(name: "strpbrk", linkageName: "_Z7strpbrkUa9enable_ifIXLb1EEEPcPKc", scope: !317, file: !317, line: 85, type: !287, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!330 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !331, file: !277, line: 85)
+!331 = !DISubprogram(name: "strrchr", linkageName: "_Z7strrchrUa9enable_ifIXLb1EEEPci", scope: !317, file: !317, line: 92, type: !322, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!332 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !333, file: !277, line: 86)
+!333 = !DISubprogram(name: "strspn", scope: !280, file: !280, line: 88, type: !326, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!334 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !335, file: !277, line: 87)
+!335 = !DISubprogram(name: "strstr", linkageName: "_Z6strstrUa9enable_ifIXLb1EEEPcPKc", scope: !317, file: !317, line: 106, type: !287, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!336 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !337, file: !277, line: 89)
+!337 = !DISubprogram(name: "strtok", scope: !280, file: !280, line: 90, type: !287, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!338 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !339, file: !277, line: 91)
+!339 = !DISubprogram(name: "memset", scope: !280, file: !280, line: 74, type: !318, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!340 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !341, file: !277, line: 92)
+!341 = !DISubprogram(name: "strerror", linkageName: "\01_strerror", scope: !280, file: !280, line: 81, type: !342, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!342 = !DISubroutineType(types: !343)
+!343 = !{!68, !5}
+!344 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !345, file: !277, line: 93)
+!345 = !DISubprogram(name: "strlen", scope: !280, file: !280, line: 82, type: !346, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: false)
+!346 = !DISubroutineType(types: !347)
+!347 = !{!15, !48}
+!348 = !{i32 2, !"Dwarf Version", i32 4}
+!349 = !{i32 2, !"Debug Info Version", i32 3}
+!350 = !{i32 1, !"wchar_size", i32 4}
+!351 = !{i32 7, !"PIC Level", i32 2}
+!352 = !{!"Apple LLVM version 9.1.0 (clang-902.0.39.2)"}
+!353 = distinct !DISubprogram(name: "main", scope: !1, file: !1, line: 3, type: !354, isLocal: false, isDefinition: true, scopeLine: 3, flags: DIFlagPrototyped, isOptimized: false, unit: !0, retainedNodes: !2)
+!354 = !DISubroutineType(types: !355)
+!355 = !{!5, !5, !67}
+!356 = !DILocalVariable(name: "this", arg: 1, scope: !357, type: !401, flags: DIFlagArtificial | DIFlagObjectPointer)
+!357 = distinct !DISubprogram(name: "operator*", linkageName: "_ZNKSt3__18auto_ptrIiEdeEv", scope: !359, file: !358, line: 2002, type: !385, isLocal: false, isDefinition: true, scopeLine: 2003, flags: DIFlagPrototyped, isOptimized: false, unit: !0, declaration: !384, retainedNodes: !2)
+!358 = !DIFile(filename: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/memory", directory: "/Users/ejiang/Projects/lls/ac/llfiles")
+!359 = distinct !DICompositeType(tag: DW_TAG_class_type, name: "auto_ptr<int>", scope: !8, file: !358, line: 1983, size: 64, elements: !360, templateParams: !379, identifier: "_ZTSNSt3__18auto_ptrIiEE")
+!360 = !{!361, !362, !366, !370, !373, !381, !384, !390, !393, !394, !397, !398}
+!361 = !DIDerivedType(tag: DW_TAG_member, name: "__ptr_", scope: !359, file: !358, line: 1986, baseType: !4, size: 64)
+!362 = !DISubprogram(name: "auto_ptr", scope: !359, file: !358, line: 1990, type: !363, isLocal: false, isDefinition: false, scopeLine: 1990, flags: DIFlagPublic | DIFlagExplicit | DIFlagPrototyped, isOptimized: false)
+!363 = !DISubroutineType(types: !364)
+!364 = !{null, !365, !4}
+!365 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !359, size: 64, flags: DIFlagArtificial | DIFlagObjectPointer)
+!366 = !DISubprogram(name: "auto_ptr", scope: !359, file: !358, line: 1991, type: !367, isLocal: false, isDefinition: false, scopeLine: 1991, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!367 = !DISubroutineType(types: !368)
+!368 = !{null, !365, !369}
+!369 = !DIDerivedType(tag: DW_TAG_reference_type, baseType: !359, size: 64)
+!370 = !DISubprogram(name: "operator=", linkageName: "_ZNSt3__18auto_ptrIiEaSERS1_", scope: !359, file: !358, line: 1994, type: !371, isLocal: false, isDefinition: false, scopeLine: 1994, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!371 = !DISubroutineType(types: !372)
+!372 = !{!369, !365, !369}
+!373 = !DISubprogram(name: "operator=", linkageName: "_ZNSt3__18auto_ptrIiEaSENS_12auto_ptr_refIiEE", scope: !359, file: !358, line: 1998, type: !374, isLocal: false, isDefinition: false, scopeLine: 1998, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!374 = !DISubroutineType(types: !375)
+!375 = !{!369, !365, !376}
+!376 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "auto_ptr_ref<int>", scope: !8, file: !358, line: 1977, size: 64, elements: !377, templateParams: !379, identifier: "_ZTSNSt3__112auto_ptr_refIiEE")
+!377 = !{!378}
+!378 = !DIDerivedType(tag: DW_TAG_member, name: "__ptr_", scope: !376, file: !358, line: 1979, baseType: !4, size: 64)
+!379 = !{!380}
+!380 = !DITemplateTypeParameter(name: "_Tp", type: !5)
+!381 = !DISubprogram(name: "~auto_ptr", scope: !359, file: !358, line: 2000, type: !382, isLocal: false, isDefinition: false, scopeLine: 2000, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!382 = !DISubroutineType(types: !383)
+!383 = !{null, !365}
+!384 = !DISubprogram(name: "operator*", linkageName: "_ZNKSt3__18auto_ptrIiEdeEv", scope: !359, file: !358, line: 2002, type: !385, isLocal: false, isDefinition: false, scopeLine: 2002, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!385 = !DISubroutineType(types: !386)
+!386 = !{!387, !388}
+!387 = !DIDerivedType(tag: DW_TAG_reference_type, baseType: !5, size: 64)
+!388 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !389, size: 64, flags: DIFlagArtificial | DIFlagObjectPointer)
+!389 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !359)
+!390 = !DISubprogram(name: "operator->", linkageName: "_ZNKSt3__18auto_ptrIiEptEv", scope: !359, file: !358, line: 2004, type: !391, isLocal: false, isDefinition: false, scopeLine: 2004, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!391 = !DISubroutineType(types: !392)
+!392 = !{!4, !388}
+!393 = !DISubprogram(name: "get", linkageName: "_ZNKSt3__18auto_ptrIiE3getEv", scope: !359, file: !358, line: 2005, type: !391, isLocal: false, isDefinition: false, scopeLine: 2005, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!394 = !DISubprogram(name: "release", linkageName: "_ZNSt3__18auto_ptrIiE7releaseEv", scope: !359, file: !358, line: 2006, type: !395, isLocal: false, isDefinition: false, scopeLine: 2006, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!395 = !DISubroutineType(types: !396)
+!396 = !{!4, !365}
+!397 = !DISubprogram(name: "reset", linkageName: "_ZNSt3__18auto_ptrIiE5resetEPi", scope: !359, file: !358, line: 2012, type: !363, isLocal: false, isDefinition: false, scopeLine: 2012, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!398 = !DISubprogram(name: "auto_ptr", scope: !359, file: !358, line: 2019, type: !399, isLocal: false, isDefinition: false, scopeLine: 2019, flags: DIFlagPublic | DIFlagPrototyped, isOptimized: false)
+!399 = !DISubroutineType(types: !400)
+!400 = !{null, !365, !376}
+!401 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !389, size: 64)
+!402 = !DILocation(line: 0, scope: !357, inlinedAt: !403)
+!403 = distinct !DILocation(line: 7, column: 10, scope: !353)
+!404 = !DILocalVariable(name: "this", arg: 1, scope: !405, type: !406, flags: DIFlagArtificial | DIFlagObjectPointer)
+!405 = distinct !DISubprogram(name: "~auto_ptr", linkageName: "_ZNSt3__18auto_ptrIiED2Ev", scope: !359, file: !358, line: 2000, type: !382, isLocal: false, isDefinition: true, scopeLine: 2000, flags: DIFlagPrototyped, isOptimized: false, unit: !0, declaration: !381, retainedNodes: !2)
+!406 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !359, size: 64)
+!407 = !DILocation(line: 0, scope: !405, inlinedAt: !408)
+!408 = distinct !DILocation(line: 2000, column: 51, scope: !409, inlinedAt: !410)
+!409 = distinct !DISubprogram(name: "~auto_ptr", linkageName: "_ZNSt3__18auto_ptrIiED1Ev", scope: !359, file: !358, line: 2000, type: !382, isLocal: false, isDefinition: true, scopeLine: 2000, flags: DIFlagPrototyped, isOptimized: false, unit: !0, declaration: !381, retainedNodes: !2)
+!410 = distinct !DILocation(line: 8, column: 1, scope: !353)
+!411 = !DILocalVariable(name: "this", arg: 1, scope: !409, type: !406, flags: DIFlagArtificial | DIFlagObjectPointer)
+!412 = !DILocation(line: 0, scope: !409, inlinedAt: !410)
+!413 = !DILocalVariable(name: "this", arg: 1, scope: !414, type: !406, flags: DIFlagArtificial | DIFlagObjectPointer)
+!414 = distinct !DISubprogram(name: "auto_ptr", linkageName: "_ZNSt3__18auto_ptrIiEC2EPi", scope: !359, file: !358, line: 1990, type: !363, isLocal: false, isDefinition: true, scopeLine: 1990, flags: DIFlagPrototyped, isOptimized: false, unit: !0, declaration: !362, retainedNodes: !2)
+!415 = !DILocation(line: 0, scope: !414, inlinedAt: !416)
+!416 = distinct !DILocation(line: 1990, column: 85, scope: !417, inlinedAt: !418)
+!417 = distinct !DISubprogram(name: "auto_ptr", linkageName: "_ZNSt3__18auto_ptrIiEC1EPi", scope: !359, file: !358, line: 1990, type: !363, isLocal: false, isDefinition: true, scopeLine: 1990, flags: DIFlagPrototyped, isOptimized: false, unit: !0, declaration: !362, retainedNodes: !2)
+!418 = distinct !DILocation(line: 6, column: 22, scope: !353)
+!419 = !DILocalVariable(name: "__p", arg: 2, scope: !414, file: !358, line: 1990, type: !4)
+!420 = !DILocation(line: 1990, column: 54, scope: !414, inlinedAt: !416)
+!421 = !DILocalVariable(name: "this", arg: 1, scope: !417, type: !406, flags: DIFlagArtificial | DIFlagObjectPointer)
+!422 = !DILocation(line: 0, scope: !417, inlinedAt: !418)
+!423 = !DILocalVariable(name: "__p", arg: 2, scope: !417, file: !358, line: 1990, type: !4)
+!424 = !DILocation(line: 1990, column: 54, scope: !417, inlinedAt: !418)
+!425 = !DILocalVariable(name: "argc", arg: 1, scope: !353, file: !1, line: 3, type: !5)
+!426 = !DILocation(line: 3, column: 14, scope: !353)
+!427 = !DILocalVariable(name: "argv", arg: 2, scope: !353, file: !1, line: 3, type: !67)
+!428 = !DILocation(line: 3, column: 27, scope: !353)
+!429 = !DILocalVariable(name: "a", scope: !353, file: !1, line: 4, type: !4)
+!430 = !DILocation(line: 4, column: 8, scope: !353)
+!431 = !DILocation(line: 4, column: 31, scope: !353)
+!432 = !DILocation(line: 4, column: 13, scope: !353)
+!433 = !DILocation(line: 5, column: 4, scope: !353)
+!434 = !DILocation(line: 5, column: 6, scope: !353)
+!435 = !DILocalVariable(name: "ap", scope: !353, file: !1, line: 6, type: !359)
+!436 = !DILocation(line: 6, column: 22, scope: !353)
+!437 = !DILocation(line: 6, column: 25, scope: !353)
+!438 = !DILocation(line: 1990, column: 85, scope: !417, inlinedAt: !418)
+!439 = !DILocation(line: 1990, column: 73, scope: !414, inlinedAt: !416)
+!440 = !DILocation(line: 1990, column: 80, scope: !414, inlinedAt: !416)
+!441 = !DILocation(line: 2003, column: 18, scope: !357, inlinedAt: !403)
+!442 = !DILocation(line: 7, column: 10, scope: !353)
+!443 = !DILocation(line: 7, column: 3, scope: !353)
+!444 = !DILocation(line: 2000, column: 59, scope: !445, inlinedAt: !408)
+!445 = distinct !DILexicalBlock(scope: !405, file: !358, line: 2000, column: 51)
+!446 = !DILocation(line: 2000, column: 52, scope: !445, inlinedAt: !408)
+!447 = !DILocation(line: 8, column: 1, scope: !353)

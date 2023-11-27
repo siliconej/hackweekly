@@ -1,0 +1,30 @@
+{
+  "ad_type": "interstitial",
+  "qdata": "x",
+  "ad_networks": [{
+                  "adapters": ["com.google.ads.mediation.admob.AdMobAdapter"],
+                  "allocation_id": "123","id": "https://example.com/aclk?",
+                  "data": {
+                  "pubid": "ca-app-pub-1234567890123456/1234567890"
+                  },
+                  "ad": {
+                  "ad_html": "<!DOCTYPE HTML><html>  <head>    <script>  window.textClicked = function() {        openBrowser();      };          window.openBrowser = function() {        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/open?a=browser&u=http%3A%2F%2Fempty_response.com';        document.body.appendChild(iframe);      };          window.sendGrantReward = function() {        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/reward?action=grant&type=cow&amount=7';        document.body.appendChild(iframe);      };      window.AFMA_ReceiveMessage = function(ev) {        if (ev != 'onshow') {          return;        }        var iframe = document.createElement('iframe');        iframe.style.display = 'none';        iframe.src =            'gmsg://mobileads.google.com/reward?action=video_start';        document.body.appendChild(iframe);      };    </script>  </head>  <body style=\"position:absolute; width:100%; height:100%; background-color: white;\">    <center>  <h2>        <a href=\"javascript:sendGrantReward();\" id=\"click-to-reward\">CLICK TO CLAIM REWARD</a>      </h2>     <h1 >        <a  href=\"javascript:textClicked();\" id=\"click-to-open\">CLICK TO OPEN</a>      </h1>    </center>  </body></html>",
+                  "ad_base_url": "https:\/\/googleads.g.doubleclick.net",
+                  "impression_urls": ["https://example.com/imp/tym1","https://example.com/imp/tym2"],
+                  "click_urls": ["https://example.com/clk?tym1", "https://example.com/clk?tym2"],
+                  "debug_dialog": "debug dialog",
+                  "disable_activation_and_scroll": true
+                  },
+                  "imp_urls": ["https://example.com/adview/mediation_network_1", "https://example.com/imp/mediation_network_2"],
+                  "clickurl": ["https://example.com/aclk?mediation_network_1","https://example.com/clk?mediation_network_2"],
+                  "fill_urls": ["https://example.com/fill/mediation_network_1","https://example.com/fill/mediation_network_2"],
+                  "video_start_urls": ["https://example.com/video_start/network1","https://example.com/video_start/network2"],
+                  "video_complete_urls": ["https://example.com/video_end/network1","https://example.com/video_end/network2"]
+                  }],
+  "settings": {
+    "click_urls": ["https://example.com/clk?server1","https://example.com/aclk?server2", "@gw_adnetid@"],
+    "imp_urls": ["https://example.com/imp/server1","https://example.com/adview/server2"],
+    "nofill_urls": ["https://google.com/nofill1","https://google.com/nofill2"],
+    "refresh": "60"
+  }
+}

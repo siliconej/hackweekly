@@ -1,0 +1,44 @@
+[
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "googleads.g.doubleclick.net",
+        "request_path": "/mads/gma"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/drx_banner_mediation.json",
+        "content_type": "javascript"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Content-Url-Opted-Out": "true",
+      "X-Afma-Mediation": "true",
+      "X-Afma-Use-Https": "false",
+      "X-Afma-Auto-Collect-Location": "true"
+    }
+  },
+  {
+    "request_filter": {
+      "request_host_path": {
+        "request_host": "pubads.g.doubleclick.net",
+        "request_path": "/gampad/ads"
+      }
+    },
+    "response": {
+      "file_asset": {
+        "asset_path": "javatests/com/google/android/apps/internal/admobsdk/mediumtest/genericapp/files/drx_banner.html",
+        "content_type": "html"
+      }
+    },
+    "extra_response_headers": {
+      "X-Afma-Gws-Query-Id": "oKekWMr4GJGcBZe6lvAH",
+      "X-Afma-Ad-Size": "320x50",
+      "X-Afma-Use-Https": "false",
+      "X-Afma-Ad-Slot-Size": "320x50",
+      "X-Afma-Auto-Collect-Location": "true",
+      "X-Afma-Content-Url-Opted-Out": "true"
+    }
+  }
+]

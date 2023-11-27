@@ -1,0 +1,18 @@
+{
+  "qdata": "x",
+  "ad_networks": [],
+  "settings": {
+    "ad_network_timeout_millis": 5000,
+    "ad_transition_anim": 0
+  },
+  "settings": {
+    "click_urls": [
+      "@gw_adnetid@"
+    ],
+    "imp_urls": [
+    ],
+    "nofill_urls": [
+      "http://www.google.com/no_fill_behaved"
+    ]
+  }
+}

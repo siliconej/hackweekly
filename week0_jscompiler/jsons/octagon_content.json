@@ -1,0 +1,63 @@
+{
+   "ads":[
+      {
+         "headline":"Lowest mortgage rates",
+         "body":"Your home sweet Queens home - cheaper and sooner than you think!",
+         "call_to_action":"Get a quote",
+         "advertiser":"NY Mortgage Inc.",
+         "image":{
+            "url":"https://tpc.googlesyndication.com/pagead/imgad?id=CICAgKCT6p-7ehABGAEyCCf7Gg6HXqby"
+         },
+         "secondary_image":{
+            "url":"https://tpc.googlesyndication.com/pagead/imgad?id=CICAgKCT6p-zfRABGAEyCAf5V54m7to1"
+         },
+         "tracking_urls_and_actions":{
+            "click_actions":[
+               {
+                  "type":2,
+                  "url":"http://www.google.com"
+               },
+               {
+                  "type":1,
+                  "url":"http://www.google.com"
+               }
+            ],
+            "impression_tracking_urls":[
+               "https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsvFhR7GTHXKaWvfmEM-BsWK-_QgjdzgwfkWYXSkx81hmlNfCIRm67wUyFp5BGRc2vNgu1LaZPMZ_1MhzywOkeZs8riQiVMNEqGqs7eERtrp9qDCZWEbJdJ0gzUBuB0hwZS99EWCHAObkogWmTK3ipLXwNjCWNlpOlh8cEbVD_lRV8ekpy_SiblPeprQ-XXdXt8-MGySUyN-QeBS07GJW9S84946ATqv46o1wlXfx1PhEO2ZEW35frWbsfUlnTOG7-IUjTi6a0ZM1moDd0mGv-lK2qj74fbLAo4uVKnwTWhPKORqXiZaEpuOQUNJIbe6rYl3wkPzB_DAJ1W3HhzL-JQ-2RguzEKCHj9kvac7Y4G2VM2qDeS802m5jTtv\u0026sai=AMfl-YQoYoazEnL85onN3pTAsWWJM4uJyiEqaNe72D_zaN_ktz_Rm6thjLJr6wkeabCCnGPBxlko_Z78vHmBNAShp7oStT29_4vD1Ec\u0026sig=Cg0ArKJSzHccCFOG393bEAE\u0026urlfix=1\u0026adurl=",
+               ""
+            ],
+            "downloaded_impression_tracking_urls": [
+               "https://www.google.com/inlinedDownloadedImp"
+            ],
+            "google_click_tracking_url":"http://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsuECxUyms0sEzoA4czlKgSodXP8KXLYwBvvOVqwc49B_3SfZTSVU2NinVptDYU9kwNDNsH-mCzfbyj49C_WqlCsU-f5MgkDFNtcHmyMe0FpvMQbuFySh2Q83NFVBAWI0WY4tgPHJOoQSiFOP3Dp1lfZfJ6mXFDOvuE5i-7MsB1O858YocgMYlcC-bxW98MWdrLm1vLjcYSvqnGu5nJz68PSr0iuZ4Tp4aAExqBHoijISVog9Np5FZ7IVfyY2i1YUMXSOiw-HDQxq0xc7_gu-vsMq14IptE270wYnYoo8fwLIti86XeyriIgjsF-E-I2NMNbW4Ukd8Shw5K0rKZ9p-HvaPkFZ893T24KIGMDG8rxz_4RBk7f\u0026sai=AMfl-YSABV7qVNTsVAyIFa_YvKjeA0IEgOZ4SKt_KgcpwjkMAPv_GvQNbnpu6Wl4mChi4sB4pB4PtvBZdlF3uIYQsyPoRFbhW-iENXM\u0026sig=Cg0ArKJSzMgqKEJuBonBEAE\u0026urlfix=1\u0026adurl=http://www.google.com",
+            "active_view":{
+               "click_string":"B4DoUaARUWtu5AomxBLz5g4ANAAAAABABOAGIAQHIAQnAAgLgAgDgBAGgBh_SCAUIgGEQAQ",
+               "is_active_view_immediate_enabled":true,
+               "activeview_cid":"CAASEuRov2B1TGyb55TMFo8wr8NJQA",
+               "is_time_on_screen_enabled":false,
+               "active_view_url_prefix":"https://pagead2.googlesyndication.com/pcs/activeview?xai=AKAOjsuz9V5Ox72udmHENo1sJk0gw5Ri3Rbay5l6BwLOxgNiw4q_O88ywJ6SerOd3vrK4SXZaf6_EQCrfAK71bmuxP5iFt47YaBcsUk\u0026sig=Cg0ArKJSzCYW6Y8hj6LdEAE"
+            },
+            "gws_query_id":"aARUWu-mAYvrBYqOi5gO",
+            "signal_configuration":{
+               "impression_ping":1,
+               "click_ping":2
+            }
+         },
+         "type":"native",
+         "template_id":"1",
+         "attribution":{
+            "url":"https://support.google.com/adsense/troubleshooter/1631343",
+            "text":"adchoices",
+            "image":{
+               "url":"https://tpc.googlesyndication.com/pagead/images/adchoices/icon.png",
+               "width":15,
+               "height":15,
+               "scale":1
+            }
+         },
+         "is_first_party_ad":true,
+         "uuid":"bd33a959-8804-3aa0-16c1-46151ec41d47",
+         "is_privileged_process":false
+      }
+   ]
+}

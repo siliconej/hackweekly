@@ -1,0 +1,183 @@
+#include <iostream>
+#include "../ac_vm_jsvariant.h"
+
+using namespace altered_carbon::js;
+
+void test1() {
+  JsVariant a((int) 10);
+  JsVariant b((int) 20);
+  JsVariant c;
+  a.add(&c, b);  // c = a + b
+  assert(IS_NUMBER(&c));
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == 30);
+
+  a.sub(&c, b);  // c = a - b
+  assert(IS_NUMBER(&c));
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == -10);
+
+  a.mul(&c, b);  // c = a * b
+  assert(IS_NUMBER(&c));
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == 200);
+
+  a.div(&c, b);  // c = a / b
+  assert(IS_NUMBER(&c));
+  assert(IS_DOUBLE(&c));
+  assert(c.flt_v() == 0.5);
+
+  a.mod(&c, b);  // c = a % b
+  assert(IS_NUMBER(&c));
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == 10);
+}
+
+void test2() {
+  JsVariant a((int) 10);
+  JsVariant b((int) 20);
+
+  a += b;
+  assert(IS_NUMBER(&a));
+  assert(IS_INTEGER(&a));
+  assert(a.int_v() == 30);
+
+  a -= b;
+  assert(IS_NUMBER(&a));
+  assert(IS_INTEGER(&a));
+  assert(a.int_v() == 10);
+
+  a *= b;
+  assert(IS_NUMBER(&a));
+  assert(IS_INTEGER(&a));
+  assert(a.int_v() == 200);
+
+  a /= b;
+  assert(IS_NUMBER(&a));
+  assert(IS_INTEGER(&a));
+  assert(a.int_v() == 10);
+
+  a /= b;
+  assert(IS_NUMBER(&a));
+  assert(IS_DOUBLE(&a));
+  assert(a.flt_v() == 0.5);
+
+  b %= a;  // 
+  assert(IS_NUMBER(&b));
+  assert(b.isDouble());
+  assert(b.flt_v() == 0.0);
+}
+
+void test3() {
+  JsVariant a((int) 1);
+  JsVariant b((int) 0);
+  JsVariant c((double) 1.0);
+  JsVariant d((double) 0.0);
+  JsVariant e;
+
+  a.div(&e, b);
+  assert(e.isNumber());
+  assert(e.isDouble());
+  assert(e.isInfinite());
+  b.div(&e, b);
+  assert(e.isDouble());
+  assert(e.isNaN());
+
+  c.div(&e, d);
+  assert(e.isNumber());
+  assert(e.isDouble());
+  assert(e.isInfinite());
+  d.div(&e, d);
+  assert(e.isNumber());
+  assert(e.isDouble());
+  assert(e.isNaN());
+}
+
+void test4() {
+  JsVariant a(true);
+  JsVariant b;
+  a.valueOf(&b, JsVariant::JS_NUMBER);
+  a.conv(JsVariant::JS_NUMBER);
+  assert(b.isInteger());
+  assert(b.int_v() == 1);
+  assert(IS_INTEGER(&a));
+  assert(a.int_v() == 1);
+}
+
+void test5() {
+  JsVariant a;
+  assert(a.isUndefined());
+  JsVariant b((int) 1);
+  a += b;
+  assert(a.isNaN());
+  JsVariant c;
+  c <<= b;
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == 0);
+  c ^= b;
+  assert(IS_INTEGER(&c));
+  assert(c.int_v() == 1);
+}
+
+void test6() {
+  JsVariant a;
+  JsVariant b = JsConstants::NaN;
+  JsVariant c = (AC_JS_INTEGER) 1;
+  JsVariant d;
+  assert(a.isUndefined());
+  assert(b.isDouble());
+  assert(b.isNaN());
+
+  b.bwx(&d, c);
+  b ^= c;
+  assert(IS_NUMBER(&b));
+  assert(IS_INTEGER(&b));
+  assert(b.int_v() == 1);
+  assert(d.isNumber());
+  assert(d.isInteger());
+  assert(d.int_v() == 1);
+  b.lts(&d, c);
+  b >>= c;
+  assert(IS_NUMBER(&b));
+  assert(IS_INTEGER(&b));
+  assert(b.int_v() == 0);
+  assert(IS_NUMBER(&d));
+  assert(IS_INTEGER((&d));
+  assert(d.int_v() == 2);
+}
+
+void test7() {
+  JsVariant a = true;
+  JsVariant b = false;
+  JsVariant d;
+  assert(a != b);
+  assert(a.valueOf(&d, JsVariant::JS_NUMBER) == JsVariant((int) 1));
+  assert(b.valueOf(&d, JsVariant::JS_NUMBER) == JsVariant((int) 0));
+  assert(b.valueOf(&d, JsVariant::JS_NUMBER) == JsVariant((int) -0));
+  assert(IS_BOOLEAN(&a));
+  assert(a.bln_v());
+  assert(IS_BOOLEAN(&b));
+  assert(!b.bln_v());
+}
+
+void test8() {
+  JsVariant a = L"hello";
+  JsVariant b = L"world";
+  assert(a == L"hello");
+  assert(b == L"world");
+  a += b;
+  assert(a == L"helloworld");
+  assert(b == L"world");
+}
+
+int main(int argc, char** argv) {
+  test1();
+  test2();
+  test3();
+  test4();
+  test5();
+  test6();
+  test7();
+  test8();
+  return 0;
+}
