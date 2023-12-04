@@ -499,7 +499,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	X500Name issuer = parentIssuer;
 	byte[] certSignature = startCertSignature;
 	byte[] sigDigestBytes = startSigDigestBytes;
-	AsymmetricBlockCipher cipher = new RSAEngine();
+	final AsymmetricBlockCipher cipher = new RSAEngine();
 	final Stack<String> certChain = new Stack<String>();
 	do {
 	    X509CertificateHolder root = signingContext.resolveCertificate(issuer);

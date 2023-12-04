@@ -509,10 +509,10 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    final ASN1Sequence signerIdSeq = (ASN1Sequence) tsSignerInfo.getSID().getId();
 	    final ASN1Integer signerId = (ASN1Integer) signerIdSeq.getObjectAt(1);
 	    timestampSigningContext.setSignerId(signerId.getValue());
-            Certificate cert = timestampSigningContext.getSigningCertificate();
-	    ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
+            final Certificate cert = timestampSigningContext.getSigningCertificate();
+	    final ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
 	    for (int i = 0; i < tsAttrSeq.size(); ++i) {
-		LogUtil.V("▹unauth attribute: " +
+		LogUtil.V("▹unauth attr: " +
 			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
 	    }
 	    try {
@@ -692,7 +692,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    // Optional
 	    if (algoSeq.size() > 1 &&
 		algoSeq.getObjectAt(1) instanceof ASN1TaggedObject) {
-		ASN1Encodable mdsObj = ((ASN1TaggedObject) algoSeq.getObjectAt(1)).getBaseObject();
+		final ASN1Encodable mdsObj = ((ASN1TaggedObject) algoSeq.getObjectAt(1)).getBaseObject();
 		if (mdsObj instanceof ASN1Sequence) {
 		    final ASN1Sequence mdsSeq = (ASN1Sequence) mdsObj;
 		    if (mdsSeq.size() > 0 && (mdsSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {

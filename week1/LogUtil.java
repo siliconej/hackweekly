@@ -64,7 +64,6 @@ public final class LogUtil {
     public static final void R(String header, String objectNum, boolean verifyStatus) {
         System.out.println("\u001b[4m" + header + " Signature\u001b[0m \u001b[48;5;236m\u001b[38;5;251m ⁕ " +
                            objectNum + " " + "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001b[0m");
-        System.out.println();
     }
 
     public static final void debugByteArrayString(final String header, final byte[] buffer) {
