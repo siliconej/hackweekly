@@ -27,6 +27,10 @@ import io.reddart.pkcs.PkcsIdentifiers;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
+/**
+ * Utility class that helps maps ObjectIdentifier to literal name of a
+ * message digest or a cipher.
+ */
 public final class IdUtil implements PkcsIdentifiers {
 
     private static final Map<String, String> _DigestAlgorithmIdMap =
@@ -64,12 +68,20 @@ public final class IdUtil implements PkcsIdentifiers {
 		{ OID_PKCS_ECDSA_SHA384, "SHA-384" },
 		{ OID_PKCS_ECDSA_SHA512, "SHA-512" },
             }).collect(Collectors.toMap($ -> $[0], $ -> $[1]));
-    
+
+    /**
+     * Returns the friendly message digest algorithm name given
+     * the ObjectIdentifier.
+     */
     public static final String getDigestAlgorithmId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
 	return getDigestAlgorithmId(oid.getId());
     }
 
+    /**
+     * Returns the friendly message digest algorithm name given
+     * the dot-seperated OID string
+     */
     public static final String getDigestAlgorithmId(String oid)
 	throws IllegalArgumentException {
 	final String id = _DigestAlgorithmIdMap.get(oid);
@@ -79,11 +91,19 @@ public final class IdUtil implements PkcsIdentifiers {
 	return id;
     }
 
+    /**
+     * Returns the friendly asymmetric cipher algorithm name given
+     * the ObjectIdentifier.
+     */
     public static final String getSignatureAlgorithmId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
 	return getSignatureAlgorithmId(oid.getId());
     }
 
+    /**
+     * Returns the friendly asymmetric cipher algorithm name given
+     * the dot-seperated OID string.
+     */
     public static final String getSignatureAlgorithmId(String oid)
 	throws IllegalArgumentException {
 	final String id = _SignatureAlgorithmIdMap.get(oid);
@@ -93,11 +113,19 @@ public final class IdUtil implements PkcsIdentifiers {
 	return id;
     }
 
+    /**
+     * Returns the friendly message digest and asymmetric cipher combo name
+     * given the ObjectIdentifier.
+     */
     public static final String getSignatureDigestId(ASN1ObjectIdentifier oid)
 	throws IllegalArgumentException {
 	return getSignatureDigestId(oid.getId());
     }
 
+    /**
+     * Returns the friendly message digest and asymmetric cipher combo name
+     * given the dot-seperated OID string.
+     */
     public static final String getSignatureDigestId(String oid)
 	throws IllegalArgumentException {
 	final String id = _SignatureDigestIdMap.get(oid);
@@ -107,5 +135,8 @@ public final class IdUtil implements PkcsIdentifiers {
 	return id;
     }
 
+    /**
+     * No reason to instantiate this class.
+     */
     private IdUtil() {}
 }

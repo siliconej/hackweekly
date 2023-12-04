@@ -18,6 +18,9 @@
  */
 package io.reddart.util;
 
+/**
+ * Logging utility class.
+ */
 public final class LogUtil {
 
     static boolean _VERBOSE = false;
@@ -91,4 +94,8 @@ public final class LogUtil {
         return sb.append("\u001B[0m]").toString();
     }
 
+    /**
+     * No reason to instantiate this class.
+     */
+    private LogUtil() {}
 }

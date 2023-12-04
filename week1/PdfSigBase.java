@@ -112,6 +112,9 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.util.DigestFactory;
 import org.bouncycastle.crypto.engines.RSAEngine;
 
+/**
+ * Base abstract class of both Signature Verifier and Signature Signeer.
+ */
 public abstract class PdfSigBase implements PkcsIdentifiers {
 
     private static class DecryptHelper {
@@ -331,6 +334,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	_pdfFile = new File(pdfFileName);
     }
 
+    /**
+     * Helper function that look for an <code>ASN1Encodable</code> object in the sequence
+     * and cast it into the appropriate object.
+     */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Sequence obj, int index, Class<T> dataType) {
         try {
 	    if (obj.size() >= index) {
@@ -342,6 +349,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return null;
     }
 
+    /**
+     * Helper function that look for an <code>ASN1Set</code> object in the sequence
+     * and cast it into the appropriate object.
+     */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Set obj, int index, Class<T> dataType) {
         try {
             if (obj.size() >= index) {
