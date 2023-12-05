@@ -296,6 +296,9 @@ public final class PdfSigVerifier extends PdfSigBase {
 	throw new RuntimeException("Use io.reddart.pdf.PdfSigCreator instead.");
     }
 
+    /**
+     * The main entry of the signature verifier.
+     */
     public static final void main(String[] args) throws Exception {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
 	File pkcs12file = null;

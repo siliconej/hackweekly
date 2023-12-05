@@ -186,6 +186,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 				 params);
 	}
 
+	/**
+	 * Decrypt byte arrary given the mode type
+	 */
 	public byte[] decrypt(byte[] in) throws InvalidCipherTextException {
 	    byte[] decryptedBytes = null;
 	    int len;
@@ -470,6 +473,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	}
     }
 
+    /**
+     * Return the byte array given the byte range defined in the <code>COSArray</code>
+     * object.
+     */
     protected byte[] getCOSBytesInRange(COSArray byteRanges) {
 	FileInputStream fis = null;
 	try {
@@ -556,8 +563,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	return false;
     }
 
-    protected static final boolean verify(AsymmetricBlockCipher cipher, CipherParameters params,
-					  byte[] encryptedBytes, byte[] clearBytes)
+    protected static final boolean verify(AsymmetricBlockCipher cipher,
+					  CipherParameters params,
+					  byte[] encryptedBytes,
+					  byte[] clearBytes)
         throws InvalidCipherTextException {
         cipher.init(false,  // for encryption?
 		    params);
@@ -568,8 +577,10 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
                 (castObjectAt(decryptedSeq, 1, ASN1OctetString.class).getOctets(), clearBytes));
     }
 
-    protected static final boolean verify(DSA cipher, CipherParameters params,
-					  ASN1Sequence encDigestSequence, byte[] plainDigest) {
+    protected static final boolean verify(DSA cipher,
+					  CipherParameters params,
+					  ASN1Sequence encDigestSequence,
+					  byte[] plainDigest) {
         cipher.init(false,  // for signing?
 		    params);
         final BigInteger r = castObjectAt(encDigestSequence, 0, ASN1Integer.class).getValue();
@@ -579,15 +590,20 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         return cipher.verifySignature(plainDigest, r, s);
     }
 
-    protected static final boolean verify(DSA cipher, CipherParameters params,
-					  byte[] encryptedBytes, byte[] clearBytes)
+    protected static final boolean verify(DSA cipher,
+					  CipherParameters params,
+					  byte[] encryptedBytes,
+					  byte[] clearBytes)
 	throws IOException {
 	return verify(cipher, params,
 		      (ASN1Sequence) ASN1Primitive.fromByteArray(encryptedBytes), clearBytes);
     }
 
-    protected static final boolean verifyMac(AlgorithmIdentifier digestObject, byte[] data,
-					     byte[] md, String pass, ASN1Sequence macSeq)
+    protected static final boolean verifyMac(AlgorithmIdentifier digestObject,
+					     byte[] data,
+					     byte[] md,
+					     String pass,
+					     ASN1Sequence macSeq)
 	    throws NoSuchAlgorithmException {
 	final String digestId = IdUtil.getDigestAlgorithmId(digestObject.getAlgorithm());
 	final PBEParamsHelper digestHelper = new PBEParamsHelper(digestId,
@@ -621,7 +637,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      * @param digestInASN1 true if the encrypted digest data is in ASN.1 encoding
      */
     public static boolean verifySignature(PdfSigningContext signingContext,
-                                          X509CertificateHolder certHolder, TBSCertificate tbsCert)
+                                          X509CertificateHolder certHolder,
+					  TBSCertificate tbsCert)
 	throws IOException, InvalidCipherTextException {
 	final PdfSigningContext.SignatureType signatureType = signingContext.getSignatureType();
 	final AsymmetricCipherType cipherType = signingContext.getDerivedCipherType();
@@ -790,6 +807,9 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
         return outputBlock;
     }
 
+    /**
+     * Load certificates from a P12 file
+     */
     protected static void loadCertBags(ASN1Primitive rootPrim, String password)
 	throws NoSuchAlgorithmException, InvalidCipherTextException, IOException {
 
