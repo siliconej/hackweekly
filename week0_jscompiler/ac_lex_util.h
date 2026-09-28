@@ -26,7 +26,7 @@ bool get_file_contents(std::string *contents, const char *filename);
 template<typename K, typename V> struct TrieNode {
   K key_;
   V value_;
-  std::vector<const TrieNode> nodes_;
+  std::vector<TrieNode> nodes_;
 };
 
 enum SearchStrategy {

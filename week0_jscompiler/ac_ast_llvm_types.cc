@@ -18,11 +18,10 @@ StructType* fillJsVariantTypeBody(
   LLVMContext& ctx, StructType* jsVariantTy, StructType* jsVariantFuncTy) {
   Type* union_args[] = { jsVariantFuncTy, ArrayType::get(Type::getInt8Ty(ctx), 24) };
   StructType* unionTy = StructType::create(
-      ctx, makeArrayRef<Type*>(union_args, 2), ANONYMOUS_UNION_NAME);
+      ctx, ArrayRef<Type*>(union_args, 2), ANONYMOUS_UNION_NAME);
   Type* class_args[] = {
     // 1. VTable.
-    FunctionType::get(Type::getInt32Ty(ctx), /* isVarARg = */ true)
-        ->getPointerTo()->getPointerTo(),
+    PointerType::getUnqual(ctx),
     // 2. Variant type.
     Type::getInt32Ty(ctx),
     // 3. Union of different payload.
@@ -33,9 +32,9 @@ StructType* fillJsVariantTypeBody(
 
 StructType* createArrayRefType(LLVMContext& ctx, Type* elementTy) {
   Type* class_args[] = {
-      elementTy->getPointerTo(), Type::getInt64Ty(ctx) };
+      PointerType::getUnqual(ctx), Type::getInt64Ty(ctx) };
   return StructType::create(
-      ctx, makeArrayRef<Type*>(class_args, 2), LLVM_ARRAY_REF_TYPE);
+      ctx, ArrayRef<Type*>(class_args, 2), LLVM_ARRAY_REF_TYPE);
 }
 
 StructType* createJsVariantNumberType(LLVMContext& ctx) {
@@ -55,56 +54,52 @@ StructType* createJsVariantNumberType(LLVMContext& ctx) {
 
 StructType* createJsVariantFuncType(LLVMContext& ctx, Type* jsvpTy) {
   Type* returnTy = Type::getVoidTy(ctx);
-  Type* args[] = { jsvpTy, jsvpTy, jsvpTy->getPointerTo(), Type::getInt64Ty(ctx) };
+  Type* args[] = { jsvpTy, jsvpTy, PointerType::getUnqual(ctx), Type::getInt64Ty(ctx) };
   FunctionType* funcTy = FunctionType::get(returnTy, args, /* isVarArg = */ false);
-  Type* class_args[] = { funcTy->getPointerTo(), Type::getInt32Ty(ctx)->getPointerTo() };
+  Type* class_args[] = { PointerType::getUnqual(ctx), PointerType::getUnqual(ctx) };
   return StructType::create(ctx, class_args, JS_VARIANT_FUNC_TYPE);
 }
 
 StructType* createJsVariantIteratorType(
     LLVMContext& ctx, Type* refCountedArrayTy, Type* nodeTy) {
   StructType* iteratorTy = StructType::create(ctx, JS_VARIANT_ITERATOR_TYPE);
-  iteratorTy->setBody(refCountedArrayTy, nodeTy->getPointerTo(),
-      Type::getInt32Ty(ctx), Type::getInt32Ty(ctx));
+  iteratorTy->setBody({refCountedArrayTy, PointerType::getUnqual(ctx),
+      Type::getInt32Ty(ctx), Type::getInt32Ty(ctx)});
   return iteratorTy;
 }
 
 StructType* createJsValueType(LLVMContext& ctx) {
   Type* args[] = {
     // VTable.
-    FunctionType::get(Type::getInt32Ty(ctx), /* isVarArg = */ true)
-        ->getPointerTo()->getPointerTo(),
+    PointerType::getUnqual(ctx),
     // value_type
     Type::getInt32Ty(ctx),
     // member functions.
     ArrayType::get(Type::getInt8Ty(ctx), 4)
   };
-  return StructType::create(ctx, makeArrayRef<Type*>(args, 3),
+  return StructType::create(ctx, ArrayRef<Type*>(args, 3),
       JS_VALUE_TYPE, /* isPacked = */ true);
 }
 
 StructType* createJsValueBaseType(LLVMContext& ctx) {
-  return StructType::create(JS_VALUE_BASE_TYPE,
-      FunctionType::get(Type::getInt32Ty(ctx), /* isVarArg = */ true)->
-          getPointerTo()->getPointerTo(), Type::getInt32Ty(ctx));
+  return StructType::create(ctx, {PointerType::getUnqual(ctx), Type::getInt32Ty(ctx)}, JS_VALUE_BASE_TYPE);
 }
 
 StructType* createAutoPtrTypeOf(LLVMContext& ctx, const Type* pointerTy) {
   return StructType::create(
-      ctx, makeArrayRef<Type*>(pointerTy->getPointerTo()),
+      ctx, ArrayRef<Type*>(PointerType::getUnqual(ctx)),
       STD_AUTO_PTR_TYPE);
 }
 
 StructType* createAutoPtrRefTypeOf(
     LLVMContext& ctx, const Type* pointerTy) {
   return StructType::create(
-      ctx, makeArrayRef<Type*>(pointerTy->getPointerTo()),
+      ctx, ArrayRef<Type*>(PointerType::getUnqual(ctx)),
       STD_AUTO_PTR_REF_TYPE);
 }
 
 Type* createCompressedPairTypeOf(LLVMContext& ctx, Type* pointerTy) {
-  return StructType::create(STD_COMPRESSED_PAIR_TYPE, StructType::create(
-      STD_COMPRESSED_PAIR_ELEM_TYPE, pointerTy));
+  return StructType::create(ctx, {StructType::create(ctx, {pointerTy}, STD_COMPRESSED_PAIR_ELEM_TYPE)}, STD_COMPRESSED_PAIR_TYPE);
 }
 
 void createUniquePtrTypesOf(LLVMContext& ctx,
@@ -113,15 +108,13 @@ void createUniquePtrTypesOf(LLVMContext& ctx,
     StructType** uniquePtrNatTy,
     StructType** defaultDeleteTy) {
   if (!!uniquePtrTy) {
-    *uniquePtrTy = StructType::create(STD_UNIQUE_PTR_TYPE, pairTy);
+    *uniquePtrTy = StructType::create(ctx, {pairTy}, STD_UNIQUE_PTR_TYPE);
   }
   if (!!defaultDeleteTy) {
-    *defaultDeleteTy = StructType::create(
-        STD_DEFAULT_DELETE_TYPE, Type::getInt8Ty(ctx));
+    *defaultDeleteTy = StructType::create(ctx, {Type::getInt8Ty(ctx)}, STD_DEFAULT_DELETE_TYPE);
   }
   if (!!uniquePtrNatTy) {
-    *uniquePtrNatTy = StructType::create(
-        STD_UNIQUE_PTR_NAT_TYPE, Type::getInt32Ty(ctx));
+    *uniquePtrNatTy = StructType::create(ctx, {Type::getInt32Ty(ctx)}, STD_UNIQUE_PTR_NAT_TYPE);
   }
 }
 
@@ -135,83 +128,72 @@ StructType* createJsValueRefTypeOf(LLVMContext& ctx,
   FunctionType* vtabTy = FunctionType::get(Type::getInt32Ty(ctx), /* isVarArg = */ true);
   Type* args1[] = {
     // VTable.
-    vtabTy->getPointerTo()->getPointerTo(),
+    PointerType::getUnqual(ctx),
     // value_type.
     Type::getInt64Ty(ctx)
   };
   *sharedCountTy = StructType::create(
-      ctx, makeArrayRef<Type*>(args1, 2), STD_SHARED_COUNT_TYPE);
-  *sharedWeakCountTy = StructType::create(
-      STD_SHARED_WEAK_COUNT_TYPE, *sharedCountTy, Type::getInt64Ty(ctx));
-  *sharedPtrTy = StructType::create(
-      STD_SHARED_PTR_TYPE,
-      pointerTy->getPointerTo(), (*sharedWeakCountTy)->getPointerTo());
-  *sharedPtrNatTy = StructType::create(
-      STD_SHARED_PTR_NAT_TYPE, Type::getInt32Ty(ctx));
-  *sharedPtrPointerTy = StructType::create(
-      STD_SHARED_PTR_POINTER_TYPE, *sharedWeakCountTy,
-      createCompressedPairTypeOf(ctx, pairTy));
+      ctx, ArrayRef<Type*>(args1, 2), STD_SHARED_COUNT_TYPE);
+  *sharedWeakCountTy = StructType::create(ctx, {*sharedCountTy, Type::getInt64Ty(ctx)}, STD_SHARED_WEAK_COUNT_TYPE);
+  *sharedPtrTy = StructType::create(ctx, {PointerType::getUnqual(ctx), PointerType::getUnqual(ctx)}, STD_SHARED_PTR_TYPE);
+  *sharedPtrNatTy = StructType::create(ctx, {Type::getInt32Ty(ctx)}, STD_SHARED_PTR_NAT_TYPE);
+  *sharedPtrPointerTy = StructType::create(ctx, {*sharedWeakCountTy,
+      createCompressedPairTypeOf(ctx, pairTy)}, STD_SHARED_PTR_POINTER_TYPE);
   Type* args2[] = {
     // VTable.
-    vtabTy->getPointerTo()->getPointerTo(),
+    PointerType::getUnqual(ctx),
     // value_type.
     *sharedPtrTy };
   return StructType::create(
-    ctx, makeArrayRef<Type*>(args2, 2), JS_VALUE_REF_TYPE);
+    ctx, ArrayRef<Type*>(args2, 2), JS_VALUE_REF_TYPE);
 }
 
 Type* createBasicStringType(LLVMContext& ctx) {
-  Type* structStringLongTy = StructType::create(
-      STD_BASIC_STRING_LONG_TYPE,
-      Type::getInt64Ty(ctx), Type::getInt64Ty(ctx),
-      Type::getInt32Ty(ctx)->getPointerTo());
-  Type* unionBasicStringTy = StructType::create(
-      ANONYMOUS_UNION_NAME, structStringLongTy);
-  Type* structStringRepTy = StructType::create(
-      STD_BASIC_STRING_REP_TYPE, unionBasicStringTy);
+  Type* structStringLongTy = StructType::create(ctx, {Type::getInt64Ty(ctx), Type::getInt64Ty(ctx),
+      PointerType::getUnqual(ctx)}, STD_BASIC_STRING_LONG_TYPE);
+  Type* unionBasicStringTy = StructType::create(ctx, {structStringLongTy}, ANONYMOUS_UNION_NAME);
+  Type* structStringRepTy = StructType::create(ctx, {unionBasicStringTy}, STD_BASIC_STRING_REP_TYPE);
 
-  Type* basicStringTy = StructType::create(
-      STD_BASIC_STRING_TYPE, createCompressedPairTypeOf(ctx, structStringRepTy));
+  Type* basicStringTy = StructType::create(ctx, {createCompressedPairTypeOf(ctx, structStringRepTy)}, STD_BASIC_STRING_TYPE);
   return basicStringTy;
 }
 
 StructType* createLexNumberType(LLVMContext& ctx) {
-  Type* unionTy = StructType::create(ctx, makeArrayRef(
+  Type* unionTy = StructType::create(ctx, ArrayRef(
       Type::getDoubleTy(ctx)), ANONYMOUS_UNION_NAME);
   Type* args[] = {
     // VTable.
-    FunctionType::get(Type::getInt32Ty(ctx), /* isVarArg = */ true)
-        ->getPointerTo()->getPointerTo(),
+    PointerType::getUnqual(ctx),
     // is_integer_.
     Type::getInt8Ty(ctx),
     // union of double and long long.
     unionTy
   };
-  return StructType::create(ctx, makeArrayRef<Type*>(args, 3),
+  return StructType::create(ctx, ArrayRef<Type*>(args, 3),
       LEX_NUMBER_TYPE);
 }
 
 StructType* createJsPrimitiveType(LLVMContext& ctx, Type* base1Ty, Type* base2Ty) {
   Type* args[] = { base1Ty, base2Ty };
   return StructType::create(
-      ctx, makeArrayRef(args, 2), JS_PRIMITIVE_TYPE);
+      ctx, ArrayRef(args, 2), JS_PRIMITIVE_TYPE);
 }
 
 StructType* createJsPrimitiveBaseType(LLVMContext& ctx, Type* baseTy) {
   Type* args[] = { baseTy, Type::getInt8Ty(ctx) };
   return StructType::create(
-      ctx, makeArrayRef(args, 2), JS_PRIMITIVE_BASE_TYPE);
+      ctx, ArrayRef(args, 2), JS_PRIMITIVE_BASE_TYPE);
 }
 
 StructType* createJsBooleanType(LLVMContext& ctx, Type* baseTy) {
   Type* args[] = { baseTy, ArrayType::get(Type::getInt8Ty(ctx), 3) };
   return StructType::create(
-      ctx, makeArrayRef(args, 2), JS_BOOLEAN_TYPE);
+      ctx, ArrayRef(args, 2), JS_BOOLEAN_TYPE);
 }
 
 StructType* createTypeBasedOf(
     LLVMContext& ctx, Type* baseTy, const char* name) {
-  return StructType::create(ctx, makeArrayRef(baseTy), name);
+  return StructType::create(ctx, ArrayRef(baseTy), name);
 }
 
 Type* createLLVMContextImplType(LLVMContext& ctx) {
@@ -220,22 +202,22 @@ Type* createLLVMContextImplType(LLVMContext& ctx) {
 
 Type* createLLVMContextType(LLVMContext& ctx, Type* baseTy) {
   return StructType::create(
-      ctx, makeArrayRef<Type*>(baseTy->getPointerTo()),
+      ctx, ArrayRef<Type*>(PointerType::getUnqual(ctx)),
       LLVM_LLVMCONTEXT_TYPE);
 }
 
 Type* createLLVMTypeType(LLVMContext& ctx, Type* baseTy) {
   StructType* typeTy = StructType::create(ctx, LLVM_TYPE_TYPE);
-  typeTy->setBody(
-      baseTy->getPointerTo(),
+  typeTy->setBody({
+      PointerType::getUnqual(ctx),
       Type::getInt32Ty(ctx), Type::getInt32Ty(ctx),
-      typeTy->getPointerTo()->getPointerTo());
+      PointerType::getUnqual(ctx)});
   return typeTy;
 }
 
 Type* createLLVMPointerIntPairType(LLVMContext& ctx) {
   return StructType::create(
-      ctx, makeArrayRef<Type*>(Type::getInt64Ty(ctx)),
+      ctx, ArrayRef<Type*>(Type::getInt64Ty(ctx)),
       LLVM_POINTER_INT_PAIR_TYPE);
 }
 
@@ -243,13 +225,13 @@ std::pair<Type*, Type*> createLLVMValueAndUseType(
     LLVMContext& ctx, Type* typeTy, Type* pointerIntPairTy) {
   StructType* valueTy = StructType::create(ctx, LLVM_VALUE_TYPE);
   StructType* useTy = StructType::create(ctx, LLVM_USE_TYPE);
-  valueTy->setBody(
-      typeTy->getPointerTo(), useTy->getPointerTo(),
+  valueTy->setBody({
+      PointerType::getUnqual(ctx), PointerType::getUnqual(ctx),
       Type::getInt8Ty(ctx), Type::getInt8Ty(ctx),
-      Type::getInt16Ty(ctx), Type::getInt32Ty(ctx));
-  useTy->setBody(
-      valueTy->getPointerTo(), useTy->getPointerTo(),
-      pointerIntPairTy);
+      Type::getInt16Ty(ctx), Type::getInt32Ty(ctx)});
+  useTy->setBody({
+      PointerType::getUnqual(ctx), PointerType::getUnqual(ctx),
+      pointerIntPairTy});
   return std::make_pair<Type*, Type*>(valueTy, useTy);
 }
 
@@ -259,47 +241,45 @@ namespace altered_carbon {
 namespace js {
 
 void BuiltInTypes::createRefCountedPtrArrayTypes(LLVMContext& ctx) {
-  Type* jsvtppTy = jsVariantTy_->getPointerTo()->getPointerTo();
+  Type* jsvtppTy = PointerType::getUnqual(ctx);
   StructType* vectorCompressedPairElementTy = StructType::create(
-     ctx, makeArrayRef(jsvtppTy), STD_COMPRESSED_PAIR_ELEM_TYPE);
+     ctx, ArrayRef(jsvtppTy), STD_COMPRESSED_PAIR_ELEM_TYPE);
   StructType* vectorCompressedPairTy = StructType::create(
-     ctx, makeArrayRef<Type*>(vectorCompressedPairElementTy),
+     ctx, ArrayRef<Type*>(vectorCompressedPairElementTy),
      STD_COMPRESSED_PAIR_TYPE);
 
   jsvVectorBaseTy_ = StructType::create(
      ctx, STD_VECTOR_BASE_TYPE);
-  jsvVectorBaseTy_->setBody(jsvtppTy, jsvtppTy, vectorCompressedPairTy);
+  jsvVectorBaseTy_->setBody({jsvtppTy, jsvtppTy, vectorCompressedPairTy});
   StructType* vectorTy = StructType::create(
-     ctx, makeArrayRef<Type*>(jsvVectorBaseTy_), STD_VECTOR_TYPE);
+     ctx, ArrayRef<Type*>(jsvVectorBaseTy_), STD_VECTOR_TYPE);
   rbTreeNodeTy_ = StructType::create(ctx, RB_TREE_NODE_TYPE);
-  rbTreeNodeTy_->setBody(
-      FunctionType::get(Type::getInt32Ty(ctx), /* isVarARg = */ true)
-        ->getPointerTo()->getPointerTo(),
+  rbTreeNodeTy_->setBody({
+      PointerType::getUnqual(ctx),
       Type::getInt32Ty(ctx),
       Type::getInt32Ty(ctx),
       Type::getInt32Ty(ctx),
       Type::getInt32Ty(ctx),
-      rbTreeNodeTy_->getPointerTo(),
-      rbTreeNodeTy_->getPointerTo(),
-      rbTreeNodeTy_->getPointerTo(),
-      vectorTy);
+      PointerType::getUnqual(ctx),
+      PointerType::getUnqual(ctx),
+      PointerType::getUnqual(ctx),
+      vectorTy});
   jsVariantArrayTy_ = StructType::create(ctx, JS_VARIANT_ARRAY_TYPE);
-  jsVariantArrayTy_->setBody(
-      FunctionType::get(Type::getInt32Ty(ctx), /* isVarARg = */ true)
-        ->getPointerTo()->getPointerTo(),
-      rbTreeNodeTy_->getPointerTo());
-  StructType* atomicBase1Ty = StructType::create(ctx, makeArrayRef<Type*>(
+  jsVariantArrayTy_->setBody({
+      PointerType::getUnqual(ctx),
+      PointerType::getUnqual(ctx)});
+  StructType* atomicBase1Ty = StructType::create(ctx, ArrayRef<Type*>(
       Type::getInt64Ty(ctx)), STD_ATOMIC_BASE_TYPE);
-  StructType* atomicBase2Ty = StructType::create(ctx, makeArrayRef<Type*>(
+  StructType* atomicBase2Ty = StructType::create(ctx, ArrayRef<Type*>(
       atomicBase1Ty), STD_ATOMIC_BASE_TYPE);
-  StructType* atomicTy = StructType::create(ctx, makeArrayRef<Type*>(
+  StructType* atomicTy = StructType::create(ctx, ArrayRef<Type*>(
       atomicBase2Ty), STD_ATOMIC_TYPE);
-  StructType* refCounterTy = StructType::create(ctx, makeArrayRef<Type*>(
+  StructType* refCounterTy = StructType::create(ctx, ArrayRef<Type*>(
       atomicTy), REF_COUNTER_TYPE);
   refCountedArrayTy_ = StructType::create(ctx, REF_COUNTED_TYPE);
-  refCountedArrayTy_->setBody(jsVariantArrayTy_, refCounterTy);
-  refCountedPtrArrayTy_ = StructType::create(ctx, makeArrayRef<Type*>(
-      refCountedArrayTy_->getPointerTo()), REF_COUNTED_PTR_TYPE);
+  refCountedArrayTy_->setBody({jsVariantArrayTy_, refCounterTy});
+  refCountedPtrArrayTy_ = StructType::create(ctx, ArrayRef<Type*>(
+      PointerType::getUnqual(ctx)), REF_COUNTED_PTR_TYPE);
 }
 
 void BuiltInTypes::createBuiltInTypes(LLVMContext& ctx) {
@@ -309,7 +289,7 @@ void BuiltInTypes::createBuiltInTypes(LLVMContext& ctx) {
   autoPtrTy_     = createAutoPtrTypeOf(ctx, jsValueTy_);
   autoPtrRefTy_  = createAutoPtrRefTypeOf(ctx, jsValueTy_);
   jsValuePairTy_ = createCompressedPairTypeOf(
-      ctx, jsValueTy_->getPointerTo());
+      ctx, PointerType::getUnqual(ctx));
 
   createUniquePtrTypesOf(ctx, jsValuePairTy_,
       &uniquePtrTy_, &uniquePtrNatTy_, &defaultDeleteTy_);
@@ -335,14 +315,14 @@ void BuiltInTypes::createBuiltInTypes(LLVMContext& ctx) {
      createTypeBasedOf(ctx, jsPrimitiveStringTy_, JS_STRING_TYPE);
 
   jsVariantTy_ = StructType::create(ctx, JS_VARIANT_TYPE);
-  jsVariantFuncTy_ = createJsVariantFuncType(ctx, jsVariantTy_->getPointerTo());
+  jsVariantFuncTy_ = createJsVariantFuncType(ctx, PointerType::getUnqual(ctx));
   jsVariantPayloadTy_ = fillJsVariantTypeBody(ctx, jsVariantTy_, jsVariantFuncTy_);
   jsVariantNumberTy_ = createJsVariantNumberType(ctx);
   createRefCountedPtrArrayTypes(ctx);
   jsVariantIteratorTy_ = createJsVariantIteratorType(
       ctx, refCountedPtrArrayTy_, rbTreeNodeTy_);
   arrayRefJsVariantPtrTy_ =
-      createArrayRefType(ctx, jsVariantTy_->getPointerTo());
+      createArrayRefType(ctx, PointerType::getUnqual(ctx));
 }
 
 void BuiltInTypes::createLLVMTypes(LLVMContext& ctx) {
@@ -361,7 +341,7 @@ void BuiltInTypes::createGlobalVariables(
     Module& module, LLVMContext& ctx, IRBuilder<>* builder,
     Function* destructFunc1, Function* destructFunc0) {
   // VTable ABI117 TypeInfo.
-  cxxabi117Gv_ = new GlobalVariable(module, Type::getInt8Ty(ctx)->getPointerTo(),
+  cxxabi117Gv_ = new GlobalVariable(module, PointerType::getUnqual(ctx),
                /* is constant = */ false, GlobalValue::ExternalLinkage,
                /* Initializer = */ nullptr, LIBCPP_CXXABI);
 
@@ -376,43 +356,43 @@ void BuiltInTypes::createGlobalVariables(
   // TypeInfo.
   Constant* typeinfo_constant_args[] = {
       dyn_cast<Constant>(builder->CreateBitCast(
-          builder->CreateConstInBoundsGEP1_64(cxxabi117Gv_, 2),
-          Type::getInt8Ty(ctx)->getPointerTo())),
+          builder->CreateConstInBoundsGEP1_64(
+              PointerType::getUnqual(ctx), cxxabi117Gv_, 2),
+          PointerType::getUnqual(ctx))),
       dyn_cast<Constant>(builder->CreateConstInBoundsGEP2_32(
           nameConst->getType(), jsVariantNameGv_, 0, 0)) };
   Constant* typeInfoConst = ConstantStruct::getAnon(
-                  makeArrayRef<Constant*>(typeinfo_constant_args, 2));
+                  ArrayRef<Constant*>(typeinfo_constant_args, 2));
   jsVariantTypeInfoGv_ = new GlobalVariable(module, typeInfoConst->getType(),
                   /* is constant = */ true, GlobalValue::LinkOnceODRLinkage,
                   /* Initializer = */ typeInfoConst, JS_VARIANT_TYPEINFO_INFO); 
   jsVariantTypeInfoGv_->setUnnamedAddr(GlobalValue::UnnamedAddr::None);
 
   // VTab.
-  ArrayType* vtabArrayTy = ArrayType::get(Type::getInt8Ty(ctx)->getPointerTo(), 4);
+  ArrayType* vtabArrayTy = ArrayType::get(PointerType::getUnqual(ctx), 4);
   Constant* vtab_constant_args[] = {
-      ConstantPointerNull::get(Type::getInt8Ty(ctx)->getPointerTo()),
+      ConstantPointerNull::get(PointerType::getUnqual(ctx)),
       dyn_cast<Constant>(builder->CreateBitCast(
-          jsVariantTypeInfoGv_, Type::getInt8Ty(ctx)->getPointerTo())),
+          jsVariantTypeInfoGv_, PointerType::getUnqual(ctx))),
       dyn_cast<Constant>(builder->CreateBitCast(
-          destructFunc1, Type::getInt8Ty(ctx)->getPointerTo())),
+          destructFunc1, PointerType::getUnqual(ctx))),
       dyn_cast<Constant>(builder->CreateBitCast(
-          destructFunc0, Type::getInt8Ty(ctx)->getPointerTo())) };
+          destructFunc0, PointerType::getUnqual(ctx))) };
   Constant* vtabArray = ConstantArray::get(vtabArrayTy,
-      makeArrayRef<Constant*>(vtab_constant_args, 4));
-  Constant* vTabConst = ConstantStruct::getAnon(makeArrayRef(vtabArray));
+      ArrayRef<Constant*>(vtab_constant_args, 4));
+  Constant* vTabConst = ConstantStruct::getAnon(ArrayRef(vtabArray));
   jsVariantVTabGv_ = new GlobalVariable(module, vTabConst->getType(),
       /* is constant = */ true, GlobalValue::LinkOnceODRLinkage,
       /* Initializer = */ vTabConst, JS_VARIANT_TYPEINFO_VTAB);
-  jsVariantVTabGv_->setAlignment(8);  // align as object.
+  jsVariantVTabGv_->setAlignment(Align(8));  // align as object.
   jsVariantVTabGv_->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
 
   // Create a convenient const to hold the GEP of jsVariantVTabGv_, to be used
   // frequently by the JsVariant initialization.
   Constant* gep_args[] = {
       builder->getInt32(0), builder->getInt32(0), builder->getInt32(2) };
-  Constant* gepConst = ConstantExpr::getGetElementPtr(
-      /* ty = */ nullptr, jsVariantVTabGv_, gep_args,
-      /* is_inbound = */ true, /* InRangeIndex = */ 1);
+  Constant* gepConst = ConstantExpr::getInBoundsGetElementPtr(
+      vTabConst->getType(), jsVariantVTabGv_, gep_args);
   jsVariantVTabGEPGv_ = new GlobalVariable(module, gepConst->getType(),
       /* is constant = */ true, GlobalValue::InternalLinkage,
       /* Initializer = */ gepConst, JS_VARIANT_TYPEINFO_VTAB_GEP);

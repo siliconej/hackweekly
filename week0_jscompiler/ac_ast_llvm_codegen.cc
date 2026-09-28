@@ -24,14 +24,15 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/Operator.h"
 
 using namespace llvm;
 
 ///////////////// Glue type definition between JS and VM //////////////////////
-#define ARR_ALIGNMENT 16
-#define OBJ_ALIGNMENT  8
-#define PTR_ALIGNMENT  8
-#define I32_ALIGNMENT  4
+#define ARR_ALIGNMENT Align(16)
+#define OBJ_ALIGNMENT Align(8)
+#define PTR_ALIGNMENT Align(8)
+#define I32_ALIGNMENT Align(4)
 
 #define AS_BOOLEAN_VTAB_INDEX 41
 
@@ -39,7 +40,7 @@ namespace {
 
 //// Allocation //////////////////////////////////////////////////////// 
 Value* createAllocaWithAlignAndInit(
-    IRBuilder<>* builder, BasicBlock* allocabb, Type* ty, int align,
+    IRBuilder<>* builder, BasicBlock* allocabb, Type* ty, Align align,
     const char* name = "ptr") {
   if (allocabb) {
     builder->SetInsertPoint(allocabb);
@@ -51,7 +52,7 @@ Value* createAllocaWithAlignAndInit(
 }
 
 Value* createAllocaWithAlignNoInit(
-    IRBuilder<>* builder, BasicBlock* allocabb, Type* ty, int align) {
+    IRBuilder<>* builder, BasicBlock* allocabb, Type* ty, Align align) {
   IRBuilderBase::InsertPoint saved = builder->saveIP();
   Value* ret = createAllocaWithAlignAndInit(builder, allocabb, ty, align);
   builder->restoreIP(saved);
@@ -59,11 +60,11 @@ Value* createAllocaWithAlignNoInit(
 }
 
 Value* createPtrAllocaAndDupOf(IRBuilder<>* builder, BasicBlock* allocabb,
-    Value* value, int align = PTR_ALIGNMENT) {
+    Value* value, Align align = PTR_ALIGNMENT) {
   Value* v = createAllocaWithAlignNoInit(builder, allocabb,
       value->getType(), align);
   builder->CreateAlignedStore(value, v, align);
-  return builder->CreateAlignedLoad(v, align);
+  return builder->CreateAlignedLoad(value->getType(), v, align);
 }
 
 //// Global Constants ////////////////////////////////////////////////// 
@@ -81,7 +82,7 @@ GlobalVariable* createGlobalWStringVariable(
       wstrConstant,
       /* GlobalVariableName = */ ".wstr");
   wstrGV->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
-  wstrGV->setAlignment(4);
+  wstrGV->setAlignment(Align(4));
   return wstrGV;
 }
 
@@ -98,7 +99,7 @@ GlobalVariable* createGlobalStringVariable(
       strConstant,
       /* GlobalVariableName = */ ".str");
   strGV->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
-  strGV->setAlignment(1);
+  strGV->setAlignment(Align(1));
   return strGV;
 }
 
@@ -106,6 +107,28 @@ GlobalVariable* createGlobalStringVariable(
 
 namespace altered_carbon {
 namespace js {
+
+Type* getPointeeType(const Value* v) {
+  if (const AllocaInst* alloca = dyn_cast<AllocaInst>(v)) {
+    return alloca->getAllocatedType();
+  }
+  if (const GlobalVariable* gv = dyn_cast<GlobalVariable>(v)) {
+    return gv->getValueType();
+  }
+  if (const GEPOperator* gep = dyn_cast<GEPOperator>(v)) {
+    return gep->getResultElementType();
+  }
+  return nullptr;
+}
+
+bool isWStringGlobal(const Value* v) {
+  const GlobalVariable* gv = dyn_cast<GlobalVariable>(v);
+  if (!gv) {
+    return false;
+  }
+  const ArrayType* ty = dyn_cast<ArrayType>(gv->getValueType());
+  return !!ty && ty->getElementType()->isIntegerTy(32);
+}
 
 //// Variable and Allocation Handeling ////////////////////////////////////////
 VariableMap::VariableMap(CodegenFuncContext* ctx) : ctx_(ctx) {
@@ -429,25 +452,29 @@ CodegenFuncContext* CodegenModuleContext::createFuncContext(
 Function* CodegenModuleContext::getOrCreateMakeJsPrimitiveFunction(
     const char* func_name, Type* type) {
   RETURN_FUNC_IF_EXIST(func_name);
-  Type* returnTy = Type::getInt64PtrTy(*context_);
+  Type* returnTy = PointerType::getUnqual(*context_);
   FunctionType* func_type = FunctionType::get(
-      returnTy, makeArrayRef<Type*>(type), /* isVarArg = */ false);
+      returnTy, ArrayRef<Type*>(type), /* isVarArg = */ false);
   return Function::Create(
       func_type, Function::ExternalLinkage, func_name, module_);
 }
 
 // All Defined JS Functions have the same FunctionType.
-Function* CodegenModuleContext::getOrCreateJsFunction(const char* func_name) {
-  RETURN_FUNC_IF_EXIST(func_name);
+FunctionType* CodegenModuleContext::getJsFunctionType() {
   Type* returnTy = Type::getVoidTy(*context_);
   Type* args[] = {
-      P_JS_VARIANT_TY, P_JS_VARIANT_TY, P_JS_VARIANT_TY->getPointerTo(),
+      P_JS_VARIANT_TY, P_JS_VARIANT_TY, PointerType::getUnqual(*context_),
       Type::getInt64Ty(*context_) };
-  Function *jsfunc = Function::Create(
-      FunctionType::get(returnTy, args, /* isVarArg = */ false),
+  return FunctionType::get(returnTy, args, /* isVarArg = */ false);
+}
+
+Function* CodegenModuleContext::getOrCreateJsFunction(const char* func_name) {
+  RETURN_FUNC_IF_EXIST(func_name);
+  Function *jsfunc = Function::Create(getJsFunctionType(),
       Function::ExternalLinkage, func_name, module_);
   jsfunc->addParamAttr(0, Attribute::NoAlias);
-  jsfunc->addParamAttr(0, Attribute::StructRet);
+  jsfunc->addParamAttr(0,
+      Attribute::getWithStructRetType(*context_, JS_VARIANT_TY));
   return jsfunc;
 }
 
@@ -473,7 +500,7 @@ Function* CodegenModuleContext::getOrCreateOpsFunction(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   Type* args[] = {
-    P_JS_VALUE_TY->getPointerTo(), Type::getInt32Ty(*context_),
+    PointerType::getUnqual(*context_), Type::getInt32Ty(*context_),
     P_JS_VALUE_TY, P_JS_VALUE_TY };
   return Function::Create(FunctionType::get(
       Type::getVoidTy(*context_), ArrayRef<Type*>(args, 4),
@@ -504,7 +531,7 @@ Function* CodegenModuleContext::getOrCreateJsVariantConstructorOrAssign(
 Function* CodegenModuleContext::getOrCreateJsVariantAssignArrayRef(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
-  Type* args[] = { P_JS_VARIANT_TY, P_JS_VARIANT_TY->getPointerTo(),
+  Type* args[] = { P_JS_VARIANT_TY, PointerType::getUnqual(*context_),
       Type::getInt64Ty(*context_) };
   Function* func = Function::Create(FunctionType::get(
       P_JS_VARIANT_TY, args, /* isVarArg = */ false),
@@ -520,7 +547,8 @@ Function* CodegenModuleContext::getOrCreateJsVariantSubscript(
       Type::getVoidTy(*context_), args,
       /* isVarArg = */ false), Function::ExternalLinkage, func_name, module_);
   func->addParamAttr(0, Attribute::NoAlias);
-  func->addParamAttr(0, Attribute::StructRet);
+  func->addParamAttr(0,
+      Attribute::getWithStructRetType(*context_, JS_VARIANT_TY));
   return func;
 }
 
@@ -531,7 +559,8 @@ Function* CodegenModuleContext::getOrCreateJsVariantSubscriptAccess(
   Function* func = Function::Create(FunctionType::get(
       P_JS_VARIANT_TY, args,
       /* isVarArg = */ false), Function::ExternalLinkage, func_name, module_);
-  func->addDereferenceableAttr(/* return type idx */ 0, sizeof(JsVariant));
+  func->addRetAttr(Attribute::getWithDereferenceableBytes(
+      *context_, sizeof(JsVariant)));
   return func;
 }
 
@@ -539,7 +568,7 @@ Function* CodegenModuleContext::getOrCreateJsVariantDestructor(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(FunctionType::get(
-      Type::getVoidTy(*context_), makeArrayRef<Type*>(P_JS_VARIANT_TY),
+      Type::getVoidTy(*context_), ArrayRef<Type*>(P_JS_VARIANT_TY),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
 }
@@ -564,9 +593,10 @@ Function* CodegenModuleContext::getOrCreateJsVariantOpFunc(
     func->addDereferenceableParamAttr(param_count, sizeof(JsVariant));
   }
   if (returnBool) {
-    func->addAttribute(/* return type idx */ 0, Attribute::ZExt);
+    func->addRetAttr(Attribute::ZExt);
   } else {
-    func->addDereferenceableAttr(/* return type idx */ 0, sizeof(JsVariant));
+    func->addRetAttr(Attribute::getWithDereferenceableBytes(
+      *context_, sizeof(JsVariant)));
   }
   return func;
 }
@@ -576,9 +606,10 @@ Function* CodegenModuleContext::getOrCreateJsVariantPostfixOpFunc(
   RETURN_FUNC_IF_EXIST(func_name);
   assert(param_count == 0);
   Function* func = Function::Create(FunctionType::get(
-      P_JS_VARIANT_TY, makeArrayRef<Type*>(P_JS_VARIANT_TY),
+      P_JS_VARIANT_TY, ArrayRef<Type*>(P_JS_VARIANT_TY),
       /* isVarArg = */ false), Function::ExternalLinkage, func_name, module_);
-  func->addDereferenceableAttr(/* return type idx */ 0, sizeof(JsVariant));
+  func->addRetAttr(Attribute::getWithDereferenceableBytes(
+      *context_, sizeof(JsVariant)));
   return func;
 }
 
@@ -597,7 +628,8 @@ Function* CodegenModuleContext::getOrCreateJsVariantUnaryOpFunc(
           Type::getVoidTy(*context_), args1,
           /* isVarArg = */ false), Function::ExternalLinkage, func_name, module_));
   func->addParamAttr(0, Attribute::NoAlias);
-  func->addParamAttr(0, Attribute::StructRet);
+  func->addParamAttr(0,
+      Attribute::getWithStructRetType(*context_, JS_VARIANT_TY));
   return func;
 }
 
@@ -605,10 +637,10 @@ Function* CodegenModuleContext::getOrCreateJsVariantAsBoolean(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   Function* func = Function::Create(FunctionType::get(
-      Type::getInt1Ty(*context_), makeArrayRef<Type*>(P_JS_VARIANT_TY),
+      Type::getInt1Ty(*context_), ArrayRef<Type*>(P_JS_VARIANT_TY),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
-  func->addAttribute(/* return type idx */ 0, Attribute::ZExt);
+  func->addRetAttr(Attribute::ZExt);
   return func;
 }
 
@@ -620,7 +652,8 @@ Function* CodegenModuleContext::getOrCreateRefCountedJsaBeginFunc(
       Type::getVoidTy(*context_), args, /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
   func->addParamAttr(0, Attribute::NoAlias);
-  func->addParamAttr(0, Attribute::StructRet);
+  func->addParamAttr(0,
+      Attribute::getWithStructRetType(*context_, JS_VARIANT_ITER_TY));
   return func;
 }
 
@@ -628,10 +661,11 @@ Function* CodegenModuleContext::getOrCreateJsVariantIteratorDerefFunc(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   Function* func = Function::Create(FunctionType::get(
-      P_JS_VARIANT_TY, makeArrayRef<Type*>(P_JS_VARIANT_ITER_TY),
+      P_JS_VARIANT_TY, ArrayRef<Type*>(P_JS_VARIANT_ITER_TY),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
-  func->addDereferenceableAttr(/* return type idx */ 0, sizeof(JsVariant));
+  func->addRetAttr(Attribute::getWithDereferenceableBytes(
+      *context_, sizeof(JsVariant)));
   return func;
 }
 
@@ -639,10 +673,11 @@ Function* CodegenModuleContext::getOrCreateJsVariantIteratorNextFunc(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   Function* func = Function::Create(FunctionType::get(
-      P_JS_VARIANT_TY, makeArrayRef<Type*>(P_JS_VARIANT_ITER_TY),
+      P_JS_VARIANT_TY, ArrayRef<Type*>(P_JS_VARIANT_ITER_TY),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
-  func->addDereferenceableAttr(/* return type idx */ 0, sizeof(JsVariant));
+  func->addRetAttr(Attribute::getWithDereferenceableBytes(
+      *context_, sizeof(JsVariant)));
   return func;
 }
 
@@ -658,50 +693,42 @@ Function* CodegenModuleContext::getOrCreateJsVariantIteratorResetFunc(
 }
 
 ////////////// Helper macros to make member access easier /////////////////////
-#define JSV_BOOLEAN_GEP(x) ( \
-    builder_->CreateBitCast(builder_-> \
-    CreateConstInBoundsGEP2_32(nullptr, x, 0, 2), \
-    Type::getInt8Ty(*context_)->getPointerTo()))
+// Pointers are opaque, so every GEP names the struct type it indexes into.
+// The payload union of JsVariant (field 2) is reinterpreted per variant type.
+#define PTR_TY              (PointerType::getUnqual(*context_))
+#define JSV_PAYLOAD_GEP(x)  (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_TY, x, 0, 2))
+#define JSV_BOOLEAN_GEP(x)      JSV_PAYLOAD_GEP(x)  // i8
+#define JSV_NUMBER_GEP(x)       JSV_PAYLOAD_GEP(x)  // JsVariantNumber
+#define JSV_FUNC_PTR_GEP(x)     JSV_PAYLOAD_GEP(x)  // JsVariantFunc
+#define JSV_ERROR_MSG_GEP(x)    JSV_PAYLOAD_GEP(x)  // i8*
+#define JSV_RC_PTR_ARRAY_GEP(x) JSV_PAYLOAD_GEP(x)  // RefCountedPtr
 
-#define JSV_NUMBER_GEP(x) ( \
-    builder_->CreateBitCast(builder_-> \
-    CreateConstInBoundsGEP2_32(nullptr, x, 0, 2), \
-    ty_.jsVariantNumberTy_->getPointerTo()))
-
-#define JSV_FUNC_PTR_GEP(x) ( \
-    builder_->CreateBitCast(builder_-> \
-    CreateConstInBoundsGEP2_32(nullptr, x, 0, 2), \
-    JS_VARIANT_FUNC_TY->getPointerTo()))
-
-#define JSV_ERROR_MSG_GEP(x) ( \
-    builder_->CreateBitCast(builder_-> \
-    CreateConstInBoundsGEP2_32(nullptr, x, 0, 2), \
-    Type::getInt8Ty(*context_)->getPointerTo()->getPointerTo()))
-
-#define JSV_RC_PTR_ARRAY_GEP(x) ( \
-    builder_->CreateBitCast(builder_-> \
-    CreateConstInBoundsGEP2_32(nullptr, x, 0, 2), \
-    RC_PTR_JSVA_TY->getPointerTo()))
-
-#define JSV_TYPE_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 1))
-#define JSN_INT_GEP(x)      (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 0))
-#define JSN_FLOAT_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 1))
-#define JSN_INT_FLG_GEP(x)  (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 2))
-#define JSA_ROOT_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 1))
-#define JSND_MIN_IDX_GEP(x) (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 1))
-#define JSND_MAX_IDX_GEP(x) (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 2))
-#define JSND_PARENT_GEP(x)  (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 5))
-#define JSND_LEFT_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 6))
-#define JSND_RIGHT_GEP(x)   (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 7))
-#define JSND_MEMBERS_GEP(x) (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 8))
-#define JSI_ARRAY_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 0))
-#define JSI_NODE_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 1))
-#define JSI_INDEX_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 2))
-#define JSI_STATUS_GEP(x)   (builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 3))
+#define JSV_TYPE_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_TY, x, 0, 1))
+#define JSN_INT_GEP(x)      (builder_->CreateConstInBoundsGEP2_32(ty_.jsVariantNumberTy_, x, 0, 0))
+#define JSN_FLOAT_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(ty_.jsVariantNumberTy_, x, 0, 1))
+#define JSN_INT_FLG_GEP(x)  (builder_->CreateConstInBoundsGEP2_32(ty_.jsVariantNumberTy_, x, 0, 2))
+#define JSA_ROOT_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_ARRAY_TY, x, 0, 1))
+#define JSND_MIN_IDX_GEP(x) (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 1))
+#define JSND_MAX_IDX_GEP(x) (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 2))
+#define JSND_PARENT_GEP(x)  (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 5))
+#define JSND_LEFT_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 6))
+#define JSND_RIGHT_GEP(x)   (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 7))
+#define JSND_MEMBERS_GEP(x) (builder_->CreateConstInBoundsGEP2_32(RB_TREE_NODE_TY, x, 0, 8))
+#define JSI_ARRAY_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_ITER_TY, x, 0, 0))
+#define JSI_NODE_GEP(x)     (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_ITER_TY, x, 0, 1))
+#define JSI_INDEX_GEP(x)    (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_ITER_TY, x, 0, 2))
+#define JSI_STATUS_GEP(x)   (builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_ITER_TY, x, 0, 3))
 
 #define RC_PTR_DOT_OP(x) ( \
-    builder_->CreateAlignedLoad( \
-    builder_->CreateConstInBoundsGEP2_32(nullptr, x, 0, 0), OBJ_ALIGNMENT))
+    builder_->CreateAlignedLoad(PTR_TY, \
+    builder_->CreateConstInBoundsGEP2_32(RC_PTR_JSVA_TY, x, 0, 0), OBJ_ALIGNMENT))
+
+// Typed loads of the common member kinds.
+#define LOAD_I8(x)     (builder_->CreateAlignedLoad(builder_->getInt8Ty(), x, OBJ_ALIGNMENT))
+#define LOAD_I32(x)    (builder_->CreateAlignedLoad(builder_->getInt32Ty(), x, OBJ_ALIGNMENT))
+#define LOAD_I64(x)    (builder_->CreateAlignedLoad(builder_->getInt64Ty(), x, OBJ_ALIGNMENT))
+#define LOAD_DOUBLE(x) (builder_->CreateAlignedLoad(builder_->getDoubleTy(), x, OBJ_ALIGNMENT))
+#define LOAD_PTR(x)    (builder_->CreateAlignedLoad(PTR_TY, x, OBJ_ALIGNMENT))
 
 // JsVariantNumber Helper.
 // JsVarintNumber: type <{ i64, double, i8, [7 x i8] }>
@@ -733,21 +760,19 @@ Value* CodegenModuleContext::maybeConvertOrAssignToJsVariant(
     Value* assignee, Value* v) {
   const Type* type = v->getType();
   if (type->isPointerTy()) {
-    type = static_cast<const PointerType*>(type)->getElementType();
-    if (type->isStructTy()) {
+    if (!isWStringGlobal(v)) {  // JsVariant*.
       if (!!assignee) {
         return current_func_->createJsVariantCopy(assignee, v);
       } else {
         return v;
       }
-    }
-    if (type->isArrayTy() && static_cast<const ArrayType*>(  // wstring.
-                 type)->getElementType()->isIntegerTy(32)) {
+    } else {  // wstring.
       return current_func_->createJsVariantAndAssignOf(
           current_func_->init_block_, &assignee,
           getOrCreateJsVariantConstructorOrAssign(
-              JS_VARIANT_ASSIGN_W, Type::getInt32PtrTy(*context_)),
-          builder_->CreateConstInBoundsGEP2_32(nullptr, v, 0, 0));
+              JS_VARIANT_ASSIGN_W, PointerType::getUnqual(*context_)),
+          builder_->CreateConstInBoundsGEP2_32(
+              cast<GlobalVariable>(v)->getValueType(), v, 0, 0));
     }
   }
 
@@ -781,7 +806,7 @@ Function* CodegenModuleContext::getOrCreateNewOpFunction(
     const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(
-      FunctionType::get(Type::getInt8PtrTy(*context_),
+      FunctionType::get(PointerType::getUnqual(*context_),
       ArrayRef<Type*>(Type::getInt64Ty(*context_)),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
@@ -792,7 +817,7 @@ Function* CodegenModuleContext::getOrCreateDelOpFunction(
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(
       FunctionType::get(Type::getVoidTy(*context_),
-      ArrayRef<Type*>(Type::getInt8PtrTy(*context_)),
+      ArrayRef<Type*>(PointerType::getUnqual(*context_)),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
 }
@@ -802,7 +827,7 @@ Function* CodegenModuleContext::getOrCreateJsValueConstructorOf(
     const char* func_name, Type* objectTy, Type* paramTy, bool zeroext) {
   RETURN_FUNC_IF_EXIST(func_name);
   Type* returnTy = Type::getVoidTy(*context_);
-  Type* args[] = { objectTy->getPointerTo(), paramTy };
+  Type* args[] = { PointerType::getUnqual(*context_), paramTy };
   FunctionType* func_type = FunctionType::get(
       returnTy, args, /* isVarArg = */ false);
   Function* func = Function::Create(
@@ -818,7 +843,7 @@ Function* CodegenModuleContext::getOrCreateJsValueRefConstructorV(
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(
       FunctionType::get(Type::getVoidTy(*context_),
-          makeArrayRef<Type*>(P_JS_VALUE_REF_TY),
+          ArrayRef<Type*>(P_JS_VALUE_REF_TY),
           /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
 }
@@ -827,7 +852,7 @@ Function* CodegenModuleContext::getOrCreateJsValueRefConstructorP(
     const char* func_name, Type* objectTy) {
   RETURN_FUNC_IF_EXIST(func_name);
   Type* args[] = {
-      P_JS_VALUE_REF_TY, objectTy->getPointerTo() };
+      P_JS_VALUE_REF_TY, PointerType::getUnqual(*context_) };
   return Function::Create(
       FunctionType::get(Type::getVoidTy(*context_),
           ArrayRef<Type*>(args, 2), /* isVarArg = */ false),
@@ -839,7 +864,7 @@ Function* CodegenModuleContext::getOrCreateJsValueRefDestructor(
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(
       FunctionType::get(Type::getVoidTy(*context_),
-          makeArrayRef<Type*>(P_JS_VALUE_REF_TY),
+          ArrayRef<Type*>(P_JS_VALUE_REF_TY),
           /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
 }
@@ -916,7 +941,7 @@ Function* CodegenModuleContext::getOrCreateWcslenFunc(const char* func_name) {
   RETURN_FUNC_IF_EXIST(func_name);
   return Function::Create(
       FunctionType::get(Type::getInt64Ty(*context_),
-      makeArrayRef<Type*>(Type::getInt32Ty(*context_)->getPointerTo()),
+      ArrayRef<Type*>(PointerType::getUnqual(*context_)),
       /* isVarArg = */ false),
       Function::ExternalLinkage, func_name, module_);
 }
@@ -954,7 +979,7 @@ Function* CodegenFuncContext::createModuleFunction() {
   // eventually we can pass in global parameters as well.
   Type* returnTy = Type::getVoidTy(*context_);
   FunctionType* func_type = FunctionType::get(
-      returnTy, makeArrayRef<Type*>(P_JS_VARIANT_TY),
+      returnTy, ArrayRef<Type*>(P_JS_VARIANT_TY),
       /* isVarArg = */ false);
   Function *script = Function::Create(
       func_type, Function::ExternalLinkage,
@@ -990,13 +1015,12 @@ std::string convertQNameToFuncName(const std::wstring& qname) {
 Value* CodegenFuncContext::createJsVariantAssignInlinableCheck(
     Value* dest, Value** destTypePtr, Value* src, Value** srcType) {
   *destTypePtr = JSV_TYPE_GEP(dest);
-  Value* check = builder_->CreateICmpSLE(builder_->CreateAlignedLoad( 
-      *destTypePtr, OBJ_ALIGNMENT), builder_->getInt32(JsVariant::JS_BOOLEAN));
+  Value* check = builder_->CreateICmpSLE(LOAD_I32(*destTypePtr), builder_->getInt32(JsVariant::JS_BOOLEAN));
   if (!src) {
     return check;
   }
   Value* srcTypePtr = JSV_TYPE_GEP(src);
-  *srcType = builder_->CreateAlignedLoad(srcTypePtr, OBJ_ALIGNMENT);
+  *srcType = LOAD_I32(srcTypePtr);
   Value* check2 = builder_->CreateICmpSLE(
       *srcType, builder_->getInt32(JsVariant::JS_BOOLEAN));
   return builder_->CreateAnd(check, check2);
@@ -1024,21 +1048,20 @@ Value* CodegenFuncContext::createJsVariantArrayBinarySearch(
   // return next;
 
   Value* curNodeAlloc = builder_->CreateAlloca(P_RB_TREE_NODE_TY);
-  builder_->CreateAlignedStore(builder_->CreateAlignedLoad(
-      JSA_ROOT_GEP(array), OBJ_ALIGNMENT), curNodeAlloc, OBJ_ALIGNMENT);
+  builder_->CreateAlignedStore(LOAD_PTR(JSA_ROOT_GEP(array)), curNodeAlloc, OBJ_ALIGNMENT);
  
   BasicBlock* loopBlock = BasicBlock::Create(*context_, "bsloop.bb", parent);
   BasicBlock* afterBlock = BasicBlock::Create(*context_, "bsend.bb", parent);
 
   // Step 1: Set the end condition
-  Value* curNode = builder_->CreateAlignedLoad(curNodeAlloc, OBJ_ALIGNMENT);
+  Value* curNode = LOAD_PTR(curNodeAlloc);
   Value* check0 = builder_->CreateIsNotNull(curNode);
   builder_->CreateCondBr(check0, loopBlock, afterBlock);
 
   // Step 2: check min > next->max_index_
   builder_->SetInsertPoint(loopBlock);
-  curNode = builder_->CreateAlignedLoad(curNodeAlloc, OBJ_ALIGNMENT);
-  Value* maxIdx = builder_->CreateAlignedLoad(JSND_MAX_IDX_GEP(curNode), OBJ_ALIGNMENT);
+  curNode = LOAD_PTR(curNodeAlloc);
+  Value* maxIdx = LOAD_I32(JSND_MAX_IDX_GEP(curNode));
   Value* check1 = builder_->CreateICmpSGT(idx, maxIdx);
   BasicBlock* bsIf1TBlock = BasicBlock::Create(*context_, "bsif1t.bb", parent);
   BasicBlock* bsIf1FBlock = BasicBlock::Create(*context_, "bsif1f.bb", parent);
@@ -1046,8 +1069,8 @@ Value* CodegenFuncContext::createJsVariantArrayBinarySearch(
 
   // Step 3: check !!next->right_
   builder_->SetInsertPoint(bsIf1TBlock);
-  curNode = builder_->CreateAlignedLoad(curNodeAlloc, OBJ_ALIGNMENT);
-  Value* rightNode = builder_->CreateAlignedLoad(JSND_RIGHT_GEP(curNode), OBJ_ALIGNMENT);
+  curNode = LOAD_PTR(curNodeAlloc);
+  Value* rightNode = LOAD_PTR(JSND_RIGHT_GEP(curNode));
   Value* check2 = builder_->CreateIsNotNull(rightNode);
   BasicBlock* bsIf2TBlock = BasicBlock::Create(*context_, "bsif2t.bb", parent);
   builder_->CreateCondBr(check2, bsIf2TBlock, afterBlock);
@@ -1059,16 +1082,16 @@ Value* CodegenFuncContext::createJsVariantArrayBinarySearch(
 
   // Step 5: check max < next->min_index_
   builder_->SetInsertPoint(bsIf1FBlock);
-  curNode = builder_->CreateAlignedLoad(curNodeAlloc, OBJ_ALIGNMENT);
-  Value* minIdx = builder_->CreateAlignedLoad(JSND_MIN_IDX_GEP(curNode), OBJ_ALIGNMENT);
+  curNode = LOAD_PTR(curNodeAlloc);
+  Value* minIdx = LOAD_I32(JSND_MIN_IDX_GEP(curNode));
   Value* check3 = builder_->CreateICmpSLT(idx, minIdx);
   BasicBlock* bsIf3TBlock = BasicBlock::Create(*context_, "bsif3t.bb", parent);
   builder_->CreateCondBr(check3, bsIf3TBlock, afterBlock);
 
   // Step 6: check !!next->left_
   builder_->SetInsertPoint(bsIf3TBlock);
-  curNode = builder_->CreateAlignedLoad(curNodeAlloc, OBJ_ALIGNMENT);
-  Value* leftNode = builder_->CreateAlignedLoad(JSND_LEFT_GEP(curNode), OBJ_ALIGNMENT);
+  curNode = LOAD_PTR(curNodeAlloc);
+  Value* leftNode = LOAD_PTR(JSND_LEFT_GEP(curNode));
   Value* check4 = builder_->CreateIsNotNull(leftNode);
   BasicBlock* bsIf4TBlock = BasicBlock::Create(*context_, "bsif4t.bb", parent);
   builder_->CreateCondBr(check4, bsIf4TBlock, afterBlock);
@@ -1118,16 +1141,15 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
     //         Condition 1: the focused jsv is an array.
     //         Condition 2: the index is either an int const, or an js variant number.
     Value* check = builder_->CreateICmpEQ(
-        builder_->CreateAlignedLoad(JSV_TYPE_GEP(dest), OBJ_ALIGNMENT),
+        LOAD_I32(JSV_TYPE_GEP(dest)),
         builder_->getInt32(JsVariant::JS_ARRAY_REF));
     Type* valueTy = idxValue->getType();
 
     Value* check2 = nullptr;
     if (valueTy->isPointerTy()) {
-    Type* elementTy = static_cast<const PointerType*>(valueTy)->getElementType();
-      if (elementTy->isStructTy()) {
+      if (!isWStringGlobal(idxValue)) {  // JsVariant*.
         check2 = builder_->CreateICmpEQ(
-            builder_->CreateAlignedLoad(JSV_TYPE_GEP(idxValue), OBJ_ALIGNMENT),
+            LOAD_I32(JSV_TYPE_GEP(idxValue)),
             builder_->getInt32(JsVariant::JS_NUMBER));
       } else {
         check2 = builder_->getFalse();
@@ -1151,8 +1173,7 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
     // Step 4: Implement the optimization through inlining of a binary search.
     builder_->SetInsertPoint(optixBlock);
     if (!isIntIdx) {
-      idxValue = builder_->CreateAlignedLoad(
-          JSN_INT_GEP(JSV_NUMBER_GEP(idxValue)), OBJ_ALIGNMENT);
+      idxValue = LOAD_I64(JSN_INT_GEP(JSV_NUMBER_GEP(idxValue)));
     }
 
     ////////////////// LLVMify a Binary Search on the Array ///////////////////////
@@ -1162,8 +1183,8 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
         RC_PTR_DOT_OP(JSV_RC_PTR_ARRAY_GEP(dest)), P_JS_VARIANT_ARRAY_TY);
 
     // Step 4.2: Call a subrountine to create the binary search.
-    Value* rbtNode = builder_->CreateAlignedLoad(createJsVariantArrayBinarySearch(
-        parent, array, builder_->CreateTrunc(idxValue, idxType)), OBJ_ALIGNMENT);
+    Value* rbtNode = LOAD_PTR(createJsVariantArrayBinarySearch(
+        parent, array, builder_->CreateTrunc(idxValue, idxType)));
 
     // Step 4.3: verify the returning node is valid, and GEP to the member offset
     //           using GEP.
@@ -1175,10 +1196,10 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
     // Step 4.4: Verify if the index is in scope of the vector.
     builder_->SetInsertPoint(nodeFound);
     Value* minIdx = builder_->CreateZExt(
-        builder_->CreateAlignedLoad(JSND_MIN_IDX_GEP(rbtNode), OBJ_ALIGNMENT),
+        LOAD_I32(JSND_MIN_IDX_GEP(rbtNode)),
         Type::getInt64Ty(*context_));
     Value* maxIdx = builder_->CreateZExt(
-        builder_->CreateAlignedLoad(JSND_MAX_IDX_GEP(rbtNode), OBJ_ALIGNMENT),
+        LOAD_I32(JSND_MAX_IDX_GEP(rbtNode)),
         Type::getInt64Ty(*context_));
     Value* check4 = builder_->CreateAnd(
         builder_->CreateICmpSGE(idxValue, minIdx),
@@ -1189,16 +1210,12 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
     // Step 4.5: Inscope, but need to do a sanity inarray check.
     builder_->SetInsertPoint(inScopeBlock);
     Value* vecbase = builder_->CreateBitCast(JSND_MEMBERS_GEP(rbtNode),
-        ty_.jsvVectorBaseTy_->getPointerTo());
+        PointerType::getUnqual(*context_));
     Value* vecbegin = builder_->CreatePtrToInt(
-        builder_->CreateAlignedLoad(
-            builder_->CreateConstInBoundsGEP2_32(nullptr, vecbase, 0, 0),
-            OBJ_ALIGNMENT),
+        LOAD_PTR(builder_->CreateConstInBoundsGEP2_32(ty_.jsvVectorBaseTy_, vecbase, 0, 0)),
         Type::getInt64Ty(*context_));
     Value* vecend = builder_->CreatePtrToInt(
-        builder_->CreateAlignedLoad(
-            builder_->CreateConstInBoundsGEP2_32(nullptr, vecbase, 0, 1),
-            OBJ_ALIGNMENT),
+        LOAD_PTR(builder_->CreateConstInBoundsGEP2_32(ty_.jsvVectorBaseTy_, vecbase, 0, 1)),
         Type::getInt64Ty(*context_));
 
     Value* offset = builder_->CreateSub(idxValue, minIdx);
@@ -1211,10 +1228,10 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
 
     // Step 4.6: Retrieve the Js Variant node.
     builder_->SetInsertPoint(inArrayBlock);
-    Value* jsvptr = builder_->CreateInBoundsGEP(nullptr,
-        builder_->CreateAlignedLoad(builder_->CreateConstInBoundsGEP2_32(
-        nullptr, vecbase, 0, 0), OBJ_ALIGNMENT), offset);
-    ret1 = builder_->CreateAlignedLoad(jsvptr, OBJ_ALIGNMENT);
+    Value* jsvptr = builder_->CreateInBoundsGEP(PTR_TY,
+        LOAD_PTR(builder_->CreateConstInBoundsGEP2_32(
+        ty_.jsvVectorBaseTy_, vecbase, 0, 0)), offset);
+    ret1 = LOAD_PTR(jsvptr);
     builder_->CreateBr(nextBlock);
 
     // Step 4.7: node not found, return undefined.
@@ -1222,7 +1239,7 @@ Value* CodegenFuncContext::createJsArrayElementByIndex(
     Value* undefValue = builder_->CreateAlloca(P_JS_VARIANT_TY);
     builder_->CreateAlignedStore(module_ctx_->getBuiltInTypes().jsvUndefinedGc_,
         undefValue, OBJ_ALIGNMENT);
-    ret2 = builder_->CreateAlignedLoad(undefValue, OBJ_ALIGNMENT);
+    ret2 = LOAD_PTR(undefValue);
     builder_->CreateBr(nextBlock);
 
     // Step 5: Implement the index call to the js variant itself.
@@ -1295,7 +1312,7 @@ Value* CodegenFuncContext::createJsVariantCopy(Value* jsv, Value* v) {
   builder_->SetInsertPoint(caseError);
   builder_->CreateAlignedStore(vtype, destTypePtr, OBJ_ALIGNMENT);
   builder_->CreateAlignedStore(
-      builder_->CreateAlignedLoad(JSV_ERROR_MSG_GEP(v), OBJ_ALIGNMENT),
+      LOAD_PTR(JSV_ERROR_MSG_GEP(v)),
       JSV_ERROR_MSG_GEP(jsv), OBJ_ALIGNMENT);
   builder_->CreateBr(nextBlock);
 
@@ -1307,17 +1324,17 @@ Value* CodegenFuncContext::createJsVariantCopy(Value* jsv, Value* v) {
   // Step 5: Create Boolean assignment case.
   builder_->SetInsertPoint(caseBoolean);
   builder_->CreateAlignedStore(vtype, destTypePtr, OBJ_ALIGNMENT);
-  Value* blnValue = builder_->CreateAlignedLoad(JSV_BOOLEAN_GEP(v), OBJ_ALIGNMENT);
-  builder_->CreateAlignedStore(blnValue, JSV_BOOLEAN_GEP(jsv), 1);
+  Value* blnValue = LOAD_I8(JSV_BOOLEAN_GEP(v));
+  builder_->CreateAlignedStore(blnValue, JSV_BOOLEAN_GEP(jsv), Align(1));
   builder_->CreateBr(nextBlock);
 
   // Step 6: Create Number assignment case.
   builder_->SetInsertPoint(caseNumber);
   builder_->CreateAlignedStore(vtype, destTypePtr, OBJ_ALIGNMENT);
   Value* srcNumPtr = JSV_NUMBER_GEP(v);
-  Value* srcInt = builder_->CreateAlignedLoad(JSN_INT_GEP(srcNumPtr), OBJ_ALIGNMENT);
-  Value* srcFloat = builder_->CreateAlignedLoad(JSN_FLOAT_GEP(srcNumPtr), OBJ_ALIGNMENT);
-  Value* srcIntFlag = builder_->CreateAlignedLoad(JSN_INT_FLG_GEP(srcNumPtr), OBJ_ALIGNMENT);
+  Value* srcInt = LOAD_I64(JSN_INT_GEP(srcNumPtr));
+  Value* srcFloat = LOAD_DOUBLE(JSN_FLOAT_GEP(srcNumPtr));
+  Value* srcIntFlag = LOAD_I8(JSN_INT_FLG_GEP(srcNumPtr));
   Value* destNumPtr = JSV_NUMBER_GEP(jsv);
   builder_->CreateAlignedStore(srcInt, JSN_INT_GEP(destNumPtr), OBJ_ALIGNMENT);
   builder_->CreateAlignedStore(srcFloat, JSN_FLOAT_GEP(destNumPtr), OBJ_ALIGNMENT);
@@ -1357,7 +1374,7 @@ Value* CodegenFuncContext::createJsVariantAssign(Value* jsv, Value* v) {
         typeptr, OBJ_ALIGNMENT);
     Value* jsb = JSV_BOOLEAN_GEP(jsv);
     builder_->CreateAlignedStore(
-        builder_->CreateZExt(v, Type::getInt8Ty(*context_)), jsb, 1);
+        builder_->CreateZExt(v, Type::getInt8Ty(*context_)), jsb, Align(1));
   } else if (type->isIntegerTy(64)) {  // AC_JS_INTEGER.
     builder_->CreateAlignedStore(builder_->getInt32(JsVariant::JS_NUMBER),
         typeptr, OBJ_ALIGNMENT);
@@ -1438,12 +1455,12 @@ Value* CodegenFuncContext::performJsFuncCall(
  
   // Step 2: LLVMify the design time loop to populate the Values.
   Value* piter_begin = builder_->CreateConstInBoundsGEP2_32(
-      /* ty = */ nullptr, ptrs, 0, 0);
+      ArrayType::get(P_JS_VARIANT_TY, l), ptrs, 0, 0);
   Value* piter_cur = nullptr;
   size_t idx = 0;
   for (ArrayRef<Value*>::const_iterator iter = params.begin();
       iter != params.end(); ++iter, ++idx) {
-    piter_cur = builder_->CreateConstInBoundsGEP1_64(piter_begin, idx);
+    piter_cur = builder_->CreateConstInBoundsGEP1_64(PTR_TY, piter_begin, idx);
     builder_->CreateAlignedStore(*iter, piter_cur, OBJ_ALIGNMENT);
   }
 
@@ -1454,7 +1471,7 @@ Value* CodegenFuncContext::performJsFuncCall(
       ret, /* this = */ self, piter_begin, builder_->getInt64(l) };
 
   // Step 4: Make a call.
-  builder_->CreateCall(func, args);
+  builder_->CreateCall(module_ctx_->getJsFunctionType(), func, args);
   return ret;
 }
 
@@ -1467,8 +1484,7 @@ Value* CodegenFuncContext::createJsFuncCall(
 Value* CodegenFuncContext::createJsFuncCall(
     Value* jsv, Value* self, ArrayRef<Value*> params) {
   // Step 1: Verify jsv is in the right type.
-  Value* check = builder_->CreateICmpEQ(builder_->CreateAlignedLoad(
-      JSV_TYPE_GEP(jsv), OBJ_ALIGNMENT),
+  Value* check = builder_->CreateICmpEQ(LOAD_I32(JSV_TYPE_GEP(jsv)),
       builder_->getInt32(JsVariant::JS_FUNCTION));
   BasicBlock* curBlock = builder_->GetInsertBlock();
   Function* parent = curBlock->getParent();
@@ -1484,7 +1500,8 @@ Value* CodegenFuncContext::createJsFuncCall(
   // Step 2: Verify function not a nullptr.
   builder_->SetInsertPoint(npeBlock);
   Value* jsfunc = JSV_FUNC_PTR_GEP(jsv);
-  Value* funcp = builder_->CreateConstInBoundsGEP2_32(nullptr, jsfunc, 0, 0);
+  Value* funcp = builder_->CreateConstInBoundsGEP2_32(
+      JS_VARIANT_FUNC_TY, jsfunc, 0, 0);
   Value* check2 = builder_->CreateIsNotNull(funcp);
   BasicBlock* callBlock = BasicBlock::Create(*context_, "call.bb", parent);
   BasicBlock* npeErrBlock = BasicBlock::Create(*context_, "err.bb", parent);
@@ -1495,7 +1512,7 @@ Value* CodegenFuncContext::createJsFuncCall(
 
   // Step 3: Make the call.
   builder_->SetInsertPoint(callBlock);
-  Value* func = builder_->CreateAlignedLoad(funcp, OBJ_ALIGNMENT);
+  Value* func = LOAD_PTR(funcp);
   Value* ret = performJsFuncCall(func, self, params);
   builder_->CreateBr(nextBlock);
 
@@ -1553,14 +1570,14 @@ void CodegenFuncContext::populateParams(std::vector<std::wstring>& params) {
   for (std::vector<std::wstring>::reverse_iterator param_iter = params.rbegin();
        param_iter != params.rend(); ++param_iter,--idx) {
     builder_->SetInsertPoint(case_blocks[idx]);
-    Value* jsv = builder_->CreateConstInBoundsGEP1_64(variant_list, idx - 1);
+    Value* jsv = builder_->CreateConstInBoundsGEP1_64(PTR_TY, variant_list, idx - 1);
     cur_variant = createAllocaWithAlignNoInit(builder_, init_block_,
         P_JS_VARIANT_TY, OBJ_ALIGNMENT);
-    builder_->CreateAlignedStore(builder_->CreateAlignedLoad(jsv, OBJ_ALIGNMENT),
+    builder_->CreateAlignedStore(LOAD_PTR(jsv),
         cur_variant, OBJ_ALIGNMENT);
     assignFunctionVariable(module_ctx_->getOrCreateJsVariantConstructorOrAssign(
         JS_VARIANT_ASSIGN_COPY, P_JS_VARIANT_TY),
-        *param_iter, builder_->CreateAlignedLoad(cur_variant, OBJ_ALIGNMENT),
+        *param_iter, LOAD_PTR(cur_variant),
         /* search_mode = */ false);
     builder_->CreateBr(case_blocks[idx - 1]);
   }
@@ -1647,7 +1664,7 @@ Value* CodegenFuncContext::createAutoPtrJsValueGet(
     Value* ptrValue, Value** elementPtr) {
   *elementPtr = builder_->CreateConstInBoundsGEP2_32(
       AUTO_PTR_TY, ptrValue, 0, 0, "autoptr");
-  return builder_->CreateAlignedLoad(*elementPtr, OBJ_ALIGNMENT);
+  return LOAD_PTR(*elementPtr);
 }
 
 // Alloca a new auto ptr, and make it hold the passed ACJsValue.
@@ -1673,16 +1690,16 @@ Value* CodegenFuncContext::createAutoPtrJsValueAlloca(Value* jsValue) {
 Value* CodegenFuncContext::createJsValueVFuncCall(
   Value* jsvValue, Type* returnType, int virtualIndex) {
   FunctionType* vFuncTy = FunctionType::get(
-      returnType, makeArrayRef<Type*>(P_JS_VALUE_TY),
+      returnType, ArrayRef<Type*>(P_JS_VALUE_TY),
       /* isVarArg = */ false);
   Value* vtab = builder_->CreateBitCast(jsvValue,
-      vFuncTy->getPointerTo()->getPointerTo()->getPointerTo(),
+      PointerType::getUnqual(*context_),
       "jsvvtab");
   Value* lookup = builder_->
-      CreateAlignedLoad(vtab, OBJ_ALIGNMENT, "lookup");
+      CreateAlignedLoad(PTR_TY, vtab, OBJ_ALIGNMENT, "lookup");
   Value* funcPtr = builder_->CreateConstInBoundsGEP1_64(
-      lookup, virtualIndex, "funcptr");
-  return builder_->CreateAlignedLoad(funcPtr, OBJ_ALIGNMENT, "vfunc");
+      PTR_TY, lookup, virtualIndex, "funcptr");
+  return builder_->CreateAlignedLoad(PTR_TY, funcPtr, OBJ_ALIGNMENT, "vfunc");
 }
 
 void CodegenFuncContext::createAutoPtrJsValueDelete(Value* ptrValue) {
@@ -1696,7 +1713,10 @@ void CodegenFuncContext::createAutoPtrJsValueDelete(Value* ptrValue) {
   builder_->CreateCondBr(notNilCheck, notNilBlock, isNilBlock);
 
   builder_->SetInsertPoint(notNilBlock);
-  builder_->CreateCall(createJsValueVFuncCall(existValue,
+  FunctionType* destructorTy = FunctionType::get(
+      builder_->getVoidTy(), ArrayRef<Type*>(P_JS_VALUE_TY),
+      /* isVarArg = */ false);
+  builder_->CreateCall(destructorTy, createJsValueVFuncCall(existValue,
       builder_->getVoidTy(), /* virtualIndex = */ 1),  // destructor.
       existValue);
   builder_->CreateBr(isNilBlock);
@@ -1723,9 +1743,9 @@ Value* CodegenFuncContext::createAutoPtrJsValueAndNewOf(
   // Step 1: Create new op func and bitcast to the original type.
   Function* newFunc = module_ctx_->getOrCreateNewOpFunction(MAKE_NEW_OP_FUNC);
   Value* newCallObj = builder_->CreateCall(
-      newFunc, makeArrayRef<Value*>(builder_->getInt64(size)), "newop");
+      newFunc, ArrayRef<Value*>(builder_->getInt64(size)), "newop");
   Value* bitcast1 = builder_->CreateBitCast(
-     newCallObj, objectTy->getPointerTo(), "jsobj");
+     newCallObj, PointerType::getUnqual(*context_), "jsobj");
 
   // Step 2: Call constructor.
   std::vector<Value*> construct_args;
@@ -1783,11 +1803,10 @@ void CodegenFuncContext::initJsVariantOfType(
   //     i32 0, inrange i32 0, i32 2) to i32 (...)**), i32 (...)*** %6, align 8
   // -----------------------------------------------
 
-  Type* vtabTy = FunctionType::get(Type::getInt32Ty(*context_), /* isVarArg = */ true)
-        ->getPointerTo()->getPointerTo();
+  Type* vtabTy = PointerType::getUnqual(*context_);
   builder_->CreateAlignedStore(
       builder_->CreateBitCast(ty_.jsVariantVTabGEPGv_, vtabTy),
-      builder_->CreateBitCast(allocaPtr, vtabTy->getPointerTo()), OBJ_ALIGNMENT);
+      builder_->CreateBitCast(allocaPtr, PointerType::getUnqual(*context_)), OBJ_ALIGNMENT);
 
   // 1.2 Populate type of the variant (JsVariantType, default: JS_UNDEFINED).
   // -----------------------------------------------
@@ -1867,12 +1886,13 @@ Value* CodegenFuncContext::createJsVariantFunc(Function* func, const std::wstrin
   Value* jsv = createJsVariantOfType(JsVariant::JS_FUNCTION);
   Value* jsfunc = JSV_FUNC_PTR_GEP(jsv);
   builder_->CreateAlignedStore(func, builder_->CreateConstInBoundsGEP2_32(
-      nullptr, jsfunc, 0, 0), OBJ_ALIGNMENT);
+      JS_VARIANT_FUNC_TY, jsfunc, 0, 0), OBJ_ALIGNMENT);
   if (qname.length() > 0) {
     GlobalVariable* gv = createGlobalWStringVariable(*module_, *context_, qname);
     builder_->CreateAlignedStore(
-      builder_->CreateConstInBoundsGEP2_32(nullptr, gv, 0, 0),
-      builder_->CreateConstInBoundsGEP2_32(nullptr, jsfunc, 0, 1), OBJ_ALIGNMENT);
+      builder_->CreateConstInBoundsGEP2_32(gv->getValueType(), gv, 0, 0),
+      builder_->CreateConstInBoundsGEP2_32(JS_VARIANT_FUNC_TY, jsfunc, 0, 1),
+      OBJ_ALIGNMENT);
   }
   return jsv;
 }
@@ -1883,14 +1903,14 @@ Value* CodegenFuncContext::createJsVariantErr(const char* msg) {
   Value* msgv = JSV_ERROR_MSG_GEP(jsv);
   GlobalVariable* gv = createGlobalStringVariable(*module_, *context_, msg);
   builder_->CreateAlignedStore(builder_->
-      CreateConstInBoundsGEP2_32(nullptr, gv, 0, 0), msgv, OBJ_ALIGNMENT);
+      CreateConstInBoundsGEP2_32(gv->getValueType(), gv, 0, 0), msgv, OBJ_ALIGNMENT);
   return jsv;
 }
 
 void CodegenFuncContext::createJsVariantDelete(Value* ptrValue) {
   builder_->CreateCall(
       module_ctx_->getOrCreateJsVariantDestructor(JS_VARIANT_DESTRUCTOR_1),
-      makeArrayRef(ptrValue));
+      ArrayRef(ptrValue));
 }
 
 Value* CodegenFuncContext::createJsVariantAdd(
@@ -1932,13 +1952,12 @@ Value* CodegenFuncContext::createJsValueRefGet(
   Type* i8ty = Type::getInt8Ty(*context_);
 
   Value* ptrValue = builder_->CreateBitCast(
-      builder_->CreateConstInBoundsGEP1_64(
-          builder_->CreateBitCast(refValue, i8ty->getPointerTo()), 8),
-      ty_.sharedPtrTy_->getPointerTo());
+      builder_->CreateConstInBoundsGEP1_64(i8ty, refValue, 8),
+      PointerType::getUnqual(*context_));
 
   *elementPtr = builder_->CreateConstInBoundsGEP2_32(
        ty_.sharedPtrTy_, ptrValue, 0, 0, "sharedptr");
-  return builder_->CreateAlignedLoad(*elementPtr, OBJ_ALIGNMENT);
+  return LOAD_PTR(*elementPtr);
 }
 
 Value* CodegenFuncContext::createJsValueRefAlloca(
@@ -1950,7 +1969,7 @@ Value* CodegenFuncContext::createJsValueRefAlloca(
       builder_, init_block_, JS_VALUE_REF_TY, OBJ_ALIGNMENT);
 
   // Create initialization code in init block.
-  builder_->CreateCall(refConstructorFunc1, makeArrayRef(newRef));
+  builder_->CreateCall(refConstructorFunc1, ArrayRef(newRef));
  
   builder_->restoreIP(saved);
   if (!!jsvalue) { 
@@ -1974,7 +1993,7 @@ Value* CodegenFuncContext::createJsValueRefRelease(Value* refValue) {
 void CodegenFuncContext::createJsValueRefDelete(Value* ptrValue) {
   builder_->CreateCall(
       module_ctx_->getOrCreateJsValueRefDestructor(JS_VALUE_REF_DESTRUCTOR_1),
-      makeArrayRef(ptrValue));
+      ArrayRef(ptrValue));
 }
 
 Value* CodegenFuncContext::createJsValueAllocaOf(
@@ -1996,9 +2015,9 @@ Value* CodegenFuncContext::createJsValueRefAndNewOf(
   // Step 1: Create new op func and bitcast to the original type.
   Function* newFunc = module_ctx_->getOrCreateNewOpFunction(MAKE_NEW_OP_FUNC);
   Value* newCallObj = builder_->CreateCall(
-      newFunc, makeArrayRef<Value*>(builder_->getInt64(size)), "newop");
+      newFunc, ArrayRef<Value*>(builder_->getInt64(size)), "newop");
   Value* bitcast1 = builder_->CreateBitCast(
-      newCallObj, objectTy->getPointerTo(), "jsobj");
+      newCallObj, PointerType::getUnqual(*context_), "jsobj");
 
   // Step 2: Call constructor.
   std::vector<Value*> construct_args;
@@ -2079,23 +2098,25 @@ Value* CodegenFuncContext::createJsVariantArray(ArrayRef<Value*> members) {
   size_t header_len = Type::getInt64Ty(*context_)->getBitWidth() >> 3;
   Value* alloc = builder_->CreateCall(
       module_ctx_->getOrCreateNewOpFunction(MAKE_NEW_ARR_OP_FUNC),
-          makeArrayRef<Value*>(builder_->getInt64(sizeof(JsVariant) * l +
+          ArrayRef<Value*>(builder_->getInt64(sizeof(JsVariant) * l +
           header_len)), "newalloc");
 
   // Store the lenght of the array in the first 8 bytes (i64).
   Value* i64alloc = builder_->CreateBitCast(
-      alloc, Type::getInt64Ty(*context_)->getPointerTo());
+      alloc, PointerType::getUnqual(*context_));
   builder_->CreateAlignedStore(builder_->getInt64(l), i64alloc, ARR_ALIGNMENT);
 
   // Offset towards the first element of the array, and convert to JsVariant.
   Value* iter_begin = builder_->CreateBitCast(
-      builder_->CreateConstInBoundsGEP1_64(alloc, header_len), P_JS_VARIANT_TY);
+      builder_->CreateConstInBoundsGEP1_64(builder_->getInt8Ty(), alloc, header_len),
+      P_JS_VARIANT_TY);
 
   Value* ptrs = createAllocaWithAlignNoInit(
       builder_, init_block_, ArrayType::get(P_JS_VARIANT_TY, l), ARR_ALIGNMENT);
 
-  Value* iter_end = builder_->CreateConstInBoundsGEP1_64(iter_begin, l);
-  Value* piter_begin = builder_->CreateConstInBoundsGEP2_32(nullptr, ptrs, 0, 0);
+  Value* iter_end = builder_->CreateConstInBoundsGEP1_64(JS_VARIANT_TY, iter_begin, l);
+  Value* piter_begin = builder_->CreateConstInBoundsGEP2_32(
+      ArrayType::get(P_JS_VARIANT_TY, l), ptrs, 0, 0);
 
   BasicBlock* curBlock = builder_->GetInsertBlock();
   BasicBlock* arrInitBlock = enterBlock("initarr.bb");
@@ -2106,7 +2127,7 @@ Value* CodegenFuncContext::createJsVariantArray(ArrayRef<Value*> members) {
   PHINode* iterPhi = builder_->CreatePHI(P_JS_VARIANT_TY, 2, "iter");
   iterPhi->addIncoming(iter_begin, curBlock);
   initJsVariantOfType(iterPhi, JsVariant::JS_UNDEFINED);
-  Value* iter_next = builder_->CreateConstInBoundsGEP1_64(iterPhi, 1);
+  Value* iter_next = builder_->CreateConstInBoundsGEP1_64(JS_VARIANT_TY, iterPhi, 1);
   Value* check = builder_->CreateICmpEQ(iter_next, iter_end);
   builder_->CreateCondBr(check, nextBlock, arrInitBlock);
   iterPhi->addIncoming(iter_next, arrInitBlock);
@@ -2118,7 +2139,7 @@ Value* CodegenFuncContext::createJsVariantArray(ArrayRef<Value*> members) {
   int idx = 0;
   for (ArrayRef<Value*>::const_iterator iter = members.begin();
            iter != members.end(); ++iter, ++idx) {
-    Value* iter_cur = builder_->CreateConstInBoundsGEP1_64(iter_begin, idx);
+    Value* iter_cur = builder_->CreateConstInBoundsGEP1_64(JS_VARIANT_TY, iter_begin, idx);
 
     ////////// this is an optimization, UNDEFINED doesn't need to be reassigned.
     if (!!(*iter)) {
@@ -2126,7 +2147,7 @@ Value* CodegenFuncContext::createJsVariantArray(ArrayRef<Value*> members) {
       builder_->CreateCall(module_ctx_->getOrCreateJsVariantConstructorOrAssign(
           JS_VARIANT_ASSIGN_COPY, P_JS_VARIANT_TY), args_assign);
     }
-    Value* piter_cur = builder_->CreateConstInBoundsGEP1_64(piter_begin, idx);
+    Value* piter_cur = builder_->CreateConstInBoundsGEP1_64(PTR_TY, piter_begin, idx);
     builder_->CreateAlignedStore(iter_cur, piter_cur, OBJ_ALIGNMENT);
   }
 
@@ -2167,16 +2188,15 @@ Value* CodegenFuncContext::createBooleanEval(Value* condition) {
   }
   //// ----==== WString GV || JsVariant ====---- ////
   if (ty->isPointerTy()) {
-    ty = static_cast<const PointerType*>(ty)->getElementType();
-    if (ty->isArrayTy() && (static_cast<const ArrayType*>(  // wstring?
-            ty))->getElementType()->isIntegerTy(32)) {
+    if (isWStringGlobal(condition)) {  // wstring?
       return builder_->CreateICmpUGT(builder_->CreateCall(
           module_ctx_->getOrCreateWcslenFunc(WCSLEN_FUNC),
-          builder_->CreateConstInBoundsGEP2_32(nullptr, condition, 0, 0)),
+          builder_->CreateConstInBoundsGEP2_32(
+              cast<GlobalVariable>(condition)->getValueType(), condition, 0, 0)),
           builder_->getInt64(0));
     }
     //// ----==== JsVariant ====---- ////
-    if (ty->isStructTy()) {
+    {
       return  builder_->CreateCall(module_ctx_->
           getOrCreateJsVariantAsBoolean(JS_VARIANT_AS_BOOLEAN), condition);
     }
@@ -2317,7 +2337,8 @@ CodegenFuncContext* CodegenFuncContext::finalizeFunc(Value* retValue) {
   builder_->CreateBr(exit_block_);
   builder_->SetInsertPoint(exit_block_);
   // std::cerr << "type: " << TYPE_NAME(retValue).str() << "\n";
-  if (!!retValue && IS_TYPE_OF(retValue, JS_VARIANT_TY)) {
+  if (!!retValue && retValue->getType()->isPointerTy() &&
+      !isWStringGlobal(retValue)) {  // JsVariant*.
     Value* args[] = {
        static_cast<Function*>(exec_block_->getParent())->arg_begin(),
        retValue };
@@ -2450,7 +2471,7 @@ Value* CodegenFuncContext::createIteratorInitCall(Value* collection) {
 
   // Step 1: Confirm we are dealing with a collection here.
   Value* check = builder_->CreateICmpEQ(
-      builder_->CreateAlignedLoad(JSV_TYPE_GEP(collection), OBJ_ALIGNMENT),
+      LOAD_I32(JSV_TYPE_GEP(collection)),
       builder_->getInt32(JsVariant::JS_ARRAY_REF));
   Function* func = builder_->GetInsertBlock()->getParent();
   BasicBlock* is_collection = BasicBlock::Create(*context_, "iterbegin.bb", func);
@@ -2483,12 +2504,12 @@ Value* CodegenFuncContext::createIteratorInitCall(Value* collection) {
 // Iterator helper: Call the iterator's next value, and assign the new value to assignee.
 void CodegenFuncContext::createIteratorNextCall(Value* iterator) {
   builder_->CreateCall(module_ctx_->getOrCreateJsVariantIteratorNextFunc(
-      JS_VARIANT_ITERATOR_NEXT_FUNC), makeArrayRef(iterator));
+      JS_VARIANT_ITERATOR_NEXT_FUNC), ArrayRef(iterator));
 }
 
 // Iterator helper: evaluate if the current iterator has reached the end.
 Value* CodegenFuncContext::createIteratorEndCheckCall(Value* iterator) {
-  Value* v = builder_->CreateAlignedLoad(JSI_STATUS_GEP(iterator), OBJ_ALIGNMENT);
+  Value* v = LOAD_I32(JSI_STATUS_GEP(iterator));
   return builder_->CreateAnd(
     builder_->CreateICmpNE(v, builder_->getInt32(ITER_END)),
     builder_->CreateICmpNE(v, builder_->getInt32(ITER_REND)));
@@ -2749,17 +2770,17 @@ Value* AstLLVMCodegen::visit(const ACAstCallExpression* node) {
       ////// FIXME(ejiang): consider runtime resolution of the variable name.
       if (!!v) {
         return ctx_->createJsFuncCall(v, ConstantPointerNull::get(
-            ctx_->getJsVariantType()->getPointerTo()), params);
+            PointerType::getUnqual(*ctx_->context_)), params);
       } else {
         return ctx_->createJsFuncCall(name, ConstantPointerNull::get(
-            ctx_->getJsVariantType()->getPointerTo()), params);
+            PointerType::getUnqual(*ctx_->context_)), params);
       }
     }
     default:
       v = node->expr_->accept(this);
       assert(!!v && "Invalid function generation clause");
       return ctx_->createJsFuncCall(v, ConstantPointerNull::get(
-          ctx_->getJsVariantType()->getPointerTo()), params);
+          PointerType::getUnqual(*ctx_->context_)), params);
   }
 }
 
@@ -2789,8 +2810,9 @@ Value* AstLLVMCodegen::visit(const ACAstRuntimeMemberRef* node) {
     // Step 1: Test if we can access the members of the JsVariant.
     //         right now only Array and Object can do subscript "[]" access.
     //         for non-accessbile JsVariant, return a newly created JS_UNDEFINED.
-    Value* type = builder->CreateAlignedLoad(
-        builder->CreateConstInBoundsGEP2_32(nullptr, ref, 0, 1), OBJ_ALIGNMENT);
+    Value* type = builder->CreateAlignedLoad(builder->getInt32Ty(),
+        builder->CreateConstInBoundsGEP2_32(
+            ctx_->getJsVariantType(), ref, 0, 1), OBJ_ALIGNMENT);
     Value* check = builder->CreateOr(
         builder->CreateOr(  
             builder->CreateICmpEQ(type, builder->getInt32(JsVariant::JS_OBJECT_INIT)),
@@ -2818,7 +2840,7 @@ Value* AstLLVMCodegen::visit(const ACAstRuntimeMemberRef* node) {
     // Step 3: Converge into a PHI.
     builder->SetInsertPoint(newbb_phi);
     PHINode* phiret = builder->CreatePHI(
-        ctx_->getJsVariantType()->getPointerTo(), 2, "subscript");
+        PointerType::getUnqual(*ctx_->context_), 2, "subscript");
     phiret->addIncoming(ret_acc, newbb_acc);
     phiret->addIncoming(ret_sub, newbb_sub);
     return phiret;
@@ -3077,12 +3099,12 @@ Value* AstLLVMCodegen::visit(const ACAstForInStatement* visitee) {
     builder->SetInsertPoint(conditionbb);
     Value* assignee = builder->CreateCall(
         module_ctx_->getOrCreateJsVariantIteratorDerefFunc(
-        JS_VARIANT_ITERATOR_DEREF_FUNC), makeArrayRef(iterator));
+        JS_VARIANT_ITERATOR_DEREF_FUNC), ArrayRef(iterator));
 
     // Step 5: Create the end point check of the iterator.
     Value* args[] = { value_holder, assignee };
     builder->CreateCall(module_ctx_->getOrCreateJsVariantConstructorOrAssign(
-        JS_VARIANT_ASSIGN_COPY, ctx_->ty_.jsVariantTy_->getPointerTo()), args);
+        JS_VARIANT_ASSIGN_COPY, PointerType::getUnqual(*ctx_->context_)), args);
     builder->CreateCondBr(ctx_->createIteratorEndCheckCall(iterator),
         /* true block = */ loopbb, /* false block = */ exitbb);
 
@@ -3338,7 +3360,7 @@ Value* AstLLVMCodegen::visit(const ACAstUnaryExpression* visitee) {
           v= module_ctx_->getOrCreateVariable(
               /* assign Func = */ nullptr, node->identifier());
           if (is_self_op) {
-            result = builder->CreateCall(func, makeArrayRef(v));
+            result = builder->CreateCall(func, ArrayRef(v));
           } else {
             result = ctx_->createJsVariantAndAssignOf(ctx_->init_block_);
             Value* args[] = { result, v };
@@ -3349,7 +3371,7 @@ Value* AstLLVMCodegen::visit(const ACAstUnaryExpression* visitee) {
          // x[number] or x["string"] reference.
         case ACAstBaseNode::AST_NON_COMPUTED_MEMBER_REF:
           v = visitee->expr_->accept(this, REF_LHS_CONTEXT);
-          result = builder->CreateCall(func, makeArrayRef(v));
+          result = builder->CreateCall(func, ArrayRef(v));
           break;
         default:
           if (visitee->expr_->node_type_ == ACAstBaseNode::AST_VAR) {
