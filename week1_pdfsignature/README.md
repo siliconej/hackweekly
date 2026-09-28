@@ -15,7 +15,7 @@ to everyone in the github community.
 
 ```
 git clone https://github.com/siliconej/hackweekly.git
-cd hackweekly/week1
+cd hackweekly/week1_pdfsignature
 make
 ```
 
