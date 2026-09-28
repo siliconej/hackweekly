@@ -6,7 +6,6 @@
 #include "ac_ast_llvm_types.h"
 #include "ac_ast_visitable.h"
 #include "ac_vm_jsvariant.h"
-#include "llvm/ADT/None.h"  // None
 #include "llvm/IR/IRBuilder.h"  // IRBuilder<> (template with default).
 
 #ifndef ALTERED_CARBON__JS__AC_AST_LLVM_CODEGEN_H_
@@ -158,30 +157,39 @@ using namespace llvm;
 #define RB_TREE_NODE_TY     (ty_.rbTreeNodeTy_)
 #define JS_VARIANT_ITER_TY  (ty_.jsVariantIteratorTy_)
 
-#define P_AUTO_PTR_TY         (AUTO_PTR_TY->getPointerTo())
-#define P_JS_VALUE_TY         (JS_VALUE_TY->getPointerTo())
-#define P_JS_VALUE_REF_TY     (JS_VALUE_REF_TY->getPointerTo())
-#define P_JS_VARIANT_TY       (JS_VARIANT_TY->getPointerTo())
-#define P_JS_VARIANT_FUNC_TY  (JS_VARIANT_FUNC_TY->getPointerTo())
-#define P_JS_VARIANT_ARRAY_TY (JS_VARIANT_ARRAY_TY->getPointerTo())
-#define P_RC_JS_ARRAY_TY      (RC_JS_ARRAY_TY->getPointerTo())
-#define P_RC_PTR_JSVA_TY      (RC_PTR_JSVA_TY->getPointerTo())
-#define P_RB_TREE_NODE_TY     (RB_TREE_NODE_TY->getPointerTo())
-#define P_JS_VARIANT_ITER_TY  (JS_VARIANT_ITER_TY->getPointerTo())
+// With opaque pointers every pointer is just "ptr"; the P_* names are kept
+// to document what the pointer is expected to point to.
+#define P_AUTO_PTR_TY         (PointerType::getUnqual(*context_))
+#define P_JS_VALUE_TY         (PointerType::getUnqual(*context_))
+#define P_JS_VALUE_REF_TY     (PointerType::getUnqual(*context_))
+#define P_JS_VARIANT_TY       (PointerType::getUnqual(*context_))
+#define P_JS_VARIANT_FUNC_TY  (PointerType::getUnqual(*context_))
+#define P_JS_VARIANT_ARRAY_TY (PointerType::getUnqual(*context_))
+#define P_RC_JS_ARRAY_TY      (PointerType::getUnqual(*context_))
+#define P_RC_PTR_JSVA_TY      (PointerType::getUnqual(*context_))
+#define P_RB_TREE_NODE_TY     (PointerType::getUnqual(*context_))
+#define P_JS_VARIANT_ITER_TY  (PointerType::getUnqual(*context_))
 
-#define TYPE_NAME(v) \
-    ((static_cast<StructType*>((static_cast<PointerType*>(v->getType()))-> \
-    getElementType()))->getName())
-#define IS_TYPE_OF(v, t) (TYPE_NAME(v) == t->getName())
+// Pointers are opaque, so the pointee type is recovered from the value that
+// produced the pointer (alloca, global, GEP) rather than from the pointer type.
+#define IS_TYPE_OF(v, t) (altered_carbon::js::getPointeeType(v) == (t))
 #define IS_PREVIOUS_INST(bb, x) \
     (bb->rbegin() != bb->rend() && isa<x>(*(bb->rbegin())))
-#define IS_PREVIOUS_INST_BR(bb) IS_PREVIOUS_INST(bb, BranchInst)
+#define IS_PREVIOUS_INST_BR(bb) \
+    (IS_PREVIOUS_INST(bb, UncondBrInst) || IS_PREVIOUS_INST(bb, CondBrInst))
 
 // #define IS_TYPE_OF(v, t) \
 //    (FunctionComparator::cmpTypes(v->getType(), t->PointerType()) == 0)
 
 namespace altered_carbon {
 namespace js {
+
+// Returns the type a pointer value points to when it can be determined from
+// its definition (alloca, global variable or GEP), nullptr otherwise.
+Type* getPointeeType(const Value*);
+
+// Returns true if v is a global wide string constant ([N x i32]).
+bool isWStringGlobal(const Value*);
 
 enum VariableType {
   NOT_FOUND   = -1,
@@ -289,6 +297,7 @@ public:
       std::vector<std::wstring>& params);
 
   //// JS Function Prototype ////
+  FunctionType* getJsFunctionType();
   Function* getOrCreateJsFunction(const char*);
 
   //// Built-in Creation Helpers ////

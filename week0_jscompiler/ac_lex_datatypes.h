@@ -1,8 +1,14 @@
 #include <iostream>
 #include <cmath>
+#include <memory>
+#include <string_view>
 
 #ifndef ALTERED_CARBON__JS__AC_LEX_DATATYPES_H_
 #define ALTERED_CARBON__JS__AC_LEX_DATATYPES_H_
+
+// llvm::make_unique was removed from LLVM; the code base calls make_unique
+// unqualified, so pull in the std version.
+using std::make_unique;
 
 namespace altered_carbon {
 namespace js {

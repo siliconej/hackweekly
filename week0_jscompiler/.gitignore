@@ -1,0 +1,5 @@
+# Build outputs (see Makefile).
+/build/
+/ac_js_compiler
+/libacjsvm.a
+/driver.o
