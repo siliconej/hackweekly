@@ -65,8 +65,33 @@ public final class LogUtil {
     }
 
     public static final void R(String header, String objectNum, boolean verifyStatus) {
+        R(header, objectNum, verifyStatus,
+          true);  // trusted
+    }
+
+    /**
+     * Print a verdict: ✓ valid, ⚠ intact but not trusted, 𐄂 invalid.
+     */
+    public static final void R(String header, String objectNum, boolean verifyStatus, boolean trusted) {
+        final String mark = !verifyStatus ? "31m𐄂" : (trusted ? "32m✓" : "33m⚠");
         System.out.println("\u001b[4m" + header + " Signature\u001b[0m \u001b[48;5;236m\u001b[38;5;251m ⁕ " +
-                           objectNum + " " + "\u001b[" + (verifyStatus?"32m✓":"31m𐄂") + "\u001b[0m");
+                           objectNum + " " + "\u001b[" + mark + "\u001b[0m");
+    }
+
+    /**
+     * Explain an invalid verdict; always printed.
+     */
+    public static final void failureReason(String reason) {
+        System.out.println("  \u001b[31m↳ " + reason + "\u001b[0m");
+    }
+
+    /**
+     * Explain why a signature isn't trusted; hidden by --nowarning.
+     */
+    public static final void trustReason(String reason) {
+        if (_WARNING) {
+            System.out.println("  \u001b[33m↳ " + reason + "\u001b[0m");
+        }
     }
 
     public static final void debugByteArrayString(final String header, final byte[] buffer) {

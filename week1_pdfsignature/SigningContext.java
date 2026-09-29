@@ -20,10 +20,10 @@ package io.reddart.pkcs;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.cert.X509CertificateHolder;
 
@@ -64,7 +64,7 @@ public interface SigningContext extends PkcsIdentifiers {
     public SignerInfo getSignerInfo();
     public byte[] getClearDigest();
     public byte[] getEncryptedDigest();
-    public X509CertificateHolder resolveCertificate(X500Name isssuer);
+    public List<X509CertificateHolder> getCertificateHolders();
 
     public String getDerivedMdName();
     public AsymmetricCipherType getDerivedCipherType();

@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.Security;
@@ -66,6 +67,10 @@ import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 
 public final class PdfSigVerifier extends PdfSigBase {
 
+    // Fail signatures whose integrity holds but whose trust can't be established.
+    private static boolean _strict = false;
+    private static int _failures = 0;
+
     public PdfSigVerifier(String pdfFileName) throws IOException {
 	super(pdfFileName);
     }
@@ -84,10 +89,8 @@ public final class PdfSigVerifier extends PdfSigBase {
      *  }
      *  </pre>
      */
-    private boolean verifyDetachedPKCS7Signature(byte[] pkcs7Bytes, COSArray byteRanges) {
-	final PdfSigningContext globalSigningContext =
-	    new PdfSigningContext(PdfSigningContext.SignatureType.PKCS7_DETACHED, pkcs7Bytes);
-
+    private boolean verifyDetachedPKCS7Signature(PdfSigningContext globalSigningContext,
+						 COSArray byteRanges) {
 	try {
 	    final SignedData signedData = globalSigningContext.getSignedData();
 
@@ -129,12 +132,8 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    LogUtil.V("Cert Subject: " + certHolder.getSubject());
 
 	    // ======= Step 3 =======
-	    // timestamp extraction.
-	    // Ideally we should get the official time from a time sever instead.
-	    if (!certHolder.isValidOn(new java.util.Date())) {
-		LogUtil.W("Certificate outside of valid time range: " +
-		     certHolder.getNotBefore() + " ~ " + certHolder.getNotAfter());
-	    }
+	    // Certificate validity is checked with the chain in step 7, at the time
+	    // proven by a trusted timestamp if there is one.
 
 	    // ======= Step 4 =======
 	    // extract the md signature algorithm and the signature of the cert
@@ -166,9 +165,15 @@ public final class PdfSigVerifier extends PdfSigBase {
 		    return false;
 		}
 		if (!globalSigningContext.verifySigningTime()) {
-		    LogUtil.W("Signing time is not within the valid lifecycle of the cert");
+		    globalSigningContext.addTrustIssue("Claimed signing time " +
+						       globalSigningContext.getSigningTime() +
+						       " is outside the signer certificate's validity");
 		}
 		encDigestAlgoIndex++;
+	    } else {
+		// Without signed attributes the signature is over the content digest itself.
+		globalSigningContext.setClearDigest
+		    (globalSigningContext.calculateMessageDigest(getCOSBytesInRange(byteRanges)));
 	    }
 
 	    // ======= Step 6 =======
@@ -203,14 +208,15 @@ public final class PdfSigVerifier extends PdfSigBase {
 		final ASN1Sequence keyUsageSeq = ASN1Sequence.getInstance
 		    (exKeyUsageObj.getExtnValue().getOctets());
 		if (!verifyExKeyUsage(keyUsageSeq)) {
-		    LogUtil.W("Key usage doesn't cover PDF signing");
+		    globalSigningContext.addTrustIssue("Signer certificate's extended key usage " +
+						       "doesn't cover PDF signing");
 		}
 	    } else {
-		LogUtil.W("No key usage specified in the cert");
+		LogUtil.V("No extended key usage in the cert: usage is not restricted");
 	    }
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
-	    return verifySignature(globalSigningContext, certHolder, cert.getTBSCertificate());
+	    return verifySignature(globalSigningContext, certHolder);
 	} catch (IOException e) {
 	    LogUtil.F("I/O failure during PKCS7 verification", e);
 	} catch (InvalidCipherTextException e) {
@@ -221,21 +227,19 @@ public final class PdfSigVerifier extends PdfSigBase {
 	return false;
     }
 
-    private boolean verifyPKCS1Signature(byte[] certBytes, byte[] digestASN1, byte[] clearDigest) {
+    private boolean verifyPKCS1Signature(PdfSigningContext signingContext,
+					 byte[] digestASN1, byte[] clearDigest) {
 	try {
-	    final PdfSigningContext signingContext =
-		new PdfSigningContext(PdfSigningContext.SignatureType.PKCS1, certBytes);
 	    signingContext.setEncryptedDigest(digestASN1);
 	    signingContext.setClearDigest(clearDigest);
 	    final Certificate cert = signingContext.getSigningCertificate();
-	    return verifySignature(signingContext,
-			           new X509CertificateHolder(cert), cert.getTBSCertificate());
+	    return verifySignature(signingContext, new X509CertificateHolder(cert));
 	} catch (IOException e) {
 	    LogUtil.F("I/O failure during PKCS1 verification", e);
 	} catch (InvalidCipherTextException e) {
-	    LogUtil.F("Cipher failure during PKCS7 verification", e);
+	    LogUtil.F("Cipher failure during PKCS1 verification", e);
 	} catch (IllegalArgumentException e) {
-	    LogUtil.F("Errors in the PKCS7 signature", e);
+	    LogUtil.F("Errors in the PKCS1 signature", e);
 	}
 	return false;
     }
@@ -258,20 +262,60 @@ public final class PdfSigVerifier extends PdfSigBase {
 	}
 
 	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
-	if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
-            "ETSI.CAdES.detached".equals(signerAlgorithm)) {
-	    LogUtil.R("◸" + _pdfFile.getName() + "◿ PKCS7", String.valueOf(cosObject.getObjectNumber()),
-		      verifyDetachedPKCS7Signature(((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
-						   (COSArray) dict.getItem(COSName.BYTERANGE)));
-	} else if ("adbe.x509.rsa_sha1".equals(signerAlgorithm)) {
-	    LogUtil.R("◸" + _pdfFile.getName() + "◿ PKCS1", String.valueOf(cosObject.getObjectNumber()),
-		      verifyPKCS1Signature(((COSString) dict.getItem(COSName.CERT)).getBytes(),
-					   ((COSString) dict.getItem(COSName.CONTENTS)).getBytes(),
-					   PdfSigningContext.calculateMessageDigest
-					   (getCOSBytesInRange((COSArray) dict.getItem(COSName.BYTERANGE)),
-					    "SHA-1")));
-	} else {
-	    System.out.println("Unsupported signer algorithm: " + signerAlgorithm);
+	final COSArray byteRanges = dict.getCOSArray(COSName.BYTERANGE);
+	final String objectNum = String.valueOf(cosObject.getObjectNumber());
+	String header = "◸" + _pdfFile.getName() + "◿ ";
+	PdfSigningContext signingContext = null;
+	boolean verified = false;
+	try {
+	    final byte[] contents = ((COSString) dict.getDictionaryObject(COSName.CONTENTS)).getBytes();
+	    if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
+		"ETSI.CAdES.detached".equals(signerAlgorithm)) {
+		header += "PKCS7";
+		signingContext = new PdfSigningContext
+		    (PdfSigningContext.SignatureType.PKCS7_DETACHED, contents);
+		verified = checkByteRange(byteRanges, contents, signingContext) &&
+		    verifyDetachedPKCS7Signature(signingContext, byteRanges);
+	    } else if ("adbe.x509.rsa_sha1".equals(signerAlgorithm)) {
+		header += "PKCS1";
+		signingContext = new PdfSigningContext
+		    (PdfSigningContext.SignatureType.PKCS1,
+		     ((COSString) dict.getDictionaryObject(COSName.CERT)).getBytes());
+		verified = checkByteRange(byteRanges, contents, signingContext) &&
+		    verifyPKCS1Signature(signingContext, contents,
+					 PdfSigningContext.calculateMessageDigest
+					 (getCOSBytesInRange(byteRanges), "SHA-1"));
+	    } else {
+		System.out.println("Unsupported signer algorithm: " + signerAlgorithm);
+		return;
+	    }
+	} catch (IllegalArgumentException | ClassCastException e) {
+	    LogUtil.F("Errors in the signature dictionary", e);
+	}
+	report(header, objectNum, verified, signingContext);
+    }
+
+    /**
+     * Print the verdict of one signature and the reasons behind it.
+     *
+     * ✓: the signed bytes are intact and the signer is trusted.
+     * ⚠: the signed bytes are intact, but trust can't be established (a failure
+     *    with --strict).
+     * 𐄂: the signature or the document structure is broken.
+     */
+    private static void report(String header, String objectNum, boolean verified,
+			       PdfSigningContext signingContext) {
+	final List<String> integrityFailures =
+	    (signingContext != null) ? signingContext.getIntegrityFailures() : List.of();
+	final List<String> trustIssues =
+	    (signingContext != null) ? signingContext.getTrustIssues() : List.of();
+	final boolean intact = verified && integrityFailures.isEmpty();
+	final boolean trusted = trustIssues.isEmpty();
+	LogUtil.R(header, objectNum, intact && (trusted || !_strict), trusted);
+	integrityFailures.forEach(LogUtil::failureReason);
+	trustIssues.forEach(LogUtil::trustReason);
+	if (!intact || (_strict && !trusted)) {
+	    ++_failures;
 	}
     }
 
@@ -301,10 +345,12 @@ public final class PdfSigVerifier extends PdfSigBase {
      */
     public static final void main(String[] args) throws Exception {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
+	ArrayList<File> trustFiles = new ArrayList<>();
 	File pkcs12file = null;
 	String pkcs12password = null;
 	boolean warning = true;
 	boolean verbose = false;
+	boolean systemTrust = true;
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
@@ -317,6 +363,12 @@ public final class PdfSigVerifier extends PdfSigBase {
 		warning = false;
 		LogUtil.init(verbose, warning);
 		continue;
+	    } else if ("--strict".equals(args[i])) {
+		_strict = true;
+	    } else if ("--trust".equals(args[i])) {
+		trustFiles.add(new File(args[++i]));
+	    } else if ("--no-system-trust".equals(args[i])) {
+		systemTrust = false;
 	    } else if ("--pkcs12".equals(args[i])) {
 		pkcs12file = new File(args[++i]);
 	    } else if ("--password".equals(args[i])) {
@@ -330,11 +382,21 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    }
 	}
 	if (fileNames.isEmpty()) {
-	    throw new IllegalArgumentException("Usage: java PdfSigVerifier [--verbose] <file_name.pdf>");
+	    throw new IllegalArgumentException
+		("Usage: java PdfSigVerifier [--verbose] [--nowarning] [--strict]" +
+		 " [--trust <cert.pem|cert.der>]... [--no-system-trust]" +
+		 " [--pkcs12 <file.p12> --password <password>] <file_name.pdf>...");
+	}
+	if (systemTrust) {
+	    loadSystemTrustAnchors();
+	}
+	for (File trustFile : trustFiles) {
+	    loadTrustAnchors(trustFile);
 	}
 
 	for (String fileName : fileNames) {
 	    (new PdfSigVerifier(fileName)).verify();
 	}
+	System.exit(_failures > 0 ? 1 : 0);
     }
 }
