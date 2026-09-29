@@ -337,7 +337,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 
     @Override
     public void sign() {
-	throw new RuntimeException("Use io.reddart.pdf.PdfSigCreator instead.");
+	throw new RuntimeException("Use io.reddart.pdf.PdfSigner instead.");
     }
 
     /**

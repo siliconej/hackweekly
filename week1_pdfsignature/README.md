@@ -46,6 +46,29 @@ Options:
   PKCS#12 file as candidate intermediates.  They are not trusted by themselves.
 - `--verbose`, `--nowarning`: show every step; hide the ⚠ reasons.
 
+## Signing
+
+```
+java -cp libs/pdfbox-app-3.0.0.jar:classes io.reddart.pdf.PdfSigner \
+    --pkcs12 <file.p12> --password <password> [options] <in.pdf> <out.pdf>
+```
+
+The signature is an `adbe.pkcs7.detached` CMS signature, appended in an
+incremental update so existing signatures stay valid over their revision.
+RSA, ECDSA and DSA keys are supported.  The PKCS#12 file must hold a private
+key: the `.p12` files in this directory hold certificates only.
+
+Options:
+
+- `--tsa <url>`: add an RFC 3161 timestamp over the signature (e.g.
+  `http://timestamp.digicert.com`), so a verifier can trust the signing time
+  after the certificate expires.
+- `--digest SHA-256|SHA-384|SHA-512` (default SHA-256), `--alias <alias>`.
+- `--name`, `--reason`, `--location`, `--contact`: shown by PDF viewers.
+
+`make test_sign` signs with throwaway RSA, EC and DSA keys and verifies the
+results; `make test_sign_tsa` also gets a timestamp, and needs the network.
+
 Happy Hacking,
 Nov 2 2023
 siliconej

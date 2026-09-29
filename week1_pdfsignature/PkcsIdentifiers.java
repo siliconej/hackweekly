@@ -48,6 +48,9 @@ public interface PkcsIdentifiers {
     final String OID_PKCS_RSA_SHA512    = "1.2.840.113549.1.1.13";
     final String OID_CIPHER_DSA         = "1.2.840.10040.4.1";
     final String OID_PKCS_DSA_SHA1      = "1.2.840.10040.4.3";
+    final String OID_PKCS_DSA_SHA256    = "2.16.840.1.101.3.4.3.2";
+    final String OID_PKCS_DSA_SHA384    = "2.16.840.1.101.3.4.3.3";
+    final String OID_PKCS_DSA_SHA512    = "2.16.840.1.101.3.4.3.4";
 
     final String OID_CIPHER_ECDSA       = "1.2.840.10045.2.1";
     final String OID_PKCS_ECDSA_SHA256  = "1.2.840.10045.4.3.2";
