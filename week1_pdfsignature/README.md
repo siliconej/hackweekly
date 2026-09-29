@@ -19,6 +19,33 @@ cd hackweekly/week1_pdfsignature
 make
 ```
 
+## Reading the verdicts
+
+```
+java -cp libs/pdfbox-app-3.0.0.jar:classes io.reddart.pdf.PdfSigVerifier [options] <file.pdf>...
+```
+
+Each signature gets one of three verdicts, followed by the reasons behind it:
+
+- ✓ the signed bytes are intact, and the signer's certificate chains to a
+  trusted root and is valid when the signature was made.
+- ⚠ the signed bytes are intact, but the signer can't be trusted: e.g. the
+  chain ends at a self-signed certificate, the certificate has expired and no
+  trusted timestamp proves the signature predates that, or content was
+  appended to the document after signing.
+- 𐄂 the signature is broken: the digest or signature doesn't verify, the
+  ByteRange doesn't exclude exactly this signature's /Contents, or an embedded
+  timestamp was issued for another signature.
+
+Options:
+
+- `--strict`: turn ⚠ into 𐄂.  The exit status is 1 if any signature is 𐄂.
+- `--trust <cert.pem|cert.der>`: add a trusted root (repeatable).  The JDK's
+  trust store (cacerts) is trusted by default; `--no-system-trust` turns it off.
+- `--pkcs12 <file.p12> --password <password>`: add the certificates in a
+  PKCS#12 file as candidate intermediates.  They are not trusted by themselves.
+- `--verbose`, `--nowarning`: show every step; hide the ⚠ reasons.
+
 Happy Hacking,
 Nov 2 2023
 siliconej

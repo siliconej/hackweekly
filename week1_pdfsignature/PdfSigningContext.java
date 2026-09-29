@@ -30,8 +30,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -43,7 +45,6 @@ import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 
 /**
@@ -100,6 +101,11 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     private byte[] clearDigest;
     private byte[] encryptedDigest;
+
+    // Verification outcome, beyond the signature math itself.
+    private List<String> integrityFailures;
+    private List<String> trustIssues;
+    private Date trustedTime;
 
     /////////////// SigningContext Implementation ////////////////
     @Override
@@ -237,7 +243,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     @Override
     public void addCertificate(Certificate cert) {
 	final BigInteger sn = cert.getSerialNumber().getValue();
-	if (!certificates.containsKey(signerId)) {
+	if (!certificates.containsKey(sn)) {
 	    certificates.put(sn, cert);
 	}
     }
@@ -251,21 +257,12 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     }
 
     @Override
-    public X509CertificateHolder resolveCertificate(X500Name name) {
-	// We don't allow self-sign resoluution here.
-	if (certificates.isEmpty()) {
-	    return null;
-	}
-	X500Name signingName = getSigningCertificate().getSubject();
+    public List<X509CertificateHolder> getCertificateHolders() {
+	final List<X509CertificateHolder> holders = new ArrayList<>(certificates.size());
 	for (Certificate cert : certificates.values()) {
-	    if (cert.getSubject().equals(signingName)) {
-		continue;
-	    }
-	    if (cert.getSubject().equals(name)) {
-		return new X509CertificateHolder(cert);
-	    } 
+	    holders.add(new X509CertificateHolder(cert));
 	}
-	return null;
+	return holders;
     }
 
     @Override
@@ -320,6 +317,52 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
         public Pkcs7ParseException(String msg, Throwable cause) {
             super(msg, cause);
         }
+    }
+
+    /**
+     * Record a failure that makes the signature invalid regardless of trust,
+     * e.g. a malformed ByteRange or a timestamp that belongs to another signature.
+     */
+    public void addIntegrityFailure(String reason) {
+	LogUtil.V("✗ " + reason);
+	integrityFailures.add(reason);
+    }
+
+    public List<String> getIntegrityFailures() {
+	return Collections.unmodifiableList(integrityFailures);
+    }
+
+    /**
+     * Record a reason the signer's identity or the signed revision cannot be
+     * trusted, e.g. an unanchored certificate chain or content appended later.
+     */
+    public void addTrustIssue(String reason) {
+	LogUtil.V("⚠ " + reason);
+	trustIssues.add(reason);
+    }
+
+    public List<String> getTrustIssues() {
+	return Collections.unmodifiableList(trustIssues);
+    }
+
+    /**
+     * Set the time proven by a verified and trusted timestamp token.
+     */
+    public void setTrustedTime(Date time) {
+	trustedTime = time;
+    }
+
+    public boolean hasTrustedTime() {
+	return trustedTime != null;
+    }
+
+    /**
+     * The time at which certificates are checked for validity: the trusted
+     * timestamp if there is one, otherwise now. The signing time attribute is
+     * the signer's own claim and cannot prove when the signature was made.
+     */
+    public Date getValidationTime() {
+	return (trustedTime != null) ? (Date) trustedTime.clone() : new Date();
     }
 
     public void setSignatureType(SignatureType type) {
@@ -387,6 +430,9 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
         nestedSigningContext = new HashMap<String, SigningContext>(3);
         signingTime = new Date(0);
         signerId = BigInteger.ZERO;
+        integrityFailures = new ArrayList<String>(2);
+        trustIssues = new ArrayList<String>(2);
+        trustedTime = null;
     }
 
     @Override

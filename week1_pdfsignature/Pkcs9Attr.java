@@ -20,8 +20,10 @@ package io.reddart.pkcs;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
 
@@ -42,6 +44,8 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.tsp.MessageImprint;
+import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.cert.X509CertificateHolder;
 // import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -453,7 +457,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
      * 1.2.840.113549.1.9.16.2.14
      */
     protected static class IdaaSignatureTimestampToken extends Pkcs9Attr {
-	private SigningContext timestampSigningContext;
+	private PdfSigningContext timestampSigningContext;
 
 	protected IdaaSignatureTimestampToken() {
 	    super("Signature Timestamp Token");
@@ -466,19 +470,21 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    if (obj instanceof ASN1TaggedObject) {
 		timestampSigningContext = new PdfSigningContext
 		    (PdfSigningContext.SignatureType.TIMESTAMP, (ASN1TaggedObject) obj);
-		try {
-		    verifyToken();
-		} catch (IOException e) {
-		    throw new Pkcs9ParseException("Fail to parse timestamp", e);
-		}
 		return true;
 	    }
 	    return false;
 	}
 
+	/**
+	 * Verify the token against the signature it is attached to.
+	 */
         @Override
         public boolean visit(SigningContext context) {
-            return false;
+	    if (!(context instanceof PdfSigningContext)) {
+		return false;
+	    }
+	    verifyToken((PdfSigningContext) context);
+	    return true;
         }
 
         @Override
@@ -494,35 +500,79 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    return sb.toString();
 	}
 
-	private void verifyToken() throws IOException {
-	    final SignedData signedData = timestampSigningContext.getSignedData();
-	    final ASN1Sequence tsObj  = (ASN1Sequence) ASN1Primitive.fromByteArray
-		(((ASN1OctetString) signedData.getEncapContentInfo().getContent()).getOctets());
-
-	    final ASN1Set certificates = signedData.getCertificates();
-            for (int i = 0; i < certificates.size(); ++i) {
-                timestampSigningContext.addCertificate
-                    (Certificate.getInstance(certificates.getObjectAt(i)));
-            }
-
-	    final SignerInfo tsSignerInfo = timestampSigningContext.getSignerInfo();
-	    final ASN1Sequence signerIdSeq = (ASN1Sequence) tsSignerInfo.getSID().getId();
-	    final ASN1Integer signerId = (ASN1Integer) signerIdSeq.getObjectAt(1);
-	    timestampSigningContext.setSignerId(signerId.getValue());
-            final Certificate cert = timestampSigningContext.getSigningCertificate();
-	    final ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
-	    for (int i = 0; i < tsAttrSeq.size(); ++i) {
-		LogUtil.V("▹unauth attr: " +
-			  Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
-	    }
+	/**
+	 * A timestamp token proves when a signature existed only if:
+	 * 1. its messageImprint is the hash of this signature's value (RFC 3161
+	 *    appendix A), otherwise it was issued for some other signature;
+	 * 2. its messageDigest attribute is the hash of its TSTInfo;
+	 * 3. the TSA's signature over its attributes verifies.
+	 * The first two are integrity failures of the signature carrying the
+	 * token.  A token that passes all three but whose TSA isn't trusted
+	 * proves nothing, which is a trust issue.
+	 */
+	private void verifyToken(PdfSigningContext signatureContext) {
+	    boolean verified = false;
+	    Date genTime = null;
 	    try {
-		LogUtil.R("Timestamp",
-			  ((ASN1GeneralizedTime) tsObj.getObjectAt(tsObj.size() - 2)).getTime(),
-			  PdfSigBase.verifySignature((PdfSigningContext) timestampSigningContext,
-						     new X509CertificateHolder(cert),
-						     cert.getTBSCertificate()));
+		final SignedData signedData = timestampSigningContext.getSignedData();
+		final byte[] tstInfoBytes =
+		    ((ASN1OctetString) signedData.getEncapContentInfo().getContent()).getOctets();
+		final TSTInfo tstInfo = TSTInfo.getInstance(tstInfoBytes);
+		genTime = tstInfo.getGenTime().getDate();
+
+		final ASN1Set certificates = signedData.getCertificates();
+		for (int i = 0; certificates != null && i < certificates.size(); ++i) {
+		    timestampSigningContext.addCertificate
+			(Certificate.getInstance(certificates.getObjectAt(i)));
+		}
+		final SignerInfo tsSignerInfo = timestampSigningContext.getSignerInfo();
+		final ASN1Sequence signerIdSeq = (ASN1Sequence) tsSignerInfo.getSID().getId();
+		timestampSigningContext.setSignerId(((ASN1Integer) signerIdSeq.getObjectAt(1)).getValue());
+		final ASN1Set tsAttrSeq = tsSignerInfo.getAuthenticatedAttributes();
+		for (int i = 0; i < tsAttrSeq.size(); ++i) {
+		    LogUtil.V("▹timestamp attr: " +
+			      Pkcs9Attr.getAndVisitInstance(tsAttrSeq.getObjectAt(i), timestampSigningContext));
+		}
+
+		final MessageImprint imprint = tstInfo.getMessageImprint();
+		final String imprintMdName = IdUtil.getDigestAlgorithmId
+		    (imprint.getHashAlgorithm().getAlgorithm());
+		final Certificate cert = timestampSigningContext.getSigningCertificate();
+		if (imprintMdName == null) {
+		    signatureContext.addIntegrityFailure("Unsupported timestamp imprint algorithm: " +
+							 imprint.getHashAlgorithm().getAlgorithm());
+		} else if (!Arrays.equals(imprint.getHashedMessage(),
+					  PdfSigningContext.calculateMessageDigest
+					  (signatureContext.getEncryptedDigest(), imprintMdName))) {
+		    signatureContext.addIntegrityFailure("Timestamp token was issued for another " +
+							 "signature (messageImprint mismatch)");
+		} else if (!timestampSigningContext.verifyMessageDigest(tstInfoBytes)) {
+		    signatureContext.addIntegrityFailure("Timestamp token's message digest doesn't " +
+							 "match its TSTInfo");
+		} else if (cert == null) {
+		    signatureContext.addIntegrityFailure("Timestamp token doesn't carry its signer's certificate");
+		} else if (!PdfSigBase.verifySignature(timestampSigningContext,
+						       new X509CertificateHolder(cert))) {
+		    signatureContext.addIntegrityFailure("Timestamp token's signature is invalid");
+		} else {
+		    verified = true;
+		}
 	    } catch (Exception e) {
 		LogUtil.F("Timetsamp signature verification failure", e);
+		signatureContext.addIntegrityFailure("Timestamp token can't be verified: " + e.getMessage());
+	    }
+
+	    final List<String> tsTrustIssues = timestampSigningContext.getTrustIssues();
+	    LogUtil.R("Timestamp", String.valueOf(genTime), verified, tsTrustIssues.isEmpty());
+	    if (!verified) {
+		return;
+	    }
+	    if (tsTrustIssues.isEmpty()) {
+		signatureContext.setTrustedTime(genTime);
+	    } else {
+		for (String issue : tsTrustIssues) {
+		    signatureContext.addTrustIssue("Timestamp not trusted: " + issue);
+		}
 	    }
 	}
     }
