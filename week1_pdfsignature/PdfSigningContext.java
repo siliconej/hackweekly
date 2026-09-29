@@ -148,6 +148,9 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     @Override
     public void setIdaaMdSigningAlgorithm(String id) {
+	if (id == null) {
+	    return;  // optional in CMSAlgorithmProtection: a MAC algorithm instead.
+	}
 	final String mdsId = IdUtil.getSignatureDigestId(id);
 	if (mdsId != null) {
 	    idaaMdSigningAlgorithm = mdsId;
@@ -220,9 +223,16 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	    OID_PKCS_RSA_SHA384.equals(signingAlgoId) ||
 	    OID_PKCS_RSA_SHA512.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.RSA;
-	} else if (OID_CIPHER_DSA.equals(signingAlgoId)) {
+	} else if (OID_CIPHER_DSA.equals(signingAlgoId) ||
+		   OID_PKCS_DSA_SHA1.equals(signingAlgoId) ||
+		   OID_PKCS_DSA_SHA256.equals(signingAlgoId) ||
+		   OID_PKCS_DSA_SHA384.equals(signingAlgoId) ||
+		   OID_PKCS_DSA_SHA512.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.DSA;
-	} else if (OID_CIPHER_ECDSA.equals(signingAlgoId)) {
+	} else if (OID_CIPHER_ECDSA.equals(signingAlgoId) ||
+		   OID_PKCS_ECDSA_SHA256.equals(signingAlgoId) ||
+		   OID_PKCS_ECDSA_SHA384.equals(signingAlgoId) ||
+		   OID_PKCS_ECDSA_SHA512.equals(signingAlgoId)) {
 	    return AsymmetricCipherType.ECDSA;
 	}
 	return null;

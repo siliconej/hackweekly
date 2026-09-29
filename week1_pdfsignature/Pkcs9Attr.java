@@ -739,18 +739,23 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 		return false;
 	    }
 	    mdAlgorithm = ((ASN1ObjectIdentifier) mdSeq.getObjectAt(0)).getId();
-	    // Optional
-	    if (algoSeq.size() > 1 &&
-		algoSeq.getObjectAt(1) instanceof ASN1TaggedObject) {
-		final ASN1Encodable mdsObj = ((ASN1TaggedObject) algoSeq.getObjectAt(1)).getBaseObject();
-		if (mdsObj instanceof ASN1Sequence) {
-		    final ASN1Sequence mdsSeq = (ASN1Sequence) mdsObj;
-		    if (mdsSeq.size() > 0 && (mdsSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {
-			mdSigningAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(0)).getId();
-		    }
-		    if (mdsSeq.size() > 1 && (mdsSeq.getObjectAt(1) instanceof ASN1ObjectIdentifier)) {
-			macAlgorithm = ((ASN1ObjectIdentifier) mdsSeq.getObjectAt(1)).getId();
-		    }
+	    // Optional: signatureAlgorithm [1] or macAlgorithm [2], both IMPLICIT
+	    // AlgorithmIdentifier.  Read them as implicit: an identifier without
+	    // parameters (e.g. ECDSA) would otherwise parse as a bare OID.
+	    for (int i = 1; i < algoSeq.size(); ++i) {
+		if (!(algoSeq.getObjectAt(i) instanceof ASN1TaggedObject)) {
+		    return false;
+		}
+		final ASN1TaggedObject tagged = (ASN1TaggedObject) algoSeq.getObjectAt(i);
+		final ASN1Sequence algoIdSeq = ASN1Sequence.getInstance(tagged, false);  // explicit
+		if (algoIdSeq.size() == 0 || !(algoIdSeq.getObjectAt(0) instanceof ASN1ObjectIdentifier)) {
+		    return false;
+		}
+		final String algoId = ((ASN1ObjectIdentifier) algoIdSeq.getObjectAt(0)).getId();
+		if (tagged.getTagNo() == 1) {
+		    mdSigningAlgorithm = algoId;
+		} else if (tagged.getTagNo() == 2) {
+		    macAlgorithm = algoId;
 		}
 	    }
 	    return true;
