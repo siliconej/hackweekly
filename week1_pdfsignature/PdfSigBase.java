@@ -58,6 +58,7 @@ import org.apache.pdfbox.cos.COSInteger;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -78,6 +79,7 @@ import org.bouncycastle.asn1.pkcs.PBKDF2Params;
 import org.bouncycastle.asn1.pkcs.PKCS12PBEParams;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Certificate;
@@ -139,11 +141,12 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	private CCMBlockCipher _ccmCipher;
 
 	public static DecryptHelper newInstance(String oid) {
-	    final DecryptHelper helper = _SymmetricCipherIdMap.get(oid);
-	    if (helper == null) {
+	    final DecryptHelper template = _SymmetricCipherIdMap.get(oid);
+	    if (template == null) {
 		throw new IllegalArgumentException("Invalid cipher algorithm: " + oid);
 	    }
-	    return helper;
+	    // The map holds templates: newCipher() mutates, so every caller gets its own.
+	    return new DecryptHelper(template._cipherType, template._modeType, template._keySize);
 	}
 
 	public DecryptHelper(SymmetricCipherType cipherType, ModeType modeType, int keySize) {
@@ -212,8 +215,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	    } else if (_modeType == ModeType.CCM) {
 		decryptedBytes = new byte[_ccmCipher.getOutputSize(in.length)];
-		len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
-                len += _gcmCipher.doFinal(decryptedBytes, len);
+		len = _ccmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
+                len += _ccmCipher.doFinal(decryptedBytes, len);
 
 	    } else if (_bufferedCipher != null) {
 		decryptedBytes = new byte[_bufferedCipher.getOutputSize(in.length)];
@@ -323,10 +326,6 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
     protected File _pdfFile;
     private byte[] _pdfBytes;
-    // Certificates loaded from PKCS#12 files: a source of issuers, not of trust.
-    private static List<X509CertificateHolder> _certBags;
-    // Certificates the chain of a signer must end at to be trusted.
-    private static final List<X509CertificateHolder> _trustAnchors = new ArrayList<>();
     private static final int MAX_CHAIN_DEPTH = 8;
 
     public PdfSigBase(String pdfFileName) throws IOException {
@@ -339,7 +338,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Sequence obj, int index, Class<T> dataType) {
         try {
-	    if (obj.size() >= index) {
+	    if (index >= 0 && obj.size() > index) {
 		return dataType.cast(obj.getObjectAt(index));
 	    }
 	} catch (ClassCastException e) {
@@ -354,7 +353,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Set obj, int index, Class<T> dataType) {
         try {
-            if (obj.size() >= index) {
+            if (index >= 0 && obj.size() > index) {
                 return dataType.cast(obj.getObjectAt(index));
             }
         } catch (ClassCastException e) {
@@ -546,6 +545,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    signingContext.addIntegrityFailure("The bytes excluded by ByteRange are not this signature's /Contents");
 	    return false;
 	}
+	signingContext.setCoversWholeDocument(signedEnd == pdf.length);
 	if (signedEnd < pdf.length) {
 	    if (!endsAtEof(pdf, (int) signedEnd)) {
 		signingContext.addIntegrityFailure("Signed bytes don't end at a revision boundary (%%EOF)");
@@ -586,66 +586,11 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
     }
 
     /**
-     * Trust the certificates in the JDK's default trust store (cacerts).
-     */
-    public static void loadSystemTrustAnchors() {
-	final File cacerts = new File(System.getProperty("java.home"), "lib/security/cacerts");
-	try {
-	    // A null password skips the store's integrity check; trusted entries stay readable.
-	    final KeyStore keyStore = KeyStore.getInstance(cacerts, (char[]) null);
-	    int count = 0;
-	    for (String alias : Collections.list(keyStore.aliases())) {
-		if (keyStore.isCertificateEntry(alias)) {
-		    _trustAnchors.add(new X509CertificateHolder(keyStore.getCertificate(alias).getEncoded()));
-		    ++count;
-		}
-	    }
-	    LogUtil.V("Trust anchors loaded from " + cacerts + ": " + count);
-	} catch (IOException | GeneralSecurityException e) {
-	    LogUtil.W("Failed to load the system trust store " + cacerts + ": " + e.getMessage());
-	}
-    }
-
-    /**
-     * Trust the certificate(s) in a PEM or DER file.
-     */
-    public static void loadTrustAnchors(File file) throws IOException {
-	final byte[] bytes = Files.readAllBytes(file.toPath());
-	final String text = new String(bytes, StandardCharsets.US_ASCII);
-	final String begin = "-----BEGIN CERTIFICATE-----";
-	final String end = "-----END CERTIFICATE-----";
-	if (!text.contains(begin)) {
-	    _trustAnchors.add(new X509CertificateHolder(bytes));
-	    return;
-	}
-	for (int from = text.indexOf(begin); from >= 0; from = text.indexOf(begin, from)) {
-	    final int to = text.indexOf(end, from);
-	    if (to < 0) {
-		throw new IOException("Unterminated PEM certificate in " + file);
-	    }
-	    _trustAnchors.add(new X509CertificateHolder
-			      (Base64.getMimeDecoder().decode(text.substring(from + begin.length(), to))));
-	    from = to + end.length();
-	}
-    }
-
-    private static boolean isTrustAnchor(X509CertificateHolder cert) {
-	for (X509CertificateHolder anchor : _trustAnchors) {
-	    // A trust anchor is a name and a key; a cross-certificate for it counts too.
-	    if (anchor.getSubject().equals(cert.getSubject()) &&
-		anchor.getSubjectPublicKeyInfo().equals(cert.getSubjectPublicKeyInfo())) {
-		return true;
-	    }
-	}
-	return false;
-    }
-
-    /**
      * Build the certificate chain of <code>leaf</code> up to a trust anchor, and
      * record every reason it can't be trusted in the signing context.
      *
-     * Issuers are looked up in the CMS certificates, the loaded PKCS#12 bags and
-     * the trust anchors.  A candidate must carry the child's issuer name, a
+     * Issuers are looked up in the CMS certificates and the signing context's
+     * trust store: its intermediates and anchors.  A candidate must carry the child's issuer name, a
      * subject key identifier matching the child's authority key identifier when
      * both are present, and a key that verifies the child's signature.  The
      * chain is trusted only if it reaches a trust anchor: a self-signed
@@ -656,18 +601,17 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      */
     public static boolean verifyCertChain(PdfSigningContext signingContext, X509CertificateHolder leaf) {
 	final Date validationTime = signingContext.getValidationTime();
+	final TrustStore trustStore = signingContext.getTrustStore();
 	final List<X509CertificateHolder> pool = new ArrayList<>(signingContext.getCertificateHolders());
-	if (_certBags != null) {
-	    pool.addAll(_certBags);
-	}
-	pool.addAll(_trustAnchors);
+	pool.addAll(trustStore.getIntermediates());
+	pool.addAll(trustStore.getAnchors());
 
 	checkCertificate(signingContext, leaf, validationTime, false);  // isCA
 	final Stack<String> certChain = new Stack<String>();
 	X509CertificateHolder cert = leaf;
 	for (int depth = 0; depth < MAX_CHAIN_DEPTH; ++depth) {
 	    certChain.push(String.valueOf(cert.getSubject()));
-	    if (isTrustAnchor(cert)) {
+	    if (trustStore.isAnchor(cert)) {
 		int indent = 0;
 		while (!certChain.isEmpty()) {
 		    LogUtil.V((indent > 0 ? "↳" : "") + certChain.pop(), indent);
@@ -675,7 +619,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		}
 		return true;
 	    }
-	    final X509CertificateHolder issuer = findIssuer(cert, pool);
+	    final X509CertificateHolder issuer = findIssuer(cert, pool, trustStore);
 	    if (issuer == null) {
 		if (cert.getSubject().equals(cert.getIssuer()) && isIssuedBy(cert, cert)) {
 		    signingContext.addTrustIssue("Certificate chain ends at a self-signed certificate " +
@@ -686,7 +630,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 		}
 		return false;
 	    }
-	    if (!isTrustAnchor(issuer)) {
+	    if (!trustStore.isAnchor(issuer)) {
 		checkCertificate(signingContext, issuer, validationTime, true);  // isCA
 	    }
 	    cert = issuer;
@@ -700,7 +644,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      * Find the certificate that issued <code>cert</code>, preferring a trust anchor.
      */
     private static X509CertificateHolder findIssuer(X509CertificateHolder cert,
-						    List<X509CertificateHolder> pool) {
+						    List<X509CertificateHolder> pool,
+						    TrustStore trustStore) {
 	final AuthorityKeyIdentifier aki = AuthorityKeyIdentifier.fromExtensions(cert.getExtensions());
 	final byte[] authorityKeyId = (aki != null) ? aki.getKeyIdentifier() : null;
 	X509CertificateHolder found = null;
@@ -720,7 +665,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    if (!isIssuedBy(cert, candidate)) {
 		continue;
 	    }
-	    if (isTrustAnchor(candidate)) {
+	    if (trustStore.isAnchor(candidate)) {
 		return candidate;
 	    }
 	    if (found == null) {
@@ -739,6 +684,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	final String who = isCA ? "CA certificate " + cert.getSubject() : "Signer certificate";
 	if (!cert.isValidOn(time)) {
 	    if (!isCA && !signingContext.hasTrustedTime() &&
+		signingContext.getSigningTime() != null &&
 		cert.isValidOn(signingContext.getSigningTime())) {
 		signingContext.addTrustIssue(who + " expired on " + cert.getNotAfter() +
 					     ", and no trusted timestamp proves the signature was made before");
@@ -779,7 +725,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    final AsymmetricCipherType keyType = getKeyCipherType(pubKeyInfo);
 	    if (keyType == AsymmetricCipherType.RSA) {
 		return verify(new RSAEngine(), newPublicKeyParams(pubKeyInfo),
-			      cert.getSignature(), tbsDigest);
+			      cert.getSignature(), tbsDigest, digestName);
 	    } else if (keyType != null) {
 		return verify(newDsaSigner(keyType), newPublicKeyParams(pubKeyInfo),
 			      cert.getSignature(), tbsDigest);
@@ -851,18 +797,34 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	}
     }
 
+    /**
+     * Verify an RSA PKCS#1 v1.5 signature: the decrypted block must be exactly
+     * the DER DigestInfo of <code>clearBytes</code> under <code>digestName</code>
+     * (RFC 8017 8.2.2).  Comparing the whole encoding, not a digest parsed out of
+     * it, leaves no room for extra or mislabeled content in the block.
+     */
     protected static final boolean verify(AsymmetricBlockCipher cipher,
 					  CipherParameters params,
 					  byte[] encryptedBytes,
-					  byte[] clearBytes)
-        throws InvalidCipherTextException {
-        cipher.init(false,  // for encryption?
-		    params);
+					  byte[] clearBytes,
+					  String digestName)
+        throws InvalidCipherTextException, IOException {
         final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
-        final ASN1Sequence decryptedSeq =
-            ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
-        return (0 == Arrays.compare
-                (castObjectAt(decryptedSeq, 1, ASN1OctetString.class).getOctets(), clearBytes));
+        pkcs1Enc.init(false,  // for encryption?
+		      params);
+        final byte[] decrypted = decrypt(pkcs1Enc, encryptedBytes);
+	final ASN1ObjectIdentifier digestOid =
+	    new ASN1ObjectIdentifier(IdUtil.getDigestAlgorithmOid(digestName));
+	// The digest algorithm's parameters are NULL, or absent in some encoders.
+	for (AlgorithmIdentifier digestAlgo : new AlgorithmIdentifier[] {
+		new AlgorithmIdentifier(digestOid, DERNull.INSTANCE),
+		new AlgorithmIdentifier(digestOid) }) {
+	    if (Arrays.equals(decrypted, new DigestInfo(digestAlgo, clearBytes).getEncoded(ASN1Encoding.DER))) {
+		return true;
+	    }
+	}
+	LogUtil.V("RSA signature doesn't decrypt to the " + digestName + " DigestInfo of the signed data");
+	return false;
     }
 
     protected static final boolean verify(DSA cipher,
@@ -989,7 +951,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	switch (cipherType) {
 	case RSA:
-	    return verify(new RSAEngine(), pubKeyParams, digest, clearDigest);
+	    return verify(new RSAEngine(), pubKeyParams, digest, clearDigest,
+			  signingContext.getDerivedMdName());
 
 	case DSA:
 	case ECDSA:
@@ -1021,7 +984,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
     /**
      * Load certificates from a P12 file
      */
-    protected static void loadCertBags(ASN1Primitive rootPrim, String password)
+    private static List<X509CertificateHolder> loadCertBags(ASN1Primitive rootPrim, String password)
 	throws NoSuchAlgorithmException, InvalidCipherTextException, IOException {
 
 	/////// parse wrappers ///////
@@ -1112,23 +1075,27 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	// Load certs from the decryptedBytes, use stream so that we can ignore some extra bytes.
 	final ASN1InputStream decryptedIS = new ASN1InputStream(new ByteArrayInputStream(decryptedBytes));
 	final ASN1Sequence certsSeq = (ASN1Sequence) decryptedIS.readObject();
+	final List<X509CertificateHolder> certs = new ArrayList<>(certsSeq.size());
         for (int i = 0; i < certsSeq.size(); ++i) {
             final CertBag certBag = CertBag.getInstance(certsSeq.getObjectAt(i));
             final ASN1TaggedObject certObj =
 		castObjectAt((ASN1Sequence) certBag.getCertValue(), 1, ASN1TaggedObject.class);
             final X509CertificateHolder holder =
 		new X509CertificateHolder(((DEROctetString) certObj.getBaseObject()).getOctets());
-	    _certBags.add(holder);
+	    certs.add(holder);
         }
 	decryptedIS.close();
+	return certs;
     }
 
-    protected static void loadPKCS12(File pkcs12file, String password) {
-	try {
-	    final ASN1InputStream asnIS = new ASN1InputStream(new FileInputStream(pkcs12file));
+    /**
+     * Read the certificates of a password-protected PKCS#12 file.  Use
+     * {@link Pkcs12#readCertificates} instead.
+     */
+    static List<X509CertificateHolder> readPkcs12Certificates(File pkcs12file, String password)
+	throws IOException {
+	try (ASN1InputStream asnIS = new ASN1InputStream(new FileInputStream(pkcs12file))) {
 	    final ASN1Sequence asn1prim = (ASN1Sequence) asnIS.readObject();
-	    asnIS.close();
-            //System.out.println("asn1prim: " + asn1prim.getObjectAt(2)
 	    final ASN1Sequence certBagSeq = castObjectAt(asn1prim, 1, ASN1Sequence.class);
 	    final ASN1Sequence macSeq = castObjectAt(asn1prim, 2, ASN1Sequence.class);
 	    final AlgorithmIdentifier digestAlgoObj = AlgorithmIdentifier.getInstance
@@ -1141,9 +1108,6 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    final byte[] cmsBytes = DEROctetString.getInstance
 		(castObjectAt(certBagSeq, 1, ASN1TaggedObject.class).getBaseObject().getEncoded()).getOctets();
 	    final ASN1Sequence cmsSeq = ASN1Sequence.getInstance(cmsBytes);
-	    if (_certBags == null) {
-		_certBags = new ArrayList<X509CertificateHolder>();
-	    }
 	    try {
 		if (verifyMac(digestAlgoObj, cmsBytes,
 			      castObjectAt(castObjectAt(macSeq, 0, ASN1Sequence.class),
@@ -1151,20 +1115,20 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 			      password, macSeq)) {
 		    LogUtil.V("MAC verified successfully.");
 		} else {
-		    LogUtil.W("MAC failed.");
+		    // Most likely a wrong password: decrypting would only yield garbage.
+		    throw new IOException("MAC of " + pkcs12file + " doesn't verify: " +
+					  "wrong password or corrupted file");
 		}
 	    } catch (NoSuchAlgorithmException e) {
-		LogUtil.F("MAC verifier failed to load: " + e);
+		// Bag certificates are only candidate issuers, never trusted by themselves.
+		LogUtil.W("Can't check the MAC of " + pkcs12file + ": " + e.getMessage());
 	    }
-	    loadCertBags(cmsSeq, password);
-	    LogUtil.V("Certificate bag size: " + _certBags.size());
-	} catch (IOException e) {
-	    LogUtil.F("Fail to read an object");
-	} catch (InvalidCipherTextException | NoSuchAlgorithmException e) {
-	    LogUtil.F("Invalid cipher text or algorithm");
+	    final List<X509CertificateHolder> certs = loadCertBags(cmsSeq, password);
+	    LogUtil.V("Certificate bag size: " + certs.size());
+	    return certs;
+	} catch (InvalidCipherTextException | NoSuchAlgorithmException |
+		 IllegalArgumentException | ClassCastException | NullPointerException e) {
+	    throw new IOException("Can't read the certificates of " + pkcs12file + ": " + e.getMessage(), e);
 	}
     }
-    
-    public abstract void verify();
-    public abstract void sign();
 }

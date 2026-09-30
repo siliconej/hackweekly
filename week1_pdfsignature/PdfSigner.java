@@ -117,7 +117,6 @@ public final class PdfSigner extends PdfSigBase implements SignatureInterface {
 	 "SHA-512", NISTObjectIdentifiers.id_sha512);
     // DocMDP /P 1: no changes at all are permitted after the certification signature.
     private static final int DOCMDP_NO_CHANGES = 1;
-    private static int _failures = 0;
 
     private final File _outFile;
     private final PrivateKey _privateKey;
@@ -341,13 +340,10 @@ public final class PdfSigner extends PdfSigBase implements SignatureInterface {
 
     //////////////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void verify() {
-	throw new RuntimeException("Use io.reddart.pdf.PdfSigVerifier instead.");
-    }
-
-    @Override
-    public void sign() {
+    /**
+     * Write the signed document.  On failure nothing is left at the output path.
+     */
+    public void sign() throws IOException, GeneralSecurityException {
 	try (PDDocument doc = Loader.loadPDF(_pdfFile);
 	     SignatureOptions options = new SignatureOptions()) {
 	    if (getDocMdpPermission(doc) == DOCMDP_NO_CHANGES) {
@@ -372,10 +368,9 @@ public final class PdfSigner extends PdfSigBase implements SignatureInterface {
 	    }
 	    System.out.println("Signed " + _pdfFile + " → " + _outFile + " (" + getSignatureAlgorithm() +
 			       (_tsaUrl != null ? ", timestamped" : "") + ")");
-	} catch (IOException | GeneralSecurityException | IllegalArgumentException e) {
-	    LogUtil.F("Failed to sign " + _pdfFile, e);
+	} catch (IOException | GeneralSecurityException | RuntimeException e) {
 	    _outFile.delete();  // never leave a half-written document behind.
-	    ++_failures;
+	    throw e;
 	}
     }
 
@@ -474,9 +469,9 @@ public final class PdfSigner extends PdfSigBase implements SignatureInterface {
 	    signer.setContactInfo(contactInfo);
 	    signer.sign();
 	} catch (IOException | GeneralSecurityException | IllegalArgumentException e) {
-	    LogUtil.F("Failed to set up the signer", e);
-	    ++_failures;
+	    LogUtil.F("Failed to sign " + fileNames.get(0), e);
+	    System.exit(1);
 	}
-	System.exit(_failures > 0 ? 1 : 0);
+	System.exit(0);
     }
 }

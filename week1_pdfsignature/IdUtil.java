@@ -98,6 +98,20 @@ public final class IdUtil implements PkcsIdentifiers {
     }
 
     /**
+     * Returns the dot-separated OID of a message digest algorithm given its
+     * friendly name, e.g. SHA-256.
+     */
+    public static final String getDigestAlgorithmOid(String name)
+	throws IllegalArgumentException {
+	for (Map.Entry<String, String> entry : _DigestAlgorithmIdMap.entrySet()) {
+	    if (entry.getValue().equals(name)) {
+		return entry.getKey();
+	    }
+	}
+	throw new IllegalArgumentException("Unsupported digest algorithm: " + name);
+    }
+
+    /**
      * Returns the friendly asymmetric cipher algorithm name given
      * the ObjectIdentifier.
      */

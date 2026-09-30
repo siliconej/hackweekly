@@ -24,6 +24,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +50,7 @@ import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSObject;
+import org.apache.pdfbox.cos.COSObjectKey;
 import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -60,6 +68,7 @@ import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -67,12 +76,15 @@ import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 
 public final class PdfSigVerifier extends PdfSigBase {
 
-    // Fail signatures whose integrity holds but whose trust can't be established.
-    private static boolean _strict = false;
-    private static int _failures = 0;
+    private final TrustStore _trustStore;
 
-    public PdfSigVerifier(String pdfFileName) throws IOException {
+    /**
+     * @param trustStore the anchors signers must chain to, and candidate
+     *        intermediates; {@link TrustStore#empty} checks integrity only
+     */
+    public PdfSigVerifier(String pdfFileName, TrustStore trustStore) throws IOException {
 	super(pdfFileName);
+	_trustStore = trustStore;
     }
 
     /**
@@ -161,7 +173,8 @@ public final class PdfSigVerifier extends PdfSigBase {
 		// 2. thee signing time should be within the certificate's validation
 		//    period.
 		if (!globalSigningContext.verifyMessageDigest(getCOSBytesInRange(byteRanges))) {
-		    LogUtil.F("Message digest of byte range(s) doesn't match");
+		    globalSigningContext.addIntegrityFailure("The signed bytes don't match the " +
+							     "signature's message digest: the document was changed");
 		    return false;
 		}
 		if (!globalSigningContext.verifySigningTime()) {
@@ -216,13 +229,10 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    }
 
 	    // Prepare pubkey and call RSA decrypt rountine to verify.
-	    return verifySignature(globalSigningContext, certHolder);
-	} catch (IOException e) {
-	    LogUtil.F("I/O failure during PKCS7 verification", e);
-	} catch (InvalidCipherTextException e) {
-	    LogUtil.F("Cipher failure during PKCS7 verification", e);
-	} catch (IllegalArgumentException e) {
-	    LogUtil.F("Errors in the PKCS7 signature", e);
+	    return verifySignatureValue(globalSigningContext, certHolder);
+	} catch (IOException | InvalidCipherTextException | IllegalArgumentException e) {
+	    LogUtil.V("PKCS7 verification failure", e);
+	    globalSigningContext.addIntegrityFailure("Malformed PKCS#7 signature: " + e.getMessage());
 	}
 	return false;
     }
@@ -232,112 +242,181 @@ public final class PdfSigVerifier extends PdfSigBase {
 	try {
 	    signingContext.setEncryptedDigest(digestASN1);
 	    signingContext.setClearDigest(clearDigest);
+	    signingContext.setMdAlgorithm(OID_ALGO_SHA1);  // adbe.x509.rsa_sha1
 	    final Certificate cert = signingContext.getSigningCertificate();
-	    return verifySignature(signingContext, new X509CertificateHolder(cert));
-	} catch (IOException e) {
-	    LogUtil.F("I/O failure during PKCS1 verification", e);
-	} catch (InvalidCipherTextException e) {
-	    LogUtil.F("Cipher failure during PKCS1 verification", e);
-	} catch (IllegalArgumentException e) {
-	    LogUtil.F("Errors in the PKCS1 signature", e);
+	    return verifySignatureValue(signingContext, new X509CertificateHolder(cert));
+	} catch (IOException | InvalidCipherTextException | IllegalArgumentException e) {
+	    LogUtil.V("PKCS1 verification failure", e);
+	    signingContext.addIntegrityFailure("Malformed PKCS#1 signature: " + e.getMessage());
 	}
 	return false;
     }
 
-    private void processObject(COSObject cosObject) {
+    /**
+     * Verify the signature value with the signer's key, recording a failure.
+     */
+    private static boolean verifySignatureValue(PdfSigningContext signingContext,
+						X509CertificateHolder certHolder)
+	throws IOException, InvalidCipherTextException {
+	if (verifySignature(signingContext, certHolder)) {
+	    return true;
+	}
+	signingContext.addIntegrityFailure("The signature value doesn't verify with the signer's key");
+	return false;
+    }
+
+    /**
+     * Verify the signature dictionary in <code>cosObject</code>, if it is one.
+     *
+     * @return null if the object is not a signature dictionary
+     */
+    private SignatureResult processObject(COSObject cosObject) {
 	final COSBase base = cosObject.getObject();
 	if (!(base instanceof COSDictionary)) {
-	    return;
+	    return null;
 	}
 
 	final COSDictionary dict = (COSDictionary) base;
 	final COSBase type = dict.getItem(COSName.TYPE);
 	if (!(type != null && type instanceof COSName &&
 	      "Sig".equals(((COSName) type).getName()))) {
-	    return;
+	    return null;
 	}
 	// according to other resources, PDF also support VeriSign, PPKMS signature scheme.
-	if (!"Adobe.PPKLite".equals(((COSName) dict.getItem(COSName.FILTER)).getName())) {
-	    LogUtil.F("Unsupported signature object: " + dict.getItem(COSName.FILTER));
+	final COSName filter = dict.getCOSName(COSName.FILTER);
+	if (filter == null || !"Adobe.PPKLite".equals(filter.getName())) {
+	    LogUtil.W("Unsupported signature handler: " + filter);
 	}
 
-	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
+	final COSName subFilter = dict.getCOSName(COSName.SUB_FILTER);
+	final String signerAlgorithm = (subFilter != null) ? subFilter.getName() : null;
 	final COSArray byteRanges = dict.getCOSArray(COSName.BYTERANGE);
-	final String objectNum = String.valueOf(cosObject.getObjectNumber());
-	String header = "◸" + _pdfFile.getName() + "◿ ";
+	final long objectNumber = cosObject.getObjectNumber();
 	PdfSigningContext signingContext = null;
-	boolean verified = false;
+	final List<String> dictionaryFailures = new ArrayList<>();
 	try {
 	    final byte[] contents = ((COSString) dict.getDictionaryObject(COSName.CONTENTS)).getBytes();
 	    if ("adbe.pkcs7.detached".equals(signerAlgorithm) ||
 		"ETSI.CAdES.detached".equals(signerAlgorithm)) {
-		header += "PKCS7";
 		signingContext = new PdfSigningContext
 		    (PdfSigningContext.SignatureType.PKCS7_DETACHED, contents);
-		verified = checkByteRange(byteRanges, contents, signingContext) &&
+		signingContext.setTrustStore(_trustStore);
+		if (checkByteRange(byteRanges, contents, signingContext)) {
 		    verifyDetachedPKCS7Signature(signingContext, byteRanges);
+		}
 	    } else if ("adbe.x509.rsa_sha1".equals(signerAlgorithm)) {
-		header += "PKCS1";
 		signingContext = new PdfSigningContext
 		    (PdfSigningContext.SignatureType.PKCS1,
 		     ((COSString) dict.getDictionaryObject(COSName.CERT)).getBytes());
-		verified = checkByteRange(byteRanges, contents, signingContext) &&
+		signingContext.setTrustStore(_trustStore);
+		if (checkByteRange(byteRanges, contents, signingContext)) {
 		    verifyPKCS1Signature(signingContext, contents,
 					 PdfSigningContext.calculateMessageDigest
 					 (getCOSBytesInRange(byteRanges), "SHA-1"));
+		}
 	    } else {
-		System.out.println("Unsupported signer algorithm: " + signerAlgorithm);
-		return;
+		return new SignatureResult(objectNumber, signerAlgorithm,
+					   SignatureResult.Verdict.UNSUPPORTED,
+					   List.of(), List.of("Unsupported signature format: " + signerAlgorithm),
+					   Optional.empty(), Optional.empty(), Optional.empty(), false);
 	    }
-	} catch (IllegalArgumentException | ClassCastException e) {
-	    LogUtil.F("Errors in the signature dictionary", e);
+	} catch (IllegalArgumentException | ClassCastException | NullPointerException e) {
+	    LogUtil.V("Signature dictionary failure", e);
+	    dictionaryFailures.add("Malformed signature dictionary: " + e.getMessage());
 	}
-	report(header, objectNum, verified, signingContext);
+	return toResult(objectNumber, signerAlgorithm, signingContext, dictionaryFailures);
     }
 
     /**
-     * Print the verdict of one signature and the reasons behind it.
-     *
-     * ✓: the signed bytes are intact and the signer is trusted.
-     * ⚠: the signed bytes are intact, but trust can't be established (a failure
-     *    with --strict).
-     * 𐄂: the signature or the document structure is broken.
+     * Collect what the verification of one signature recorded in its context.
      */
-    private static void report(String header, String objectNum, boolean verified,
-			       PdfSigningContext signingContext) {
-	final List<String> integrityFailures =
-	    (signingContext != null) ? signingContext.getIntegrityFailures() : List.of();
-	final List<String> trustIssues =
-	    (signingContext != null) ? signingContext.getTrustIssues() : List.of();
-	final boolean intact = verified && integrityFailures.isEmpty();
-	final boolean trusted = trustIssues.isEmpty();
-	LogUtil.R(header, objectNum, intact && (trusted || !_strict), trusted);
-	integrityFailures.forEach(LogUtil::failureReason);
-	trustIssues.forEach(LogUtil::trustReason);
-	if (!intact || (_strict && !trusted)) {
-	    ++_failures;
+    private static SignatureResult toResult(long objectNumber, String subFilter,
+					    PdfSigningContext signingContext,
+					    List<String> dictionaryFailures) {
+	final List<String> integrityFailures = new ArrayList<>(dictionaryFailures);
+	final List<String> trustIssues = new ArrayList<>();
+	Optional<X509Certificate> signer = Optional.empty();
+	Optional<Instant> claimedSigningTime = Optional.empty();
+	Optional<SignatureResult.Timestamp> timestamp = Optional.empty();
+	boolean coversWholeDocument = false;
+	if (signingContext != null) {
+	    integrityFailures.addAll(signingContext.getIntegrityFailures());
+	    trustIssues.addAll(signingContext.getTrustIssues());
+	    signer = toX509Certificate(signingContext.getSigningCertificate());
+	    claimedSigningTime = Optional.ofNullable(signingContext.getSigningTime()).map(Date::toInstant);
+	    timestamp = Optional.ofNullable(signingContext.getTimestamp());
+	    coversWholeDocument = signingContext.coversWholeDocument();
+	}
+	return new SignatureResult(objectNumber, subFilter,
+				   SignatureResult.verdictOf(integrityFailures, trustIssues),
+				   integrityFailures, trustIssues, signer, claimedSigningTime,
+				   timestamp, coversWholeDocument);
+    }
+
+    private static Optional<X509Certificate> toX509Certificate(Certificate cert) {
+	if (cert == null) {
+	    return Optional.empty();
+	}
+	try {
+	    return Optional.of(new JcaX509CertificateConverter().getCertificate(new X509CertificateHolder(cert)));
+	} catch (CertificateException e) {
+	    LogUtil.V("Signer certificate can't be converted", e);
+	    return Optional.empty();
 	}
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void verify() {
-	try {
-	    final PDDocument doc = Loader.loadPDF(_pdfFile,
-						  (String) null);  // password?
+    /**
+     * Verify every signature of the document.  Nothing is printed: the verdicts
+     * and the reasons behind them are in the report.
+     */
+    public VerificationReport verify() {
+	final List<SignatureResult> results = new ArrayList<>();
+	try (PDDocument doc = Loader.loadPDF(_pdfFile,
+					     (String) null)) {  // password?
 	    doc.setAllSecurityToBeRemoved(true);
 	    final COSDocument cosDocument = doc.getDocument();
-	    cosDocument.getXrefTable().keySet().stream()
-		.forEach(obj -> processObject(cosDocument.getObjectFromPool(obj)));
+	    for (COSObjectKey key : cosDocument.getXrefTable().keySet()) {
+		final SignatureResult result = processObject(cosDocument.getObjectFromPool(key));
+		if (result != null) {
+		    results.add(result);
+		}
+	    }
 	} catch (IOException e) {
-	    LogUtil.F("Failed to parse PDF file", e);
+	    LogUtil.V("Failed to parse PDF file", e);
+	    return new VerificationReport(_pdfFile, results,
+					  Optional.of("Failed to parse " + _pdfFile + ": " + e.getMessage()));
 	}
+	results.sort(Comparator.comparingLong(SignatureResult::objectNumber));
+	return new VerificationReport(_pdfFile, results, Optional.empty());
     }
 
-    @Override
-    public void sign() {
-	throw new RuntimeException("Use io.reddart.pdf.PdfSigner instead.");
+    /**
+     * Print the verdicts of a document and the reasons behind them.
+     *
+     * ✓: the signed bytes are intact and the signer is trusted.
+     * ⚠: the signed bytes are intact, but trust can't be established (𐄂 with
+     *    --strict).
+     * 𐄂: the signature or the document structure is broken.
+     */
+    private static void print(VerificationReport report, VerificationReport.Policy policy) {
+	report.error().ifPresent(LogUtil::F);
+	for (SignatureResult signature : report.signatures()) {
+	    if (signature.verdict() == SignatureResult.Verdict.UNSUPPORTED) {
+		System.out.println("Unsupported signer algorithm: " + signature.subFilter());
+		continue;
+	    }
+	    signature.timestamp().ifPresent
+		(ts -> LogUtil.R("Timestamp", String.valueOf(Date.from(ts.time())), ts.verified(), ts.trusted()));
+	    final String format = "adbe.x509.rsa_sha1".equals(signature.subFilter()) ? "PKCS1" : "PKCS7";
+	    LogUtil.R("◸" + report.file().getName() + "◿ " + format,
+		      String.valueOf(signature.objectNumber()),
+		      VerificationReport.passes(signature, policy),
+		      signature.trustIssues().isEmpty());
+	    signature.integrityFailures().forEach(LogUtil::failureReason);
+	    signature.trustIssues().forEach(LogUtil::trustReason);
+	}
     }
 
     /**
@@ -346,11 +425,13 @@ public final class PdfSigVerifier extends PdfSigBase {
     public static final void main(String[] args) throws Exception {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
 	ArrayList<File> trustFiles = new ArrayList<>();
+	Map<File, String> pkcs12files = new LinkedHashMap<>();
 	File pkcs12file = null;
 	String pkcs12password = null;
 	boolean warning = true;
 	boolean verbose = false;
 	boolean systemTrust = true;
+	VerificationReport.Policy policy = VerificationReport.Policy.LENIENT;
 
 	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
@@ -364,7 +445,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		LogUtil.init(verbose, warning);
 		continue;
 	    } else if ("--strict".equals(args[i])) {
-		_strict = true;
+		policy = VerificationReport.Policy.STRICT;
 	    } else if ("--trust".equals(args[i])) {
 		trustFiles.add(new File(args[++i]));
 	    } else if ("--no-system-trust".equals(args[i])) {
@@ -377,7 +458,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		fileNames.add(args[i]);
             }
 	    if (pkcs12file != null && pkcs12password != null) {
-		loadPKCS12(pkcs12file, pkcs12password);
+		pkcs12files.put(pkcs12file, pkcs12password);
 		pkcs12file = null;
 	    }
 	}
@@ -387,16 +468,33 @@ public final class PdfSigVerifier extends PdfSigBase {
 		 " [--trust <cert.pem|cert.der>]... [--no-system-trust]" +
 		 " [--pkcs12 <file.p12> --password <password>] <file_name.pdf>...");
 	}
+	final TrustStore.Builder trustBuilder = TrustStore.builder();
 	if (systemTrust) {
-	    loadSystemTrustAnchors();
+	    try {
+		trustBuilder.systemAnchors();
+	    } catch (IOException e) {
+		LogUtil.W(e.getMessage() + ": " + e.getCause());
+	    }
 	}
-	for (File trustFile : trustFiles) {
-	    loadTrustAnchors(trustFile);
+	try {
+	    for (File trustFile : trustFiles) {
+		trustBuilder.anchors(trustFile);
+	    }
+	    for (Map.Entry<File, String> pkcs12 : pkcs12files.entrySet()) {
+		trustBuilder.intermediates(Pkcs12.readCertificates(pkcs12.getKey(), pkcs12.getValue()));
+	    }
+	} catch (IOException e) {
+	    LogUtil.F(e.getMessage());
+	    System.exit(1);
 	}
+	final TrustStore trustStore = trustBuilder.build();
 
+	boolean passed = true;
 	for (String fileName : fileNames) {
-	    (new PdfSigVerifier(fileName)).verify();
+	    final VerificationReport report = (new PdfSigVerifier(fileName, trustStore)).verify();
+	    print(report, policy);
+	    passed &= report.passes(policy);
 	}
-	System.exit(_failures > 0 ? 1 : 0);
+	System.exit(passed ? 0 : 1);
     }
 }
