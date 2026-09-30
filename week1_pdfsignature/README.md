@@ -46,6 +46,27 @@ Options:
   PKCS#12 file as candidate intermediates.  They are not trusted by themselves.
 - `--verbose`, `--nowarning`: show every step; hide the ⚠ reasons.
 
+## As a library
+
+```java
+TrustStore trust = TrustStore.builder()
+    .systemAnchors()                                   // the JDK's cacerts
+    .anchors(new File("root.pem"))
+    .intermediates(Pkcs12.readCertificates(new File("chain.p12"), password))
+    .build();
+
+VerificationReport report = new PdfSigVerifier("doc.pdf", trust).verify();
+report.passes(VerificationReport.Policy.STRICT);
+for (SignatureResult signature : report.signatures()) {
+    signature.verdict();              // VALID, UNTRUSTED, INVALID or UNSUPPORTED
+    signature.integrityFailures();    // why it's INVALID
+    signature.trustIssues();          // why it's UNTRUSTED
+}
+```
+
+A `TrustStore` is immutable, so verifiers with different trust stores can run
+side by side.  `TrustStore.empty()` checks integrity only.
+
 ## Signing
 
 ```

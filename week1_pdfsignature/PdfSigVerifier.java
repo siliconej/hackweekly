@@ -28,6 +28,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,8 +76,15 @@ import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 
 public final class PdfSigVerifier extends PdfSigBase {
 
-    public PdfSigVerifier(String pdfFileName) throws IOException {
+    private final TrustStore _trustStore;
+
+    /**
+     * @param trustStore the anchors signers must chain to, and candidate
+     *        intermediates; {@link TrustStore#empty} checks integrity only
+     */
+    public PdfSigVerifier(String pdfFileName, TrustStore trustStore) throws IOException {
 	super(pdfFileName);
+	_trustStore = trustStore;
     }
 
     /**
@@ -291,6 +300,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		"ETSI.CAdES.detached".equals(signerAlgorithm)) {
 		signingContext = new PdfSigningContext
 		    (PdfSigningContext.SignatureType.PKCS7_DETACHED, contents);
+		signingContext.setTrustStore(_trustStore);
 		if (checkByteRange(byteRanges, contents, signingContext)) {
 		    verifyDetachedPKCS7Signature(signingContext, byteRanges);
 		}
@@ -298,6 +308,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		signingContext = new PdfSigningContext
 		    (PdfSigningContext.SignatureType.PKCS1,
 		     ((COSString) dict.getDictionaryObject(COSName.CERT)).getBytes());
+		signingContext.setTrustStore(_trustStore);
 		if (checkByteRange(byteRanges, contents, signingContext)) {
 		    verifyPKCS1Signature(signingContext, contents,
 					 PdfSigningContext.calculateMessageDigest
@@ -414,6 +425,7 @@ public final class PdfSigVerifier extends PdfSigBase {
     public static final void main(String[] args) throws Exception {
 	ArrayList<String> fileNames = new ArrayList<>(args.length);
 	ArrayList<File> trustFiles = new ArrayList<>();
+	Map<File, String> pkcs12files = new LinkedHashMap<>();
 	File pkcs12file = null;
 	String pkcs12password = null;
 	boolean warning = true;
@@ -446,7 +458,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 		fileNames.add(args[i]);
             }
 	    if (pkcs12file != null && pkcs12password != null) {
-		loadPKCS12(pkcs12file, pkcs12password);
+		pkcs12files.put(pkcs12file, pkcs12password);
 		pkcs12file = null;
 	    }
 	}
@@ -456,16 +468,30 @@ public final class PdfSigVerifier extends PdfSigBase {
 		 " [--trust <cert.pem|cert.der>]... [--no-system-trust]" +
 		 " [--pkcs12 <file.p12> --password <password>] <file_name.pdf>...");
 	}
+	final TrustStore.Builder trustBuilder = TrustStore.builder();
 	if (systemTrust) {
-	    loadSystemTrustAnchors();
+	    try {
+		trustBuilder.systemAnchors();
+	    } catch (IOException e) {
+		LogUtil.W(e.getMessage() + ": " + e.getCause());
+	    }
 	}
-	for (File trustFile : trustFiles) {
-	    loadTrustAnchors(trustFile);
+	try {
+	    for (File trustFile : trustFiles) {
+		trustBuilder.anchors(trustFile);
+	    }
+	    for (Map.Entry<File, String> pkcs12 : pkcs12files.entrySet()) {
+		trustBuilder.intermediates(Pkcs12.readCertificates(pkcs12.getKey(), pkcs12.getValue()));
+	    }
+	} catch (IOException e) {
+	    LogUtil.F(e.getMessage());
+	    System.exit(1);
 	}
+	final TrustStore trustStore = trustBuilder.build();
 
 	boolean passed = true;
 	for (String fileName : fileNames) {
-	    final VerificationReport report = (new PdfSigVerifier(fileName)).verify();
+	    final VerificationReport report = (new PdfSigVerifier(fileName, trustStore)).verify();
 	    print(report, policy);
 	    passed &= report.passes(policy);
 	}

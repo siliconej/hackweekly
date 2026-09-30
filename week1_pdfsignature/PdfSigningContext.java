@@ -107,6 +107,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     private List<String> trustIssues;
     private Date trustedTime;
     private SignatureResult.Timestamp timestamp;
+    private TrustStore trustStore = TrustStore.empty();
     private boolean coversWholeDocument;
 
     /////////////// SigningContext Implementation ////////////////
@@ -381,6 +382,17 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     public boolean coversWholeDocument() {
 	return coversWholeDocument;
+    }
+
+    /**
+     * The trust store the signer's certificate chain is built with.
+     */
+    public void setTrustStore(TrustStore trustStore) {
+	this.trustStore = trustStore;
+    }
+
+    public TrustStore getTrustStore() {
+	return trustStore;
     }
 
     public boolean hasTrustedTime() {
