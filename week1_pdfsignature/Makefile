@@ -21,6 +21,7 @@ classes/${PDF_PACKAGE}/PdfSigner.class: PdfSigner.java \
 	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes PdfSigner.java
 
 classes/${PDF_PACKAGE}/PdfSigVerifier.class: PdfSigVerifier.java \
+	classes/${PDF_PACKAGE}/Pkcs12.class \
 	classes/${PDF_PACKAGE}/VerificationReport.class \
 	classes/${PDF_PACKAGE}/PdfSigBase.class \
 	classes/${PDF_PACKAGE}/PdfSigningContext.class \
@@ -57,7 +58,16 @@ classes/${PDF_PACKAGE}/SignatureResult.class: SignatureResult.java
 
 	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes SignatureResult.java
 
+classes/${PDF_PACKAGE}/Pkcs12.class: Pkcs12.java classes/${PDF_PACKAGE}/PdfSigBase.class
+
+	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes Pkcs12.java
+
+classes/${PDF_PACKAGE}/TrustStore.class: TrustStore.java classes/${UTIL_PACKAGE}/LogUtil.class
+
+	javac ${JAVAC_FLAGS} -cp ${JARFILE} -d ./classes TrustStore.java
+
 classes/${PDF_PACKAGE}/PdfSigningContext.class: PdfSigningContext.java \
+	classes/${PDF_PACKAGE}/TrustStore.class \
 	classes/${PDF_PACKAGE}/SignatureResult.class \
 	classes/${PKCS_PACKAGE}/SigningContext.class \
 	classes/${PKCS_PACKAGE}/PkcsIdentifiers.class \

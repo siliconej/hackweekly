@@ -484,6 +484,7 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 	    if (!(context instanceof PdfSigningContext)) {
 		return false;
 	    }
+	    timestampSigningContext.setTrustStore(((PdfSigningContext) context).getTrustStore());
 	    verifyToken((PdfSigningContext) context);
 	    return true;
         }
