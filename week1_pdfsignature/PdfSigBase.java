@@ -58,6 +58,7 @@ import org.apache.pdfbox.cos.COSInteger;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -78,6 +79,7 @@ import org.bouncycastle.asn1.pkcs.PBKDF2Params;
 import org.bouncycastle.asn1.pkcs.PKCS12PBEParams;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Certificate;
@@ -139,11 +141,12 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	private CCMBlockCipher _ccmCipher;
 
 	public static DecryptHelper newInstance(String oid) {
-	    final DecryptHelper helper = _SymmetricCipherIdMap.get(oid);
-	    if (helper == null) {
+	    final DecryptHelper template = _SymmetricCipherIdMap.get(oid);
+	    if (template == null) {
 		throw new IllegalArgumentException("Invalid cipher algorithm: " + oid);
 	    }
-	    return helper;
+	    // The map holds templates: newCipher() mutates, so every caller gets its own.
+	    return new DecryptHelper(template._cipherType, template._modeType, template._keySize);
 	}
 
 	public DecryptHelper(SymmetricCipherType cipherType, ModeType modeType, int keySize) {
@@ -212,8 +215,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	    } else if (_modeType == ModeType.CCM) {
 		decryptedBytes = new byte[_ccmCipher.getOutputSize(in.length)];
-		len = _gcmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
-                len += _gcmCipher.doFinal(decryptedBytes, len);
+		len = _ccmCipher.processBytes(in, 0, in.length, decryptedBytes, 0);
+                len += _ccmCipher.doFinal(decryptedBytes, len);
 
 	    } else if (_bufferedCipher != null) {
 		decryptedBytes = new byte[_bufferedCipher.getOutputSize(in.length)];
@@ -339,7 +342,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Sequence obj, int index, Class<T> dataType) {
         try {
-	    if (obj.size() >= index) {
+	    if (index >= 0 && obj.size() > index) {
 		return dataType.cast(obj.getObjectAt(index));
 	    }
 	} catch (ClassCastException e) {
@@ -354,7 +357,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
      */
     protected static final <T extends ASN1Encodable> T castObjectAt(ASN1Set obj, int index, Class<T> dataType) {
         try {
-            if (obj.size() >= index) {
+            if (index >= 0 && obj.size() > index) {
                 return dataType.cast(obj.getObjectAt(index));
             }
         } catch (ClassCastException e) {
@@ -779,7 +782,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    final AsymmetricCipherType keyType = getKeyCipherType(pubKeyInfo);
 	    if (keyType == AsymmetricCipherType.RSA) {
 		return verify(new RSAEngine(), newPublicKeyParams(pubKeyInfo),
-			      cert.getSignature(), tbsDigest);
+			      cert.getSignature(), tbsDigest, digestName);
 	    } else if (keyType != null) {
 		return verify(newDsaSigner(keyType), newPublicKeyParams(pubKeyInfo),
 			      cert.getSignature(), tbsDigest);
@@ -851,18 +854,34 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	}
     }
 
+    /**
+     * Verify an RSA PKCS#1 v1.5 signature: the decrypted block must be exactly
+     * the DER DigestInfo of <code>clearBytes</code> under <code>digestName</code>
+     * (RFC 8017 8.2.2).  Comparing the whole encoding, not a digest parsed out of
+     * it, leaves no room for extra or mislabeled content in the block.
+     */
     protected static final boolean verify(AsymmetricBlockCipher cipher,
 					  CipherParameters params,
 					  byte[] encryptedBytes,
-					  byte[] clearBytes)
-        throws InvalidCipherTextException {
-        cipher.init(false,  // for encryption?
-		    params);
+					  byte[] clearBytes,
+					  String digestName)
+        throws InvalidCipherTextException, IOException {
         final PKCS1Encoding pkcs1Enc = new PKCS1Encoding(cipher);
-        final ASN1Sequence decryptedSeq =
-            ASN1Sequence.getInstance(decrypt(pkcs1Enc, encryptedBytes));
-        return (0 == Arrays.compare
-                (castObjectAt(decryptedSeq, 1, ASN1OctetString.class).getOctets(), clearBytes));
+        pkcs1Enc.init(false,  // for encryption?
+		      params);
+        final byte[] decrypted = decrypt(pkcs1Enc, encryptedBytes);
+	final ASN1ObjectIdentifier digestOid =
+	    new ASN1ObjectIdentifier(IdUtil.getDigestAlgorithmOid(digestName));
+	// The digest algorithm's parameters are NULL, or absent in some encoders.
+	for (AlgorithmIdentifier digestAlgo : new AlgorithmIdentifier[] {
+		new AlgorithmIdentifier(digestOid, DERNull.INSTANCE),
+		new AlgorithmIdentifier(digestOid) }) {
+	    if (Arrays.equals(decrypted, new DigestInfo(digestAlgo, clearBytes).getEncoded(ASN1Encoding.DER))) {
+		return true;
+	    }
+	}
+	LogUtil.V("RSA signature doesn't decrypt to the " + digestName + " DigestInfo of the signed data");
+	return false;
     }
 
     protected static final boolean verify(DSA cipher,
@@ -989,7 +1008,8 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 
 	switch (cipherType) {
 	case RSA:
-	    return verify(new RSAEngine(), pubKeyParams, digest, clearDigest);
+	    return verify(new RSAEngine(), pubKeyParams, digest, clearDigest,
+			  signingContext.getDerivedMdName());
 
 	case DSA:
 	case ECDSA:
@@ -1151,10 +1171,13 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 			      password, macSeq)) {
 		    LogUtil.V("MAC verified successfully.");
 		} else {
-		    LogUtil.W("MAC failed.");
+		    // Most likely a wrong password: decrypting would only yield garbage.
+		    LogUtil.F("MAC of " + pkcs12file + " doesn't verify: wrong password or corrupted file");
+		    return;
 		}
 	    } catch (NoSuchAlgorithmException e) {
-		LogUtil.F("MAC verifier failed to load: " + e);
+		// Bag certificates are only candidate issuers, never trusted by themselves.
+		LogUtil.W("Can't check the MAC of " + pkcs12file + ": " + e.getMessage());
 	    }
 	    loadCertBags(cmsSeq, password);
 	    LogUtil.V("Certificate bag size: " + _certBags.size());

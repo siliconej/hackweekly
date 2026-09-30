@@ -232,6 +232,7 @@ public final class PdfSigVerifier extends PdfSigBase {
 	try {
 	    signingContext.setEncryptedDigest(digestASN1);
 	    signingContext.setClearDigest(clearDigest);
+	    signingContext.setMdAlgorithm(OID_ALGO_SHA1);  // adbe.x509.rsa_sha1
 	    final Certificate cert = signingContext.getSigningCertificate();
 	    return verifySignature(signingContext, new X509CertificateHolder(cert));
 	} catch (IOException e) {
@@ -257,11 +258,13 @@ public final class PdfSigVerifier extends PdfSigBase {
 	    return;
 	}
 	// according to other resources, PDF also support VeriSign, PPKMS signature scheme.
-	if (!"Adobe.PPKLite".equals(((COSName) dict.getItem(COSName.FILTER)).getName())) {
-	    LogUtil.F("Unsupported signature object: " + dict.getItem(COSName.FILTER));
+	final COSName filter = dict.getCOSName(COSName.FILTER);
+	if (filter == null || !"Adobe.PPKLite".equals(filter.getName())) {
+	    LogUtil.W("Unsupported signature handler: " + filter);
 	}
 
-	final String signerAlgorithm = ((COSName) dict.getItem(COSName.SUB_FILTER)).getName();
+	final COSName subFilter = dict.getCOSName(COSName.SUB_FILTER);
+	final String signerAlgorithm = (subFilter != null) ? subFilter.getName() : null;
 	final COSArray byteRanges = dict.getCOSArray(COSName.BYTERANGE);
 	final String objectNum = String.valueOf(cosObject.getObjectNumber());
 	String header = "◸" + _pdfFile.getName() + "◿ ";
