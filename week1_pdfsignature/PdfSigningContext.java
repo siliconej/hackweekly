@@ -106,6 +106,8 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
     private List<String> integrityFailures;
     private List<String> trustIssues;
     private Date trustedTime;
+    private SignatureResult.Timestamp timestamp;
+    private boolean coversWholeDocument;
 
     /////////////// SigningContext Implementation ////////////////
     @Override
@@ -130,7 +132,7 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 
     @Override
     public Date getSigningTime() {
-	return (Date) signingTime.clone();
+	return (signingTime != null) ? (Date) signingTime.clone() : null;
     }
 
     @Override
@@ -362,6 +364,25 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	trustedTime = time;
     }
 
+    /**
+     * Record the outcome of the timestamp token attached to this signature.
+     */
+    public void setTimestamp(SignatureResult.Timestamp timestamp) {
+	this.timestamp = timestamp;
+    }
+
+    public SignatureResult.Timestamp getTimestamp() {
+	return timestamp;
+    }
+
+    public void setCoversWholeDocument(boolean coversWholeDocument) {
+	this.coversWholeDocument = coversWholeDocument;
+    }
+
+    public boolean coversWholeDocument() {
+	return coversWholeDocument;
+    }
+
     public boolean hasTrustedTime() {
 	return trustedTime != null;
     }
@@ -480,6 +501,9 @@ public class PdfSigningContext implements PkcsIdentifiers, SigningContext {
 	final Certificate signingCert = getSigningCertificate();
 	if (signingCert == null) {
 	    return false;
+	}
+	if (signingTime == null) {
+	    return true;  // the attribute is optional: no claim to contradict.
 	}
 	return (signingTime.getTime() >= signingCert.getStartDate().getDate().getTime() &&
 		signingTime.getTime() < signingCert.getEndDate().getDate().getTime());

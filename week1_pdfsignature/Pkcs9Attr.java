@@ -29,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import io.reddart.pdf.PdfSigBase;
 import io.reddart.pdf.PdfSigningContext;
+import io.reddart.pdf.SignatureResult;
 import io.reddart.util.IdUtil;
 import io.reddart.util.LogUtil;
 
@@ -558,12 +559,15 @@ public class Pkcs9Attr implements PkcsIdentifiers {
 		    verified = true;
 		}
 	    } catch (Exception e) {
-		LogUtil.F("Timetsamp signature verification failure", e);
+		LogUtil.V("Timestamp signature verification failure", e);
 		signatureContext.addIntegrityFailure("Timestamp token can't be verified: " + e.getMessage());
 	    }
 
 	    final List<String> tsTrustIssues = timestampSigningContext.getTrustIssues();
-	    LogUtil.R("Timestamp", String.valueOf(genTime), verified, tsTrustIssues.isEmpty());
+	    if (genTime != null) {
+		signatureContext.setTimestamp(new SignatureResult.Timestamp
+					      (genTime.toInstant(), verified, tsTrustIssues.isEmpty()));
+	    }
 	    if (!verified) {
 		return;
 	    }

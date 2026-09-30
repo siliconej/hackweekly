@@ -46,6 +46,15 @@ public final class LogUtil {
             System.out.println(sb.toString());
         }
     }
+    /**
+     * Log a failure that is reported elsewhere, with its stack trace when verbose.
+     */
+    public static final void V(String log, Exception e) {
+        if (_VERBOSE) {
+            System.out.println(log + ": " + e);
+            e.printStackTrace(System.out);
+        }
+    }
     public static final void W(String log) {
         if (_WARNING) {
             System.out.println("\u001B[35mWARNING: " + log + "\u001B[0m");

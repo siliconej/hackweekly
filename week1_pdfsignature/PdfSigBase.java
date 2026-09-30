@@ -549,6 +549,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	    signingContext.addIntegrityFailure("The bytes excluded by ByteRange are not this signature's /Contents");
 	    return false;
 	}
+	signingContext.setCoversWholeDocument(signedEnd == pdf.length);
 	if (signedEnd < pdf.length) {
 	    if (!endsAtEof(pdf, (int) signedEnd)) {
 		signingContext.addIntegrityFailure("Signed bytes don't end at a revision boundary (%%EOF)");
@@ -742,6 +743,7 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	final String who = isCA ? "CA certificate " + cert.getSubject() : "Signer certificate";
 	if (!cert.isValidOn(time)) {
 	    if (!isCA && !signingContext.hasTrustedTime() &&
+		signingContext.getSigningTime() != null &&
 		cert.isValidOn(signingContext.getSigningTime())) {
 		signingContext.addTrustIssue(who + " expired on " + cert.getNotAfter() +
 					     ", and no trusted timestamp proves the signature was made before");
@@ -1188,6 +1190,4 @@ public abstract class PdfSigBase implements PkcsIdentifiers {
 	}
     }
     
-    public abstract void verify();
-    public abstract void sign();
 }
