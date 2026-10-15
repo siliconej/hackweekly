@@ -584,19 +584,3 @@ copied into the WAV as-is, as in the C program) and IEEE 754 floating point.
   supported.
 - The pregap before track 1 (normally 2 s of silence) is not written.
 
----
-
-## Differences from the C program
-
-| Area | C | C++ |
-|---|---|---|
-| Structure | one 1,342-line file, global options | library + program, 9 headers |
-| Memory | `malloc`/`free`, fixed 255-track arrays, `goto out` cleanup | RAII, vectors, exceptions at image level |
-| TOC access | raw pointer arithmetic | bounds-checked `ByteView` |
-| Areas | only the chosen area's TOC is read | same (areas are located first, read on demand) |
-| Parallel jobs | `fork()`, one process per image | `std::jthread`, one thread per image |
-| Dither seed | memory address (varies per run) | fixed per track (reproducible) |
-| DST bit reader | bit by bit | 64-bit fast path, same results |
-| Read error mid-image | stops reading, keeps what was decoded | same |
-| Extra option | — | `--dump-toc` |
-| Tests | Python, end-to-end | unit tests + DST equivalence + end-to-end + byte comparison |
